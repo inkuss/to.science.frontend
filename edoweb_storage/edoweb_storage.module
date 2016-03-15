@@ -918,6 +918,7 @@ function _edoweb_utf8_charmap() {
     'ý' => '\u00FD',
     'þ' => '\u00FE',
     'ÿ' => '\u00FF',
+    '–' => '\u2013',
   );
   return $char_map;
 }
