@@ -81,9 +81,7 @@ class LinkedDataClient {
           'format' => 'application/ntriples',
         );
         try {
-          $rdf_data = _edoweb_escape_utf8(
-            jsonld_to_rdf($json_ld, $options)
-          );
+          $rdf_data = jsonld_to_rdf($json_ld, $options);
           $rdf_parser = new LibRDF_Parser('ntriples');
         } catch(JsonLdException $e) {
           watchdog('edoweb', 'Unable to parse JSON LD');
