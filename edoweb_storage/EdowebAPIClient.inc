@@ -80,9 +80,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     $rdf_model = new LibRDF_Model(new LibRDF_Storage());
     $json = json_decode($http_response->data);
     try {
-      $rdf_ntriples = _edoweb_escape_utf8(
-        jsonld_to_rdf($json, $options)
-      );
+      $rdf_ntriples = jsonld_to_rdf($json, $options);
     } catch(JsonLdException $e) {
       watchdog('edoweb_storage', 'Unable to parse JSON LD');
       die(FALSE);
@@ -528,9 +526,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
 
     foreach ($hits->hits as $hit) {
       try {
-        $rdf_ntriples = _edoweb_escape_utf8(
-          jsonld_to_rdf($hit->_source, $options)
-        );
+        $rdf_ntriples = jsonld_to_rdf($hit->_source, $options);
       } catch(JsonLdException $e) {
         watchdog('edoweb_storage', 'Unable to parse JSON LD: ' .  json_encode($hit->_source));
         continue;
