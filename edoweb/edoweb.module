@@ -4396,3 +4396,55 @@ function edoweb_update_7168() {
 
 }
 
+/**
+ * Update complete drupal data schema
+ */
+function edoweb_update_7169() {
+	_update_edoweb_installed_fields();
+  _update_edoweb_installed_instances();
+  _update_rdf_mapping();
+}
+/**
+ * Update definition of possible children of a node
+ */
+function edoweb_update_7170() {
+
+	$updated_instances = array(
+			'volume' => array(
+					'field_edoweb_struct_child',
+			),
+			'issue' => array(
+					'field_edoweb_struct_child',
+			),
+			'article' => array(
+					'field_edoweb_struct_child',
+			),
+			'version' => array(
+					'field_edoweb_struct_child',
+			),
+			'part' => array(
+					'field_edoweb_struct_child',
+			),
+			'webpage' => array(
+					'field_edoweb_struct_child',
+			),
+			'monograph' => array(
+					'field_edoweb_struct_child',
+			),
+			'journal' => array(
+					'field_edoweb_struct_child',
+			),
+			'generic' => array(
+					'field_edoweb_struct_child',
+			),
+			'file' => array(
+					'field_edoweb_struct_child',
+			),
+	);
+
+	_update_edoweb_installed_instances($updated_instances);
+	_update_rdf_mapping();
+
+}
+
+
