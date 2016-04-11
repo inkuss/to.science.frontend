@@ -1,1 +1,5294 @@
-(function(c){var d={},a=/^(([a-z][\-a-z0-9+\.]*):)?(\/\/([^\/?#]+))?([^?#]*)?(\?([^#]*))?(#(.*))?$/i,g,b=function(j){var h=j.match(a);if(h===null){throw"Malformed URI: "+j}return{scheme:h[1]?h[2].toLowerCase():undefined,authority:h[3]?h[4]:undefined,path:h[5]||"",query:h[6]?h[7]:undefined,fragment:h[8]?h[9]:undefined}},f=function(j){var k="",h=[];if(/\./.test(j)){while(j!==undefined&&j!==""){if(j==="."||j===".."){j=""}else{if(/^\.\.\//.test(j)){j=j.substring(3)}else{if(/^\.\//.test(j)){j=j.substring(2)}else{if(/^\/\.(\/|$)/.test(j)){j="/"+j.substring(3)}else{if(/^\/\.\.(\/|$)/.test(j)){j="/"+j.substring(4);k=k.replace(/\/?[^\/]+$/,"")}else{h=j.match(/^(\/?[^\/]*)(\/.*)?$/);j=h[2];k=k+h[1]}}}}}}return k}else{return j}},e=function(h,j){if(h.authority!==""&&(h.path===undefined||h.path==="")){return"/"+j}else{return h.path.replace(/[^\/]+$/,"")+j}};c.uri=function(k,j){var h;k=k||"";if(d[k]){return d[k]}j=j||c.uri.base();if(typeof j==="string"){j=c.uri.absolute(j)}h=new c.uri.fn.init(k,j);if(d[h]){return d[h]}else{d[h]=h;return h}};c.uri.fn=c.uri.prototype={scheme:undefined,authority:undefined,path:undefined,query:undefined,fragment:undefined,init:function(k,j){var h={};j=j||{};c.extend(this,b(k));if(this.scheme===undefined){this.scheme=j.scheme;if(this.authority!==undefined){this.path=f(this.path)}else{this.authority=j.authority;if(this.path===""){this.path=j.path;if(this.query===undefined){this.query=j.query}}else{if(!/^\//.test(this.path)){this.path=e(j,this.path)}this.path=f(this.path)}}}if(this.scheme===undefined){throw"Malformed URI: URI is not an absolute URI and no base supplied: "+k}return this},resolve:function(h){return c.uri(h,this)},relative:function(p){var n,o,m=0,k,l=[],h="";if(typeof p==="string"){p=c.uri(p,{})}if(p.scheme!==this.scheme||p.authority!==this.authority){return p.toString()}if(p.path!==this.path){n=p.path.split("/");o=this.path.split("/");if(n[1]!==o[1]){h=p.path}else{while(n[m]===o[m]){m+=1}k=m;for(;m<o.length-1;m+=1){l.push("..")}for(;k<n.length;k+=1){l.push(n[k])}h=l.join("/")}h=p.query===undefined?h:h+"?"+p.query;h=p.fragment===undefined?h:h+"#"+p.fragment;return h}if(p.query!==undefined&&p.query!==this.query){return"?"+p.query+(p.fragment===undefined?"":"#"+p.fragment)}if(p.fragment!==undefined&&p.fragment!==this.fragment){return"#"+p.fragment}return""},toString:function(){var h="";if(this._string){return this._string}else{h=this.scheme===undefined?h:(h+this.scheme+":");h=this.authority===undefined?h:(h+"//"+this.authority);h=h+this.path;h=this.query===undefined?h:(h+"?"+this.query);h=this.fragment===undefined?h:(h+"#"+this.fragment);this._string=h;return h}}};c.uri.fn.init.prototype=c.uri.fn;c.uri.absolute=function(h){return c.uri(h,{})};c.uri.resolve=function(j,h){return c.uri(j,h)};c.uri.relative=function(j,h){return c.uri(h,{}).relative(j)};c.uri.base=function(){return c(document).base()};c.fn.base=function(){var h=c(this).parents().andSelf().find("base").attr("href"),j=c(this)[0].ownerDocument||document,k=c.uri.absolute(j.location===null?document.location.href:j.location.href);return h===undefined?k:c.uri(h,k)}})(jQuery);(function(b){var a=/\sxmlns(?::([^ =]+))?\s*=\s*(?:"([^"]*)"|'([^']*)')/g;b.fn.xmlns=function(h,d,j){var f=this.eq(0),m=f.data("xmlns"),k=f[0],n,c,g,l=h?"xmlns:"+h:"xmlns",o,r,q=false;if(d===undefined){if(h===undefined){if(m===undefined){m={};if(k.attributes&&k.attributes.getNamedItemNS){for(g=0;g<k.attributes.length;g+=1){n=k.attributes[g];if(/^xmlns(:(.+))?$/.test(n.nodeName)){h=/^xmlns(:(.+))?$/.exec(n.nodeName)[2]||"";o=n.nodeValue;if(h===""||o!==""){m[h]=b.uri(n.nodeValue);q=true}}}}else{r=/<[^>]+>/.exec(k.outerHTML);n=a.exec(r);while(n!==null){h=n[1]||"";o=n[2]||n[3];if(h===""||o!==""){m[h]=b.uri(n[2]||n[3]);q=true}n=a.exec(r)}a.lastIndex=0}j=j||(k.parentNode.nodeType===1?f.parent().xmlns():{});m=q?b.extend({},j,m):j;f.data("xmlns",m)}return m}else{if(typeof h==="object"){for(c in h){if(typeof h[c]==="string"){this.xmlns(c,h[c])}}this.find("*").andSelf().removeData("xmlns");return this}else{if(m===undefined){m=f.xmlns()}return m[h]}}}else{this.find("*").andSelf().removeData("xmlns");return this.attr(l,d)}};b.fn.removeXmlns=function(e){var c,f,d;if(typeof e==="object"){if(e.length===undefined){for(f in e){if(typeof e[f]==="string"){this.removeXmlns(f)}}}else{for(d=0;d<e.length;d+=1){this.removeXmlns(e[d])}}}else{c=e?"xmlns:"+e:"xmlns";this.removeAttr(c)}this.find("*").andSelf().removeData("xmlns");return this};b.fn.qname=function(d){var c,f,e;if(d===undefined){if(this[0].outerHTML===undefined){d=this[0].nodeName.toLowerCase()}else{d=/<([^ >]+)/.exec(this[0].outerHTML)[1].toLowerCase()}}if(d==="?xml:namespace"){throw"XMLinHTML: Unable to get the prefix to resolve the name of this element"}c=/^(([^:]+):)?([^:]+)$/.exec(d);f=c[2]||"";e=this.xmlns(f);if(e===undefined&&f!==""){throw"MalformedQName: The prefix "+f+" is not declared"}return{namespace:e,localPart:c[3],prefix:f,name:d}}})(jQuery);(function(b){var a=function(c){return c.replace(/[ \t\n\r]+/," ").replace(/^ +/,"").replace(/ +$/,"")};b.typedValue=function(d,c){return b.typedValue.fn.init(d,c)};b.typedValue.fn=b.typedValue.prototype={representation:undefined,value:undefined,datatype:undefined,init:function(e,c){var f;if(b.typedValue.valid(e,c)){f=b.typedValue.types[c];this.representation=e;this.datatype=c;this.value=f.value(f.strip?a(e):e);return this}else{throw {name:"InvalidValue",message:e+" is not a valid "+c+" value"}}}};b.typedValue.fn.init.prototype=b.typedValue.fn;b.typedValue.types={};b.typedValue.types["http://www.w3.org/2001/XMLSchema#string"]={regex:/^.*$/,strip:false,value:function(c){return c}};b.typedValue.types["http://www.w3.org/2001/XMLSchema#boolean"]={regex:/^(?:true|false|1|0)$/,strip:true,value:function(c){return c==="true"||c==="1"}};b.typedValue.types["http://www.w3.org/2001/XMLSchema#decimal"]={regex:/^[\-\+]?(?:[0-9]+\.[0-9]*|\.[0-9]+|[0-9]+)$/,strip:true,value:function(c){return c}};b.typedValue.types["http://www.w3.org/2001/XMLSchema#integer"]={regex:/^[\-\+]?[0-9]+$/,strip:true,value:function(c){return parseInt(c,10)}};b.typedValue.types["http://www.w3.org/2001/XMLSchema#int"]={regex:/^[\-\+]?[0-9]+$/,strip:true,value:function(c){return parseInt(c,10)}};b.typedValue.types["http://www.w3.org/2001/XMLSchema#float"]={regex:/^(?:[\-\+]?(?:[0-9]+\.[0-9]*|\.[0-9]+|[0-9]+)(?:[eE][\-\+]?[0-9]+)?|[\-\+]?INF|NaN)$/,strip:true,value:function(c){if(c==="-INF"){return -1/0}else{if(c==="INF"||c==="+INF"){return 1/0}else{return parseFloat(c)}}}};b.typedValue.types["http://www.w3.org/2001/XMLSchema#double"]={regex:b.typedValue.types["http://www.w3.org/2001/XMLSchema#float"].regex,strip:true,value:b.typedValue.types["http://www.w3.org/2001/XMLSchema#float"].value};b.typedValue.types["http://www.w3.org/2001/XMLSchema#duration"]={regex:/^([\-\+])?P(?:([0-9]+)Y)?(?:([0-9]+)M)?(?:([0-9]+)D)?(?:T(?:([0-9]+)H)?(?:([0-9]+)M)?(?:([0-9]+(?:\.[0-9]+))?S)?)$/,validate:function(d){var c=this.regex.exec(d);return c[2]||c[3]||c[4]||c[5]||c[6]||c[7]},strip:true,value:function(c){return c}};b.typedValue.types["http://www.w3.org/2001/XMLSchema#dateTime"]={regex:/^(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):(([0-9]{2})(\.([0-9]+))?)((?:[\-\+]([0-9]{2}):([0-9]{2}))|Z)?$/,validate:function(d){var c=this.regex.exec(d),g=parseInt(c[1],10),j=c[10]===undefined||c[10]==="Z"?"+0000":c[10].replace(/:/,""),f;if(g===0||parseInt(j,10)<-1400||parseInt(j,10)>1400){return false}try{g=g<100?Math.abs(g)+1000:g;month=parseInt(c[2],10);day=parseInt(c[3],10);if(day>31){return false}else{if(day>30&&!(month===1||month===3||month===5||month===7||month===8||month===10||month===12)){return false}else{if(month===2){if(day>29){return false}else{if(day===29&&(g%4!==0||(g%100===0&&g%400!==0))){return false}}}}}f=""+g+"/"+c[2]+"/"+c[3]+" "+c[4]+":"+c[5]+":"+c[7]+" "+j;f=new Date(f);return true}catch(h){return false}},strip:true,value:function(c){return c}};b.typedValue.types["http://www.w3.org/2001/XMLSchema#date"]={regex:/^(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})((?:[\-\+]([0-9]{2}):([0-9]{2}))|Z)?$/,validate:function(e){var c=this.regex.exec(e),f=parseInt(c[1],10),g=parseInt(c[2],10),d=parseInt(c[3],10),h=c[10]===undefined||c[10]==="Z"?"+0000":c[10].replace(/:/,"");if(f===0||g>12||d>31||parseInt(h,10)<-1400||parseInt(h,10)>1400){return false}else{return true}},strip:true,value:function(c){return c}};b.typedValue.types["http://www.w3.org/2001/XMLSchema#gMonthDay"]={regex:/^--([0-9]{2})-([0-9]{2})((?:[\-\+]([0-9]{2}):([0-9]{2}))|Z)?$/,validate:function(e){var c=this.regex.exec(e),f=parseInt(c[1],10),d=parseInt(c[2],10),g=c[3]===undefined||c[3]==="Z"?"+0000":c[3].replace(/:/,"");if(f>12||d>31||parseInt(g,10)<-1400||parseInt(g,10)>1400){return false}else{if(f===2&&d>29){return false}else{if((f===4||f===6||f===9||f===11)&&d>30){return false}else{return true}}}},strip:true,value:function(c){return c}};b.typedValue.types["http://www.w3.org/2001/XMLSchema#anyURI"]={regex:/^.*$/,strip:true,value:function(c,d){var e=b.extend({},b.typedValue.defaults,d);return b.uri.resolve(c,e.base)}};b.typedValue.defaults={base:b.uri.base(),namespaces:{}};b.typedValue.valid=function(e,c){var f=b.typedValue.types[c];if(f===undefined){throw"InvalidDatatype: The datatype "+c+" can't be recognised"}else{e=f.strip?a(e):e;if(f.regex.test(e)){return f.validate===undefined?true:f.validate(e)}else{return false}}}})(jQuery);(function(a){a.curie=function(f,c){var g=a.extend({},a.curie.defaults,c||{}),b=/^(([^:]*):)?(.+)$/.exec(f),h=b[2],d=b[3],e=g.namespaces[h];if(/^:.+/.test(f)){if(g.reservedNamespace===undefined||g.reservedNamespace===null){throw"Malformed CURIE: No prefix and no default namespace for unprefixed CURIE "+f}else{e=g.reservedNamespace}}else{if(h){if(e===undefined){throw"Malformed CURIE: No namespace binding for "+h+" in CURIE "+f}}else{if(g.charcase==="lower"){f=f.toLowerCase()}else{if(g.charcase==="upper"){f=f.toUpperCase()}}if(g.reserved.length&&a.inArray(f,g.reserved)>=0){e=g.reservedNamespace;d=f}else{if(g.defaultNamespace===undefined||g.defaultNamespace===null){throw"Malformed CURIE: No prefix and no default namespace for unprefixed CURIE "+f}else{e=g.defaultNamespace}}}}return a.uri(e+d)};a.curie.defaults={namespaces:{},reserved:[],reservedNamespace:undefined,defaultNamespace:undefined,charcase:"preserve"};a.safeCurie=function(d,c){var b=/^\[([^\]]+)\]$/.exec(d);return b?a.curie(b[1],c):a.uri(d)};a.createCurie=function(f,b){var e=a.extend({},a.curie.defaults,b||{}),d=e.namespaces,c;f=a.uri(f).toString();if(e.reservedNamespace!==undefined&&f.substring(0,e.reservedNamespace.toString().length)===e.reservedNamespace.toString()){c=f.substring(e.reservedNamespace.toString().length);if(a.inArray(c,e.reserved)===-1){c=":"+c}}else{a.each(d,function(h,g){if(f.substring(0,g.toString().length)===g.toString()){c=h+":"+f.substring(g.toString().length);return null}})}if(c===undefined){throw"No Namespace Binding: There's no appropriate namespace binding for generating a CURIE from "+f}else{return c}};a.fn.curie=function(c,b){var d=a.extend({},a.fn.curie.defaults,{namespaces:this.xmlns()},b||{});return a.curie(c,d)};a.fn.safeCurie=function(d,b){var c=a.extend({},a.fn.curie.defaults,{namespaces:this.xmlns()},b||{});return a.safeCurie(d,c)};a.fn.createCurie=function(d,b){var c=a.extend({},a.fn.curie.defaults,{namespaces:this.xmlns()},b||{});return a.createCurie(d,c)};a.fn.curie.defaults={reserved:["alternate","appendix","bookmark","cite","chapter","contents","copyright","first","glossary","help","icon","index","last","license","meta","next","p3pv1","prev","role","section","stylesheet","subsection","start","top","up"],reservedNamespace:"http://www.w3.org/1999/xhtml/vocab#",defaultNamespace:undefined,charcase:"lower"}})(jQuery);(function(F){var f={},c={},t={},C={},r={},j="http://www.w3.org/2001/XMLSchema#",w="http://www.w3.org/1999/02/22-rdf-syntax-ns#",v="http://www.w3.org/2000/01/rdf-schema#",z=/^<(([^>]|\\>)*)>$/,T=/^("""((\\"|[^"])*)"""|"((\\"|[^"])*)")(@([a-z]+(-[a-z0-9]+)*)|\^\^(.+))?$/,g=/(("""((\\"|[^"])*)""")|("(\\"|[^"]|)*")|(<(\\>|[^>])*>)|\S)+/g,x=databankSeed=new Date().getTime()%1000,k=function(){x+=1;return"b"+x.toString(16)},K=function(){databankSeed+=1;return"data"+databankSeed.toString(16)},l=function(X,Y){if(typeof X==="string"){try{return F.rdf.resource(X,Y)}catch(aa){try{return F.rdf.blank(X,Y)}catch(Z){throw"Bad Triple: Subject "+X+" is not a resource: "+Z}}}else{return X}},R=function(Y,X){if(Y==="a"){return F.rdf.type}else{if(typeof Y==="string"){try{return F.rdf.resource(Y,X)}catch(Z){throw"Bad Triple: Property "+Y+" is not a resource: "+Z}}else{return Y}}},N=function(X,Z){if(typeof X==="string"){try{return F.rdf.resource(X,Z)}catch(ab){try{return F.rdf.blank(X,Z)}catch(aa){try{return F.rdf.literal(X,Z)}catch(Y){throw"Bad Triple: Object "+X+" is not a resource or a literal "+Y}}}}else{return X}},a=function(aa,Y,Z){var X;if(typeof Y==="string"){X=Y.substring(1);if(Z[X]&&Z[X]!==aa){return null}else{Z[X]=aa;return Z}}else{if(Y===aa){return Z}else{return null}}},U=function(Y,X){return F.map(Y,function(Z){var aa=X.exec(Z);return aa===null?null:{bindings:aa,triples:[Z]}})},q=function(X,Z,Y){return F.map(X,function(ac,aa){var ab=F.map(Z,function(ad){var ae=true;F.each(ad.bindings,function(ag,af){if(!(ac.bindings[ag]===undefined||ac.bindings[ag]===af)){ae=false;return false}});return ae?ad:null});if(ab.length>0){return F.map(ab,function(ad){return{bindings:F.extend({},ac.bindings,ad.bindings),triples:F.unique(ac.triples.concat(ad.triples))}})}else{return Y?ac:null}})},V=function(X,Z){var Y,aa,ab;if(Z.filterExp!==undefined&&!F.isFunction(Z.filterExp)){if(X.union===undefined){Y=typeof Z.filterExp.subject==="string"?"":Z.filterExp.subject;aa=typeof Z.filterExp.property==="string"?"":Z.filterExp.property;ab=typeof Z.filterExp.object==="string"?"":Z.filterExp.object;if(X.queries[Y]===undefined){X.queries[Y]={}}if(X.queries[Y][aa]===undefined){X.queries[Y][aa]={}}if(X.queries[Y][aa][ab]===undefined){X.queries[Y][aa][ab]=[]}X.queries[Y][aa][ab].push(Z)}else{F.each(X.union,function(ad,ac){V(ac,Z)})}}},A=function(X){X.length=0;X.matches=[];F.each(X.children,function(Y,Z){A(Z)});F.each(X.partOf,function(Y,Z){A(Z)})},H=function(Y,X){if(X.length>0){F.each(Y.children,function(Z,aa){J(aa,X)});F.each(Y.partOf,function(Z,aa){H(aa,X)});F.each(X,function(aa,Z){Y.matches.push(Z);Array.prototype.push.call(Y,Z.bindings)})}},J=function(Z,Y){var X;if(Z.union===undefined){if(Z.top||Z.parent.top){X=Z.alphaMemory}else{Y=Y||Z.parent.matches;if(F.isFunction(Z.filterExp)){X=F.map(Y,function(aa,ab){return Z.filterExp.call(aa.bindings,ab,aa.bindings,aa.triples)?aa:null})}else{X=q(Y,Z.alphaMemory,Z.filterExp.optional)}}}else{X=F.map(Z.union,function(aa){return aa.matches})}H(Z,X)},p=function(Z,Y){var X;if(Z.filterExp.optional){A(Z);J(Z)}else{if(Z.top||Z.parent.top){X=[Y]}else{X=q(Z.parent.matches,[Y],false)}H(Z,X)}},P=function(Y,Z){var X,aa=Y.filterExp.exec(Z);if(aa!==null){X={triples:[Z],bindings:aa};Y.alphaMemory.push(X);p(Y,X)}},d=function(X,Y){X.alphaMemory.splice(F.inArray(Y,X.alphaMemory),1);A(X);J(X)},B=function(X,Y){F.each(X,function(Z,aa){P(aa,Y)})},m=function(X,Y){F.each(X,function(Z,aa){d(aa,Y)})},e=function(X,ab){var Y=ab.subject,Z=ab.property,aa=ab.object;if(X.union===undefined){if(X.queries[Y]!==undefined){if(X.queries[Y][Z]!==undefined){if(X.queries[Y][Z][aa]!==undefined){B(X.queries[Y][Z][aa],ab)}if(X.queries[Y][Z][""]!==undefined){B(X.queries[Y][Z][""],ab)}}if(X.queries[Y][""]!==undefined){if(X.queries[Y][""][aa]!==undefined){B(X.queries[Y][""][aa],ab)}if(X.queries[Y][""][""]!==undefined){B(X.queries[Y][""][""],ab)}}}if(X.queries[""]!==undefined){if(X.queries[""][Z]!==undefined){if(X.queries[""][Z][aa]!==undefined){B(X.queries[""][Z][aa],ab)}if(X.queries[""][Z][""]!==undefined){B(X.queries[""][Z][""],ab)}}if(X.queries[""][""]!==undefined){if(X.queries[""][""][aa]!==undefined){B(X.queries[""][""][aa],ab)}if(X.queries[""][""][""]!==undefined){B(X.queries[""][""][""],ab)}}}}else{F.each(X.union,function(ad,ac){e(ac,ab)})}},s=function(X,ab){var Y=ab.subject,Z=ab.property,aa=ab.object;if(X.union===undefined){if(X.queries[Y]!==undefined){if(X.queries[Y][Z]!==undefined){if(X.queries[Y][Z][aa]!==undefined){m(X.queries[Y][Z][aa],ab)}if(X.queries[Y][Z][""]!==undefined){m(X.queries[Y][Z][""],ab)}}if(X.queries[Y][""]!==undefined){if(X.queries[Y][""][aa]!==undefined){m(X.queries[Y][""][aa],ab)}if(X.queries[Y][""][""]!==undefined){m(X.queries[Y][""][""],ab)}}}if(X.queries[""]!==undefined){if(X.queries[""][Z]!==undefined){if(X.queries[""][Z][aa]!==undefined){m(X.queries[""][Z][aa],ab)}if(X.queries[""][Z][""]!==undefined){m(X.queries[""][Z][""],ab)}}if(X.queries[""][""]!==undefined){if(X.queries[""][""][aa]!==undefined){m(X.queries[""][""][aa],ab)}if(X.queries[""][""][""]!==undefined){m(X.queries[""][""][""],ab)}}}}else{F.each(X.union,function(ad,ac){s(ac,ab)})}},n=function(ac){var ab={},Y,X,Z,aa;for(Y=0;Y<ac.length;Y+=1){X=ac[Y];Z=X.subject.value.toString();aa=X.property.value.toString();if(ab[Z]===undefined){ab[Z]={}}if(ab[Z][aa]===undefined){ab[Z][aa]=[]}ab[Z][aa].push(X.object.dump())}return ab},W=function(ab){var ag,ad,Y,ae,Z,aa,ac,X,af=[];for(ag in ab){ad=(ag.substring(0,2)==="_:")?F.rdf.blank(ag):F.rdf.resource("<"+ag+">");for(Y in ab[ag]){ae=F.rdf.resource("<"+Y+">");for(ac=0;ac<ab[ag][Y].length;ac+=1){Z=ab[ag][Y][ac];if(Z.type==="uri"){aa=F.rdf.resource("<"+Z.value+">")}else{if(Z.type==="bnode"){aa=F.rdf.blank(Z.value)}else{if(Z.datatype!==undefined){aa=F.rdf.literal(Z.value,{datatype:Z.datatype})}else{X={};if(Z.lang!==undefined){X.lang=Z.lang}aa=F.rdf.literal('"'+Z.value+'"',X)}}}af.push(F.rdf.triple(ad,ae,aa))}}}return af},E=function(aa,Z,Y,ab){var ac=aa.ownerDocument,X;if(Z!==undefined&&Z!==null){if(ac.createAttributeNS){X=ac.createAttributeNS(Z,Y);X.nodeValue=ab;aa.attributes.setNamedItemNS(X)}else{X=ac.createNode(2,Y,Z);X.nodeValue=ab;aa.attributes.setNamedItem(X)}}else{X=ac.createAttribute(Y);X.nodeValue=ab;aa.attributes.setNamedItem(X)}return aa},y=function(Y,X,Z){if(Z){E(Y,"http://www.w3.org/2000/xmlns/","xmlns:"+Z,X)}else{E(Y,undefined,"xmlns",X)}return Y},D=function(Z,X){var ab,ac="",aa,Y=false;if(Z!==undefined&&Z!==null){if(/:/.test(X)){aa=/([^:]+):/.exec(X)[1]}Y=true}if(document.implementation&&document.implementation.createDocument){ab=document.implementation.createDocument(Z,X,null);if(Y){y(ab.documentElement,Z,aa)}return ab}else{ab=new ActiveXObject("Microsoft.XMLDOM");ab.async="false";if(aa===undefined){ac=' xmlns="'+Z+'"'}else{ac=" xmlns:"+aa+'="'+Z+'"'}ab.loadXML("<"+X+ac+"/>");return ab}},h=function(Z,Y,X){var ab=Z.ownerDocument,aa;if(Y!==undefined&&Y!==null){aa=ab.createElementNS?ab.createElementNS(Y,X):ab.createNode(1,X,Y)}else{aa=ab.createElement(X)}Z.appendChild(aa);return aa},M=function(Y,aa){var Z=Y.ownerDocument,X;X=Z.createTextNode(aa);Y.appendChild(X);return Y},u=function(Z,X){var ad,ab,Y,ac;try{ab=new ActiveXObject("Microsoft.XMLDOM");ab.async="false";ab.loadXML("<temp>"+X+"</temp>")}catch(aa){ad=new DOMParser();ab=ad.parseFromString("<temp>"+X+"</temp>","text/xml")}for(Y=0;Y<ab.documentElement.childNodes.length;Y+=1){Z.appendChild(ab.documentElement.childNodes[Y].cloneNode(true))}return Z},L=function(ak,am){var ai=D(w,"rdf:RDF"),ad=n(ak),Y=am.namespaces||{},Z,al,ae,X,af,ab,aj,aa,ah,ag,ac;for(Z in Y){y(ai.documentElement,Y[Z],Z)}for(al in ad){if(ad[al][F.rdf.type.value]!==undefined){aa=/(.+[#\/])([^#\/]+)/.exec(ad[al][F.rdf.type.value][0].value);ag=aa[1];ah=aa[2];for(Z in Y){if(Y[Z]===ag){ac=Z;break}}ae=h(ai.documentElement,ag,ac+":"+ah)}else{ae=h(ai.documentElement,w,"rdf:Description")}if(/^_:/.test(al)){E(ae,w,"rdf:nodeID",al.substring(2))}else{E(ae,w,"rdf:about",al)}for(X in ad[al]){if(X!==F.rdf.type.value.toString()||ad[al][X].length>1){aa=/(.+[#\/])([^#\/]+)/.exec(X);ag=aa[1];ah=aa[2];for(Z in Y){if(Y[Z]===ag){ac=Z;break}}for(ab=(X===F.rdf.type.value.toString()?1:0);ab<ad[al][X].length;ab+=1){aj=ad[al][X][ab];af=h(ae,ag,ac+":"+ah);if(aj.type==="uri"){E(af,w,"rdf:resource",aj.value)}else{if(aj.type==="literal"){if(aj.datatype!==undefined){if(aj.datatype==="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral"){E(af,w,"rdf:parseType","Literal");u(af,aj.value)}else{E(af,w,"rdf:datatype",aj.datatype);M(af,aj.value)}}else{if(aj.lang!==undefined){E(af,"http://www.w3.org/XML/1998/namespace","xml:lang",aj.lang);M(af,aj.value)}else{M(af,aj.value)}}}else{E(af,w,"rdf:nodeID",aj.value.substring(2))}}}}}}return ai},S=function(X){switch(X){case"http://www.w3.org/1999/02/22-rdf-syntax-ns":return"rdf";case"http://www.w3.org/XML/1998/namespace":return"xml";case"http://www.w3.org/2000/xmlns/":return"xmlns";default:throw ("No default prefix mapped for namespace "+X)}},b=function(Z,Y,X){var ab;if(Z.hasAttributeNS){return Z.hasAttributeNS(Y,X)}else{try{ab=/:/.test(X)?/:(.+)$/.exec(X)[1]:X;return Z.attributes.getQualifiedItem(ab,Y)!==null}catch(aa){return Z.getAttribute(S(Y)+":"+X)!==null}}},G=function(Z,Y,X){var ab;if(Z.getAttributeNS){return Z.getAttributeNS(Y,X)}else{try{ab=/:/.test(X)?/:(.+)$/.exec(X)[1]:X;return Z.attributes.getQualifiedItem(ab,Y).nodeValue}catch(aa){return Z.getAttribute(S(Y)+":"+X)}}},I=function(X){return X.localName||X.baseName},o=function(Z,aa){var Y,X;if(b(Z,w,"about")){Y=G(Z,w,"about");X=F.rdf.resource("<"+Y+">",{base:aa})}else{if(b(Z,w,"ID")){Y=G(Z,w,"ID");X=F.rdf.resource("<#"+Y+">",{base:aa})}else{if(b(Z,w,"nodeID")){Y=G(Z,w,"nodeID");X=F.rdf.blank("_:"+Y)}else{X=F.rdf.blank("[]")}}}return X},O=function(ap,Z,aa,au){var ac,af,ad,ag,aq,ak,au,aj,ai,ae=1,at,ar,am,X=[],ab,ao,al={},Y,ah=[];au=G(ap,"http://www.w3.org/XML/1998/namespace","lang")||au;aa=G(ap,"http://www.w3.org/XML/1998/namespace","base")||aa;if(au!==null&&au!==undefined&&au!==""){al={lang:au}}ac=o(ap,aa);if(Z&&(ap.namespaceURI!==w||I(ap)!=="Description")){ad=F.rdf.type;aq=F.rdf.resource("<"+ap.namespaceURI+I(ap)+">");ah.push(F.rdf.triple(ac,ad,aq))}for(aj=0;aj<ap.attributes.length;aj+=1){af=ap.attributes.item(aj);if(af.namespaceURI!==undefined&&af.namespaceURI!=="http://www.w3.org/2000/xmlns/"&&af.namespaceURI!=="http://www.w3.org/XML/1998/namespace"&&af.prefix!=="xmlns"&&af.prefix!=="xml"){if(af.namespaceURI!==w){ad=F.rdf.resource("<"+af.namespaceURI+I(af)+">");aq=F.rdf.literal('"'+af.nodeValue+'"',al);ah.push(F.rdf.triple(ac,ad,aq))}else{if(I(af)==="type"){ad=F.rdf.type;aq=F.rdf.resource("<"+af.nodeValue+">",{base:aa});ah.push(F.rdf.triple(ac,ad,aq))}}}}for(aj=0;aj<ap.childNodes.length;aj+=1){af=ap.childNodes[aj];if(af.nodeType===1){if(af.namespaceURI===w&&I(af)==="li"){ad=F.rdf.resource("<"+w+"_"+ae+">");ae+=1}else{ad=F.rdf.resource("<"+af.namespaceURI+I(af)+">")}au=G(af,"http://www.w3.org/XML/1998/namespace","lang")||au;if(au!==null&&au!==undefined&&au!==""){al={lang:au}}if(b(af,w,"resource")){ag=G(af,w,"resource");aq=F.rdf.resource("<"+ag+">",{base:aa})}else{if(b(af,w,"nodeID")){ag=G(af,w,"nodeID");aq=F.rdf.blank("_:"+ag)}else{if(b(af,w,"parseType")){ab=G(af,w,"parseType");if(ab==="Literal"){try{ao=new XMLSerializer();ag=ao.serializeToString(af.getElementsByTagName("*")[0])}catch(an){ag="";for(ai=0;ai<af.childNodes.length;ai+=1){ag+=af.childNodes[ai].xml}}aq=F.rdf.literal(ag,{datatype:w+"XMLLiteral"})}else{if(ab==="Resource"){Y=O(af,false,aa,au);if(Y.length>0){aq=Y[Y.length-1].subject;ah=ah.concat(Y)}else{aq=F.rdf.blank("[]")}}else{if(ab==="Collection"){if(af.getElementsByTagName("*").length>0){for(ai=0;ai<af.childNodes.length;ai+=1){ag=af.childNodes[ai];if(ag.nodeType===1){X.push(ag)}}at=F.rdf.blank("[]");aq=at;for(ai=0;ai<X.length;ai+=1){ag=X[ai];Y=O(ag,true,aa,au);if(Y.length>0){am=Y[Y.length-1].subject;ah=ah.concat(Y)}else{am=o(ag)}ah.push(F.rdf.triple(at,F.rdf.first,am));if(ai===X.length-1){ah.push(F.rdf.triple(at,F.rdf.rest,F.rdf.nil))}else{ar=F.rdf.blank("[]");ah.push(F.rdf.triple(at,F.rdf.rest,ar));at=ar}}}else{aq=F.rdf.nil}}}}}else{if(b(af,w,"datatype")){ag=af.childNodes[0].nodeValue;aq=F.rdf.literal(ag,{datatype:G(af,w,"datatype")})}else{if(af.getElementsByTagName("*").length>0){for(ai=0;ai<af.childNodes.length;ai+=1){ag=af.childNodes[ai];if(ag.nodeType===1){Y=O(ag,true,aa,au);if(Y.length>0){aq=Y[Y.length-1].subject;ah=ah.concat(Y)}else{aq=o(ag)}}}}else{if(af.childNodes.length>0){ag=af.childNodes[0].nodeValue;aq=F.rdf.literal('"'+ag+'"',al)}else{Y=O(af,false,aa,au);if(Y.length>0){aq=Y[Y.length-1].subject;ah=ah.concat(Y)}else{aq=F.rdf.blank("[]")}}}}}}}ah.push(F.rdf.triple(ac,ad,aq));if(b(af,w,"ID")){ak=F.rdf.resource("<#"+G(af,w,"ID")+">",{base:aa});ah.push(F.rdf.triple(ak,F.rdf.subject,ac));ah.push(F.rdf.triple(ak,F.rdf.property,ad));ah.push(F.rdf.triple(ak,F.rdf.object,aq))}}}return ah},Q=function(Y){var X,aa,Z,ab=[];if(Y.documentElement.namespaceURI===w&&I(Y.documentElement)==="RDF"){aa=G(Y.documentElement,"http://www.w3.org/XML/1998/namespace","lang");base=G(Y.documentElement,"http://www.w3.org/XML/1998/namespace","base")||F.uri.base();for(X=0;X<Y.documentElement.childNodes.length;X+=1){Z=Y.documentElement.childNodes[X];if(Z.nodeType===1){ab=ab.concat(O(Z,true,base,aa))}}}else{ab=O(Y.documentElement,true)}return ab};F.typedValue.types["http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral"]={regex:/^.*$/m,strip:false,value:function(X){return X}};F.rdf=function(X){return new F.rdf.fn.init(X)};F.rdf.fn=F.rdf.prototype={rdfquery:"0.9",init:function(X){var Y;X=X||{};this.parent=X.parent;this.union=X.union;this.top=this.parent===undefined&&this.union===undefined;if(this.union===undefined){if(X.databank===undefined){this.databank=this.parent===undefined?F.rdf.databank(X.triples,X):this.parent.databank}else{this.databank=X.databank}}else{Y=F.map(this.union,function(Z){return Z.databank});Y=F.unique(Y);if(Y[1]!==undefined){this.databank=F.rdf.databank(undefined,{union:Y})}else{this.databank=Y[0]}}this.children=[];this.partOf=[];this.filterExp=X.filter;this.alphaMemory=[];this.matches=[];this.length=0;if(this.filterExp!==undefined){if(!F.isFunction(this.filterExp)){V(this.databank,this);this.alphaMemory=U(this.databank.triples(),this.filterExp)}}J(this);return this},base:function(X){if(X===undefined){return this.databank.base()}else{this.databank.base(X);return this}},prefix:function(Y,X){if(X===undefined){return this.databank.prefix(Y)}else{this.databank.prefix(Y,X);return this}},add:function(aa,Y){var Z,X;if(aa.rdfquery!==undefined){if(aa.top){X=this.databank.add(aa.databank);Z=F.rdf({parent:this.parent,databank:X});return Z}else{if(this.top){X=aa.databank.add(this.databank);Z=F.rdf({parent:aa.parent,databank:X});return Z}else{if(this.union===undefined){Z=F.rdf({union:[this,aa]});this.partOf.push(Z);aa.partOf.push(Z);return Z}else{this.union.push(aa);aa.partOf.push(this)}}}}else{if(typeof aa==="string"){Y=F.extend({},{base:this.base(),namespaces:this.prefix(),source:aa},Y);aa=F.rdf.pattern(aa,Y)}if(aa.isFixed()){this.databank.add(aa.triple(),Y)}else{Z=this;this.each(function(ac,ad){var ab=aa.triple(ad);if(ab!==null){Z.databank.add(ab,Y)}})}}return this},remove:function(Y,X){if(typeof Y==="string"){X=F.extend({},{base:this.base(),namespaces:this.prefix()},X);Y=F.rdf.pattern(Y,X)}if(Y.isFixed()){this.databank.remove(Y.triple(),X)}else{query=this;this.each(function(aa,ab){var Z=Y.triple(ab);if(Z!==null){query.databank.remove(Z,X)}})}return this},load:function(Y,X){this.databank.load(Y,X);return this},except:function(X){return F.rdf({databank:this.databank.except(X.databank)})},where:function(Z,Y){var ac,ab,aa,X;Y=Y||{};if(typeof Z==="string"){ab=Y.base||this.base();aa=F.extend({},this.prefix(),Y.namespaces||{});X=Y.optional||false;Z=F.rdf.pattern(Z,{namespaces:aa,base:ab,optional:X})}ac=F.rdf(F.extend({},Y,{parent:this,filter:Z}));this.children.push(ac);return ac},optional:function(Y,X){return this.where(Y,F.extend({},X||{},{optional:true}))},about:function(Y,X){return this.where(Y+" ?property ?value",X)},filter:function(Z,aa){var X,Y;if(typeof Z==="string"){if(aa.constructor===RegExp){X=function(){return aa.test(this[Z].value)}}else{X=function(){return this[Z].type==="literal"?this[Z].value===aa:this[Z]===aa}}}else{X=Z}Y=F.rdf({parent:this,filter:X});this.children.push(Y);return Y},select:function(aa){var Z=[],Y,X;for(Y=0;Y<this.length;Y+=1){if(aa===undefined){Z[Y]=this[Y]}else{Z[Y]={};for(X=0;X<aa.length;X+=1){Z[Y][aa[X]]=this[Y][aa[X]]}}}return Z},describe:function(ab){var Y,X,aa,Z=[];for(Y=0;Y<ab.length;Y+=1){aa=ab[Y];if(aa.substring(0,1)==="?"){aa=aa.substring(1);for(X=0;X<this.length;X+=1){Z.push(this[X][aa])}}else{Z.push(aa)}}return this.databank.describe(Z)},eq:function(X){return this.filter(function(Y){return Y===X})},reset:function(){var X=this;while(X.parent!==undefined){X=X.parent}return X},end:function(){return this.parent},size:function(){return this.length},sources:function(){return F(F.map(this.matches,function(X){return[X.triples]}))},dump:function(X){var Y=F.map(this.matches,function(Z){return Z.triples});X=F.extend({namespaces:this.databank.namespaces,base:this.databank.base},X||{});return F.rdf.dump(Y,X)},get:function(X){return(X===undefined)?F.makeArray(this):this[X]},each:function(X){F.each(this.matches,function(Z,Y){X.call(Y.bindings,Z,Y.bindings,Y.triples)});return this},map:function(X){return F(F.map(this.matches,function(Y,Z){return X.call(Y.bindings,Z,Y.bindings,Y.triples)}))},jquery:function(){return F(this)}};F.rdf.fn.init.prototype=F.rdf.fn;F.rdf.gleaners=[];F.rdf.dump=function(ac,X){var Z=F.extend({},F.rdf.dump.defaults,X||{}),ab=Z.format,Y=Z.serialize,aa;if(ab==="application/json"){aa=n(ac,Z);return Y?F.toJSON(aa):aa}else{if(ab==="application/rdf+xml"){aa=L(ac,Z);if(Y){if(aa.xml){return aa.xml.replace(/\s+$/,"")}else{serializer=new XMLSerializer();return serializer.serializeToString(aa)}}else{return aa}}else{throw"Unrecognised dump format: "+ab+". Expected application/json or application/rdf+xml."}}};F.rdf.dump.defaults={format:"application/json",serialize:false,namespaces:{}};F.fn.rdf=function(){var X=[];if(F(this)[0]&&F(this)[0].nodeType===9){return F(this).children("*").rdf()}else{if(F(this).length>0){X=F(this).map(function(Y,Z){return F.map(F.rdf.gleaners,function(aa){return aa.call(F(Z))})});return F.rdf({triples:X,namespaces:F(this).xmlns()})}else{return F.rdf()}}};F.extend(F.expr[":"],{about:function(Y,aa,X){var Z=F(Y),ac=X[3]?Z.safeCurie(X[3]):null,ab=false;F.each(F.rdf.gleaners,function(ad,ae){ab=ae.call(Z,{about:ac});if(ab){return null}});return ab},type:function(Y,aa,X){var Z=F(Y),ab=X[3]?Z.curie(X[3]):null,ac=false;F.each(F.rdf.gleaners,function(ad,ae){if(ae.call(Z,{type:ab})){ac=true;return null}});return ac}});F.rdf.databank=function(Y,X){return new F.rdf.databank.fn.init(Y,X)};F.rdf.databank.fn=F.rdf.databank.prototype={init:function(Z,X){var Y;Z=Z||[];X=X||{};this.id=K();if(X.union===undefined){this.queries={};this.tripleStore={};this.objectStore={};this.baseURI=X.base||F.uri.base();this.namespaces=F.extend({},X.namespaces||{});for(Y=0;Y<Z.length;Y+=1){this.add(Z[Y])}}else{this.union=X.union}return this},base:function(X){if(this.union===undefined){if(X===undefined){return this.baseURI}else{this.baseURI=X;return this}}else{if(X===undefined){return this.union[0].base()}else{F.each(this.union,function(Z,Y){Y.base(X)});return this}}},prefix:function(Z,X){var Y={};if(this.union===undefined){if(Z===undefined){return this.namespaces}else{if(X===undefined){return this.namespaces[Z]}else{this.namespaces[Z]=X;return this}}}else{if(X===undefined){F.each(this.union,function(ab,aa){F.extend(Y,aa.prefix())});if(Z===undefined){return Y}else{return Y[Z]}}else{F.each(this.union,function(ab,aa){aa.prefix(Z,X)});return this}}},add:function(ab,Y){var aa=(Y&&Y.base)||this.base(),Z=F.extend({},this.prefix(),(Y&&Y.namespaces)||{}),X;if(ab===this){return this}else{if(ab.tripleStore!==undefined){if(this.union===undefined){X=F.rdf.databank(undefined,{union:[this,ab]});return X}else{this.union.push(ab);return this}}else{if(typeof ab==="string"){ab=F.rdf.triple(ab,{namespaces:Z,base:aa,source:ab})}if(this.union===undefined){if(this.tripleStore[ab.subject]===undefined){this.tripleStore[ab.subject]=[]}if(F.inArray(ab,this.tripleStore[ab.subject])===-1){this.tripleStore[ab.subject].push(ab);if(ab.object.type==="uri"||ab.object.type==="bnode"){if(this.objectStore[ab.object]===undefined){this.objectStore[ab.object]=[]}this.objectStore[ab.object].push(ab)}e(this,ab)}}else{F.each(this.union,function(ad,ac){ac.add(ab)})}return this}}},remove:function(ac,Z){var ab=(Z&&Z.base)||this.base(),aa=F.extend({},this.prefix(),(Z&&Z.namespaces)||{}),ad,X,Y;if(typeof ac==="string"){ac=F.rdf.triple(ac,{namespaces:aa,base:ab,source:ac})}ad=this.tripleStore[ac.subject];if(ad!==undefined){ad.splice(F.inArray(ac,ad),1)}if(ac.object.type==="uri"||ac.object.type==="bnode"){X=this.objectStore[ac.object];if(X!==undefined){X.splice(F.inArray(ac,X),1)}}s(this,ac);return this},except:function(Y){var X=Y.tripleStore,Z=[];F.each(this.tripleStore,function(ab,ac){var aa=X[ab];if(aa===undefined){Z=Z.concat(ac)}else{F.each(ac,function(ae,ad){if(F.inArray(ad,aa)===-1){Z.push(ad)}})}});return F.rdf.databank(Z)},triples:function(){var X=[];if(this.union===undefined){F.each(this.tripleStore,function(Z,Y){X=X.concat(Y)})}else{F.each(this.union,function(Z,Y){X=X.concat(Y.triples().get())});X=F.unique(X)}return F(X)},size:function(){return this.triples().length},describe:function(aa){var Y,Z,X,ac={},ab=[];while(aa.length>0){Z=aa.pop();if(ac[Z]===undefined){if(Z.value===undefined){Z=F.rdf.resource(Z)}if(this.tripleStore[Z]!==undefined){for(Y=0;Y<this.tripleStore[Z].length;Y+=1){X=this.tripleStore[Z][Y];ab.push(X);if(X.object.type==="bnode"){aa.push(X.object)}}}if(this.objectStore[Z]!==undefined){for(Y=0;Y<this.objectStore[Z].length;Y+=1){X=this.objectStore[Z][Y];ab.push(X);if(X.subject.type==="bnode"){aa.push(X.subject)}}}ac[Z]=true}}return F.unique(ab)},dump:function(X){X=F.extend({namespaces:this.namespaces,base:this.base},X||{});return F.rdf.dump(this.triples(),X)},load:function(Y){var X,Z;if(Y.ownerDocument!==undefined){Z=Q(Y)}else{Z=W(Y)}for(X=0;X<Z.length;X+=1){this.add(Z[X])}return this},toString:function(){return"[Databank with "+this.size()+" triples]"}};F.rdf.databank.fn.init.prototype=F.rdf.databank.fn;F.rdf.pattern=function(ab,ad,aa,Z){var ac,X,Y;if(aa===undefined){Z=ad||{};X=F.trim(ab).match(g);if(X.length===3||(X.length===4&&X[3]===".")){ab=X[0];ad=X[1];aa=X[2]}else{throw"Bad Pattern: Couldn't parse string "+ab}Y=(Z.optional===undefined)?F.rdf.pattern.defaults.optional:Z.optional}if(r[ab]&&r[ab][ad]&&r[ab][ad][aa]&&r[ab][ad][aa][Y]){return r[ab][ad][aa][Y]}ac=new F.rdf.pattern.fn.init(ab,ad,aa,Z);if(r[ac.subject]&&r[ac.subject][ac.property]&&r[ac.subject][ac.property][ac.object]&&r[ac.subject][ac.property][ac.object][ac.optional]){return r[ac.subject][ac.property][ac.object][ac.optional]}else{if(r[ac.subject]===undefined){r[ac.subject]={}}if(r[ac.subject][ac.property]===undefined){r[ac.subject][ac.property]={}}if(r[ac.subject][ac.property][ac.object]===undefined){r[ac.subject][ac.property][ac.object]={}}r[ac.subject][ac.property][ac.object][ac.optional]=ac;return ac}};F.rdf.pattern.fn=F.rdf.pattern.prototype={init:function(Y,aa,ab,X){var Z=F.extend({},F.rdf.pattern.defaults,X);this.subject=Y.toString().substring(0,1)==="?"?Y:l(Y,Z);this.property=aa.toString().substring(0,1)==="?"?aa:R(aa,Z);this.object=ab.toString().substring(0,1)==="?"?ab:N(ab,Z);this.optional=Z.optional;return this},fill:function(aa){var X=this.subject,Y=this.property,Z=this.object;if(typeof X==="string"&&aa[X.substring(1)]){X=aa[X.substring(1)]}if(typeof Y==="string"&&aa[Y.substring(1)]){Y=aa[Y.substring(1)]}if(typeof Z==="string"&&aa[Z.substring(1)]){Z=aa[Z.substring(1)]}return F.rdf.pattern(X,Y,Z,{optional:this.optional})},exec:function(Y){var X={};X=a(Y.subject,this.subject,X);if(X===null){return null}X=a(Y.property,this.property,X);if(X===null){return null}X=a(Y.object,this.object,X);return X},isFixed:function(){return typeof this.subject!=="string"&&typeof this.property!=="string"&&typeof this.object!=="string"},triple:function(Y){var X=this;if(!this.isFixed()){X=this.fill(Y)}if(X.isFixed()){return F.rdf.triple(X.subject,X.property,X.object,{source:this.toString()})}else{return null}},toString:function(){return this.subject+" "+this.property+" "+this.object}};F.rdf.pattern.fn.init.prototype=F.rdf.pattern.fn;F.rdf.pattern.defaults={base:F.uri.base(),namespaces:{},optional:false};F.rdf.triple=function(aa,ac,Z,Y){var ad,ab,X;if(Z===undefined){Y=ac;X=F.trim(aa).match(g);if(X.length===3||(X.length===4&&X[3]===".")){aa=X[0];ac=X[1];Z=X[2]}else{throw"Bad Triple: Couldn't parse string "+aa}}ab=(Y&&Y.graph)||"";if(C[ab]&&C[ab][aa]&&C[ab][aa][ac]&&C[ab][aa][ac][Z]){return C[ab][aa][ac][Z]}ad=new F.rdf.triple.fn.init(aa,ac,Z,Y);ab=ad.graph||"";if(C[ab]&&C[ab][ad.subject]&&C[ab][ad.subject][ad.property]&&C[ab][ad.subject][ad.property][ad.object]){return C[ab][ad.subject][ad.property][ad.object]}else{if(C[ab]===undefined){C[ab]={}}if(C[ab][ad.subject]===undefined){C[ab][ad.subject]={}}if(C[ab][ad.subject][ad.property]===undefined){C[ab][ad.subject][ad.property]={}}C[ab][ad.subject][ad.property][ad.object]=ad;return ad}};F.rdf.triple.fn=F.rdf.triple.prototype={init:function(Y,aa,ab,X){var Z;Z=F.extend({},F.rdf.triple.defaults,X);this.subject=l(Y,Z);this.property=R(aa,Z);this.object=N(ab,Z);this.graph=Z.graph===undefined?undefined:l(Z.graph,Z);this.source=Z.source;return this},isFixed:function(){return true},triple:function(X){return this},dump:function(){var Z={},X=this.subject.value.toString(),Y=this.property.value.toString();Z[X]={};Z[X][Y]=this.object.dump();return Z},toString:function(){return this.subject+" "+this.property+" "+this.object+" ."}};F.rdf.triple.fn.init.prototype=F.rdf.triple.fn;F.rdf.triple.defaults={base:F.uri.base(),source:[document],namespaces:{}};F.rdf.resource=function(Z,X){var Y;if(f[Z]){return f[Z]}Y=new F.rdf.resource.fn.init(Z,X);if(f[Y]){return f[Y]}else{f[Y]=Y;return Y}};F.rdf.resource.fn=F.rdf.resource.prototype={type:"uri",value:undefined,init:function(ac,Y){var X,ab,aa,Z;if(typeof ac==="string"){X=z.exec(ac);Z=F.extend({},F.rdf.resource.defaults,Y);if(X!==null){this.value=F.uri.resolve(X[1].replace(/\\>/g,">"),Z.base)}else{if(ac.substring(0,1)===":"){aa=Z.namespaces[""];if(aa===undefined){throw"Malformed Resource: No namespace binding for default namespace in "+ac}else{this.value=F.uri.resolve(aa+ac.substring(1))}}else{if(ac.substring(ac.length-1)===":"){ab=ac.substring(0,ac.length-1);aa=Z.namespaces[ab];if(aa===undefined){throw"Malformed Resource: No namespace binding for prefix "+ab+" in "+ac}else{this.value=F.uri.resolve(aa)}}else{try{this.value=F.curie(ac,{namespaces:Z.namespaces})}catch(ad){throw"Malformed Resource: Bad format for resource "+ad}}}}}else{this.value=ac}return this},dump:function(){return{type:"uri",value:this.value.toString()}},toString:function(){return"<"+this.value+">"}};F.rdf.resource.fn.init.prototype=F.rdf.resource.fn;F.rdf.resource.defaults={base:F.uri.base(),namespaces:{}};F.rdf.type=F.rdf.resource("<"+w+"type>");F.rdf.label=F.rdf.resource("<"+v+"label>");F.rdf.first=F.rdf.resource("<"+w+"first>");F.rdf.rest=F.rdf.resource("<"+w+"rest>");F.rdf.nil=F.rdf.resource("<"+w+"nil>");F.rdf.subject=F.rdf.resource("<"+w+"subject>");F.rdf.property=F.rdf.resource("<"+w+"property>");F.rdf.object=F.rdf.resource("<"+w+"object>");F.rdf.blank=function(X){var Y;if(c[X]){return c[X]}Y=new F.rdf.blank.fn.init(X);if(c[Y]){return c[Y]}else{c[Y]=Y;return Y}};F.rdf.blank.fn=F.rdf.blank.prototype={type:"bnode",value:undefined,id:undefined,init:function(X){if(X==="[]"){this.id=k();this.value="_:"+this.id}else{if(X.substring(0,2)==="_:"){this.id=X.substring(2);this.value=X}else{throw"Malformed Blank Node: "+X+" is not a legal format for a blank node"}}return this},dump:function(){return{type:"bnode",value:this.value}},toString:function(){return this.value}};F.rdf.blank.fn.init.prototype=F.rdf.blank.fn;F.rdf.literal=function(Z,X){var Y;if(t[Z]){return t[Z]}Y=new F.rdf.literal.fn.init(Z,X);if(t[Y]){return t[Y]}else{t[Y]=Y;return Y}};F.rdf.literal.fn=F.rdf.literal.prototype={type:"literal",value:undefined,lang:undefined,datatype:undefined,init:function(ab,Y){var X,Z,aa=F.extend({},F.rdf.literal.defaults,Y);if(aa.lang!==undefined&&aa.datatype!==undefined){throw"Malformed Literal: Cannot define both a language and a datatype for a literal ("+ab+")"}if(aa.datatype!==undefined){Z=F.safeCurie(aa.datatype,{namespaces:aa.namespaces});F.extend(this,F.typedValue(ab.toString(),Z))}else{if(aa.lang!==undefined){this.value=ab.toString();this.lang=aa.lang}else{if(typeof ab==="boolean"){F.extend(this,F.typedValue(ab.toString(),j+"boolean"))}else{if(typeof ab==="number"){F.extend(this,F.typedValue(ab.toString(),j+"double"))}else{if(ab==="true"||ab==="false"){F.extend(this,F.typedValue(ab,j+"boolean"))}else{if(F.typedValue.valid(ab,j+"integer")){F.extend(this,F.typedValue(ab,j+"integer"))}else{if(F.typedValue.valid(ab,j+"decimal")){F.extend(this,F.typedValue(ab,j+"decimal"))}else{if(F.typedValue.valid(ab,j+"double")&&!/^\s*([\-\+]?INF|NaN)\s*$/.test(ab)){F.extend(this,F.typedValue(ab,j+"double"))}else{X=T.exec(ab);if(X!==null){this.value=(X[2]||X[4]).replace(/\\"/g,'"');if(X[9]){Z=F.rdf.resource(X[9],aa);F.extend(this,F.typedValue(this.value,Z.value))}else{if(X[7]){this.lang=X[7]}}}else{throw"Malformed Literal: Couldn't recognise the value "+ab}}}}}}}}}return this},dump:function(){var X={type:"literal",value:this.value.toString()};if(this.lang!==undefined){X.lang=this.lang}else{if(this.datatype!==undefined){X.datatype=this.datatype.toString()}}return X},toString:function(){var X='"'+this.value+'"';if(this.lang!==undefined){X+="@"+this.lang}else{if(this.datatype!==undefined){X+="^^<"+this.datatype+">"}}return X}};F.rdf.literal.fn.init.prototype=F.rdf.literal.fn;F.rdf.literal.defaults={base:F.uri.base(),namespaces:{},datatype:undefined,lang:undefined}})(jQuery);(function(h){var D={rdf:"http://www.w3.org/1999/02/22-rdf-syntax-ns#",xsd:"http://www.w3.org/2001/XMLSchema#"},B=D.rdf+"XMLLiteral",k=h.fn.curie.defaults,v=/\s([^ =]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^ >]+))/g,n=h.rdf.resource("<>"),z=function(H){var F="",E,G;if(!/&/.test(H)){return H}while(H.length>0){E=/([^&]*)(&([^;]+);)(.*)/g.exec(H);if(E===null){F+=H;break}F+=E[1];G=E[3];H=E[4];if(G.charAt(0)==="#"){if(G.charAt(1)==="x"){F+=String.fromCharCode(parseInt(G.substring(2),16))}else{F+=String.fromCharCode(parseInt(G.substring(1),10))}}else{switch(G){case"amp":F+="&";break;case"nbsp":F+=String.fromCharCode(160);break;case"quot":F+='"';break;case"apos":F+="'";break;default:F+="&"+G+";"}}}return F},u=function(F){var G,K,M,O,E,N,J,H,L={},I={};K=F[0];L[":length"]=0;if(K.attributes&&K.attributes.getNamedItemNS){J=K.attributes;for(G=0;G<J.length;G+=1){M=J[G];if(/^xmlns(:(.+))?$/.test(M.nodeName)&&M.nodeValue!==""){H=/^xmlns(:(.+))?$/.exec(M.nodeName)[2]||"";L[H]=h.uri(M.nodeValue);L[":length"]+=1}else{if(/rel|rev|lang|xml:lang/.test(M.nodeName)){I[M.nodeName]=M.nodeValue===""?undefined:M.nodeValue}else{if(/about|href|src|resource|property|typeof|content|datatype/.test(M.nodeName)){I[M.nodeName]=M.nodeValue===null?undefined:M.nodeValue}}}}}else{O=/<[^>]+>/.exec(K.outerHTML);M=v.exec(O);while(M!==null){E=M[1];N=M[2]||M[3]||M[4];if(/^xmlns/.test(E)&&E!=="xmlns:"&&N!==""){H=/^xmlns(:(.+))?$/.exec(E)[2]||"";L[H]=h.uri(N);L[":length"]+=1}else{if(/about|href|src|resource|property|typeof|content|datatype|rel|rev|lang|xml:lang/.test(E)){I[E]=z(N)}}M=v.exec(O)}v.lastIndex=0}return{atts:I,namespaces:L}},y=function(F,E){var G=F[0].getAttribute(E);if(E==="rev"||E==="rel"||E==="lang"||E==="xml:lang"){G=G===""?undefined:G}return G===null?undefined:G},e=function(E){return h.rdf.resource(E)},d=function(F,G,E){if(F.substring(0,2)==="_:"){return h.rdf.blank(F)}else{try{return e(h.curie(F,E))}catch(H){return undefined}}},g=function(I,G,F){var E=/^\[([^\]]+)\]$/.exec(I),H=F.base||G.base();return E?d(E[1],G,F):e(h.uri(I,H))},o=function(H,G,E){var F,I,J=[];H=H&&H.split?H.split(/[ \t\n\r\x0C]+/g):[];for(F=0;F<H.length;F+=1){if(H[F]!==""){I=d(H[F],G,E);if(I!==undefined){J.push(I)}}}return J},f=function(H,J,E){var F,G,I=[];J=J.type==="uri"?J:h.rdf.resource(J,E);H=H&&H.split?H.split(/\s+/):[];for(F=0;F<H.length;F+=1){if(H[F]!==""){G=d(H[F],null,E);if(G!==J){I.push(H[F])}}}return I.reverse().join(" ")},x=function(I,F,H){var G,J,K,E;F=F||{};K=F.atts||u(I).atts;G=H===undefined?K.rel!==undefined||K.rev!==undefined:H;J=K.resource;J=J===undefined?K.href:J;if(J===undefined){J=G?h.rdf.blank("[]"):J}else{E=F.curieOptions||h.extend({},k,{namespaces:I.xmlns()});J=g(J,I,E)}return J},r=function(K,G,J){var I,L,E,F,H=false;G=G||{};L=G.atts||u(K).atts;E=G.curieOptions||h.extend({},k,{namespaces:K.xmlns(),base:K.base()});I=J===undefined?L.rel!==undefined||L.rev!==undefined:J;if(L.about!==undefined){F=g(L.about,K,E)}if(F===undefined&&L.src!==undefined){F=g(L.src,K,E)}if(!I&&F===undefined&&L.resource!==undefined){F=g(L.resource,K,E)}if(!I&&F===undefined&&L.href!==undefined){F=g(L.href,K,E)}if(F===undefined){if(/head|body/i.test(K[0].nodeName)){F=n}else{if(L["typeof"]!==undefined){F=h.rdf.blank("[]")}else{if(K[0].parentNode.nodeType===1){F=G.object||x(K.parent())||r(K.parent()).subject;H=!I&&L.property===undefined}else{F=n}}}}return{subject:F,skip:H}},s=function(F,E){var G;E=E||{};if(E.atts){G=E.atts.lang;G=G||E.atts["xml:lang"]}else{G=F[0].getAttribute("lang");G=(G===null||G==="")?F[0].getAttribute("xml:lang"):G;G=(G===null||G==="")?undefined:G}if(G===undefined){if(E.lang){G=E.lang}else{if(F[0].parentNode.nodeType===1){G=s(F.parent())}}}return G},p=function(E){switch(E){case"<":return"&lt;";case'"':return"&quot;";case"&":return"&amp;"}},w=function(F,G){var H,I="",J,L,E,K,M;F.contents().each(function(){var N=h(this),O=N[0];if(O.nodeType===1){E=O.nodeName.toLowerCase();I+="<"+E;if(O.outerHTML){M=/<[^>]+>/.exec(O.outerHTML);L=v.exec(M);while(L!==null){if(!/^jQuery/.test(L[1])){I+=" "+L[1]+"=";I+=L[2]?L[3]:'"'+L[1]+'"'}L=v.exec(M)}v.lastIndex=0}else{J=O.attributes;for(H=0;H<J.length;H+=1){L=J.item(H);I+=" "+L.nodeName+'="';I+=L.nodeValue.replace(/[<"&]/g,p);I+='"'}}if(!G){K=N.xmlns("");if(K!==undefined&&N.attr("xmlns")===undefined){I+=' xmlns="'+K+'"'}}I+=">";I+=w(N,true);I+="</"+E+">"}else{if(O.nodeType===8){I+="<!--";I+=O.nodeValue;I+="-->"}else{I+=O.nodeValue}}});return I},C=function(G){var V,J,E,Z,Q,U,P,X,W,N,K,H,R,O,L,T=[],F,S,M,Y,I=this.children();G=G||{};O=G.forward||[];L=G.backward||[];F=u(this);S=F.atts;G.atts=S;M=G.namespaces||this.xmlns();if(F.namespaces[":length"]>0){M=h.extend({},M);for(Y in F.namespaces){if(Y!==":length"){M[Y]=F.namespaces[Y]}}}G.curieOptions=h.extend({},k,{namespaces:M,base:this.base()});J=r(this,G);Z=s(this,G);if(J.skip){H=G.forward;R=G.backward;J=G.subject;E=G.object}else{J=J.subject;if(O.length>0||L.length>0){N=G.subject||r(this.parent()).subject;for(V=0;V<O.length;V+=1){W=h.rdf.triple(N,O[V],J,{source:this[0]});T.push(W)}for(V=0;V<L.length;V+=1){W=h.rdf.triple(J,L[V],N,{source:this[0]});T.push(W)}}E=x(this,G);P=o(S["typeof"],this,G.curieOptions);for(V=0;V<P.length;V+=1){W=h.rdf.triple(J,h.rdf.type,P[V],{source:this[0]});T.push(W)}K=o(S.property,this,G.curieOptions);if(K.length>0){Q=S.datatype;U=S.content;if(Q!==undefined&&Q!==""){Q=h.curie(Q,G.curieOptions);if(Q===B){X=h.rdf.literal(w(this),{datatype:B})}else{if(U!==undefined){X=h.rdf.literal(U,{datatype:Q})}else{X=h.rdf.literal(this.text(),{datatype:Q})}}}else{if(U!==undefined){if(Z===undefined){X=h.rdf.literal('"'+U+'"')}else{X=h.rdf.literal(U,{lang:Z})}}else{if(I.length===0||Q===""){Z=s(this,G);if(Z===undefined){X=h.rdf.literal('"'+this.text()+'"')}else{X=h.rdf.literal(this.text(),{lang:Z})}}else{X=h.rdf.literal(w(this),{datatype:B})}}}for(V=0;V<K.length;V+=1){W=h.rdf.triple(J,K[V],X,{source:this[0]});T.push(W)}}H=o(S.rel,this,G.curieOptions);R=o(S.rev,this,G.curieOptions);if(S.resource!==undefined||S.href!==undefined){if(H!==undefined){for(V=0;V<H.length;V+=1){W=h.rdf.triple(J,H[V],E,{source:this[0]});T.push(W)}}H=[];if(R!==undefined){for(V=0;V<R.length;V+=1){W=h.rdf.triple(E,R[V],J,{source:this[0]});T.push(W)}}R=[]}}I.each(function(){T=T.concat(C.call(h(this),{forward:H,backward:R,subject:J,object:E||J,lang:Z,namespaces:M}))});return T},t=function(E){var F,G;if(E&&E.about!==undefined){G=u(this).atts;if(E.about===null){return G.property!==undefined||G.rel!==undefined||G.rev!==undefined||G["typeof"]!==undefined}else{return r(this,{atts:G}).subject.value===E.about}}else{if(E&&E.type!==undefined){F=y(this,"typeof");if(F!==undefined){return E.type===null?true:this.curie(F)===E.type}return false}else{return C.call(this)}}},A=1,q=function(I,F,H){var E,G,J;try{G=I.createCurie(H)}catch(K){if(H.toString()===B){I.attr("xmlns:rdf",D.rdf);G="rdf:XMLLiteral"}else{E=/^(.+[\/#])([^#]+)$/.exec(H);I.attr("xmlns:ns"+A,E[1]);G="ns"+A+":"+E[2];A+=1}}J=y(I,F);if(J!==undefined){if(h.inArray(G,J.split(/\s+/))===-1){I.attr(F,J+" "+G)}}else{I.attr(F,G)}},m=function(G,E,H){var F;if(H.type==="bnode"){F="[_:"+H.id+"]"}else{F=h(G).base().relative(H.value)}G.attr(E,F)},b=function(G,E){var F=r(G).subject;if(E!==F){m(G,"about",E)}G.removeData("rdfa.subject")},c=function(F,E){var G=x(F);if(E!==G){m(F,"resource",E)}F.removeData("rdfa.objectResource")},a=function(E,F){E.wrapInner("<span></span>").children("span").attr("lang",F);return E},j=function(P){var J,M,F,I,S,Q,G,K,E,H,O,L,N,R=this.xmlns();S=this;N=u(this).atts;if(typeof P==="string"){P=h.rdf.triple(P,{namespaces:R,base:this.base()})}else{if(P.rdfquery){j.call(this,P.sources().get(0));return this}else{if(P.length){for(L=0;L<P.length;L+=1){j.call(this,P[L])}return this}}}M=N.rel!==undefined||N.rev!==undefined;F=M||N.property!==undefined||N["typeof"]!==undefined;if(P.object.type!=="literal"){Q=r(this,{atts:N},true).subject;K=x(this,{atts:N},true);I=!F&&N.resource===undefined;G=Q===P.subject;E=K===P.object;if(P.property===h.rdf.type){if(G){q(this,"typeof",P.object.value)}else{if(F){S=this.wrapInner("<span />").children("span");q(S,"typeof",P.object.value);if(K!==P.subject){b(S,P.subject)}}else{q(this,"typeof",P.object.value);b(this,P.subject)}}}else{if(G){if(E){q(this,"rel",P.property.value)}else{if(I||!F){q(this,"rel",P.property.value);c(this,P.object)}else{S=this.wrap("<span />").parent();q(S,"rev",P.property.value);b(S,P.object)}}}else{if(Q===P.object){if(K===P.subject){q(this,"rev",P.property.value)}else{if(I||!F){q(this,"rev",P.property.value);c(this,P.subject)}else{S=this.wrap("<span />").parent();q(S,"rel",P.property.value);b(S,P.subject)}}}else{if(E){if(F){S=this.wrapInner("<span />").children("span");q(S,"rev",P.property.value);c(S,P.subject);S=S.wrapInner("<span />").children("span");b(S,P.object);S=this}else{b(this,P.subject);q(this,"rel",P.property.value)}}else{if(K===P.subject){if(F){S=this.wrapInner("<span />").children("span");q(S,"rel",this.property.value);c(S,P.object);S=S.wrapInner("<span />").children("span");b(S,K);S=this}else{b(this,P.object);q(this,"rev",P.property.value)}}else{if(F){S=this.wrapInner("<span />").children("span");q(S,"rel",P.property.value);b(S,P.subject);c(S,P.object);if(S.children("*").length>0){S=this.wrapInner("<span />").children("span");b(S,Q)}S=this}else{q(S,"rel",P.property.value);b(this,P.subject);c(this,P.object);if(this.children("*").length>0){S=this.wrapInner("<span />").children("span");b(S,Q);S=this}}}}}}}}else{Q=r(this,{atts:N}).subject;K=x(this,{atts:N});G=Q===P.subject;J=this.text()!==P.object.value;if(N.property!==undefined){O=N.content;E=O!==undefined?O===P.object.value:!J;if(G&&E){q(this,"property",P.property.value)}else{S=this.wrapInner("<span />").children("span");return j.call(S,P)}}else{if(K===P.subject){S=this.wrapInner("<span />").children("span");return j.call(S,P)}q(this,"property",P.property.value);b(this,P.subject);if(J){if(P.object.datatype&&P.object.datatype.toString()===B){this.html(P.object.value)}else{this.attr("content",P.object.value)}}H=s(this);if(P.object.lang){if(H!==P.object.lang){this.attr("lang",P.object.lang);if(J){a(this,H)}}}else{if(P.object.datatype){q(this,"datatype",P.object.datatype)}else{if(!J){this.attr("datatype","")}if(H!==undefined){this.attr("lang","");if(J){a(this,H)}}}}}}this.parents().andSelf().trigger("rdfChange");return S},l=function(K){var I,L,J,E,F,H,G=this.xmlns();L=u(this).atts;if(K.length){for(i=0;i<K.length;i+=1){l.call(this,K[i])}return this}hasRelation=L.rel!==undefined||L.rev!==undefined;hasRDFa=hasRelation||L.property!==undefined||L["typeof"]!==undefined;if(hasRDFa){if(K.property!==undefined){if(L.property!==undefined){J=f(L.property,K.property,{namespaces:G});if(J===""){this.removeAttr("property")}else{this.attr("property",J)}}if(L.rel!==undefined){E=f(L.rel,K.property,{namespaces:G});if(E===""){this.removeAttr("rel")}else{this.attr("rel",E)}}if(L.rev!==undefined){F=f(L.rev,K.property,{namespaces:G});if(F===""){this.removeAttr("rev")}else{this.attr("rev",F)}}}if(K.type!==undefined){if(L["typeof"]!==undefined){H=f(L["typeof"],K.type,{namespaces:G});if(H===""){this.removeAttr("typeof")}else{this.attr("typeof",H)}}}if(L.property===this.attr("property")&&L.rel===this.attr("rel")&&L.rev===this.attr("rev")&&L["typeof"]===this.attr("typeof")){return l.call(this.parent(),K)}}this.parents().andSelf().trigger("rdfChange");return this};h.fn.rdfa=function(E){if(E===undefined){var F=h.map(h(this),function(G){return C.call(h(G))});return h.rdf({triples:F})}else{h(this).each(function(){j.call(h(this),E)});return this}};h.fn.removeRdfa=function(E){h(this).each(function(){l.call(h(this),E)});return this};h.rdf.gleaners.push(t)})(jQuery);
+/*
+ * $ URIs @VERSION
+ * 
+ * Copyright (c) 2008,2009 Jeni Tennison
+ * Licensed under the MIT (MIT-LICENSE.txt)
+ *
+ */
+/**
+ * @fileOverview $ URIs
+ * @author <a href="mailto:jeni@jenitennison.com">Jeni Tennison</a>
+ * @copyright (c) 2008,2009 Jeni Tennison
+ * @license MIT license (MIT-LICENSE.txt)
+ * @version 1.0
+ */
+/**
+ * @class
+ * @name jQuery
+ * @exports $ as jQuery
+ * @description rdfQuery is a <a href="http://jquery.com/">jQuery</a> plugin.
+ *              The only fields and methods listed here are those that come as
+ *              part of the rdfQuery library.
+ */
+(function($) {
+
+	var mem = {}, uriRegex = /^(([a-z][\-a-z0-9+\.]*):)?(\/\/([^\/?#]+))?([^?#]*)?(\?([^#]*))?(#(.*))?$/i, docURI,
+
+	parseURI = function(u) {
+		var m = u.match(uriRegex);
+		if (m === null) {
+			throw "Malformed URI: " + u;
+		}
+		return {
+			scheme : m[1] ? m[2].toLowerCase() : undefined,
+			authority : m[3] ? m[4] : undefined,
+			path : m[5] || '',
+			query : m[6] ? m[7] : undefined,
+			fragment : m[8] ? m[9] : undefined
+		};
+	},
+
+	removeDotSegments = function(u) {
+		var r = '', m = [];
+		if (/\./.test(u)) {
+			while (u !== undefined && u !== '') {
+				if (u === '.' || u === '..') {
+					u = '';
+				} else if (/^\.\.\//.test(u)) { // starts with ../
+					u = u.substring(3);
+				} else if (/^\.\//.test(u)) { // starts with ./
+					u = u.substring(2);
+				} else if (/^\/\.(\/|$)/.test(u)) { // starts with /./ or
+													// consists
+					// of /.
+					u = '/' + u.substring(3);
+				} else if (/^\/\.\.(\/|$)/.test(u)) { // starts with /../ or
+														// consists
+					// of /..
+					u = '/' + u.substring(4);
+					r = r.replace(/\/?[^\/]+$/, '');
+				} else {
+					m = u.match(/^(\/?[^\/]*)(\/.*)?$/);
+					u = m[2];
+					r = r + m[1];
+				}
+			}
+			return r;
+		} else {
+			return u;
+		}
+	},
+
+	merge = function(b, r) {
+		if (b.authority !== '' && (b.path === undefined || b.path === '')) {
+			return '/' + r;
+		} else {
+			return b.path.replace(/[^\/]+$/, '') + r;
+		}
+	};
+
+	/**
+	 * Creates a new jQuery.uri object. This should be invoked as a method
+	 * rather than constructed using new.
+	 * 
+	 * @class Represents a URI
+	 * @param {String}
+	 *            [relative='']
+	 * @param {String|jQuery.uri}
+	 *            [base] Defaults to the base URI of the page
+	 * @returns {jQuery.uri} The new jQuery.uri object.
+	 * @example uri = jQuery.uri('/my/file.html');
+	 */
+	$.uri = function(relative, base) {
+		var uri;
+		relative = relative || '';
+		if (mem[relative]) {
+			return mem[relative];
+		}
+		base = base || $.uri.base();
+		if (typeof base === 'string') {
+			base = $.uri.absolute(base);
+		}
+		uri = new $.uri.fn.init(relative, base);
+		if (mem[uri]) {
+			return mem[uri];
+		} else {
+			mem[uri] = uri;
+			return uri;
+		}
+	};
+
+	$.uri.fn = $.uri.prototype = {
+		/**
+		 * The scheme used in the URI
+		 * 
+		 * @type String
+		 */
+		scheme : undefined,
+		/**
+		 * The authority used in the URI
+		 * 
+		 * @type String
+		 */
+		authority : undefined,
+		/**
+		 * The path used in the URI
+		 * 
+		 * @type String
+		 */
+		path : undefined,
+		/**
+		 * The query part of the URI
+		 * 
+		 * @type String
+		 */
+		query : undefined,
+		/**
+		 * The fragment part of the URI
+		 * 
+		 * @type String
+		 */
+		fragment : undefined,
+
+		init : function(relative, base) {
+			var r = {};
+			base = base || {};
+			$.extend(this, parseURI(relative));
+			if (this.scheme === undefined) {
+				this.scheme = base.scheme;
+				if (this.authority !== undefined) {
+					this.path = removeDotSegments(this.path);
+				} else {
+					this.authority = base.authority;
+					if (this.path === '') {
+						this.path = base.path;
+						if (this.query === undefined) {
+							this.query = base.query;
+						}
+					} else {
+						if (!/^\//.test(this.path)) {
+							this.path = merge(base, this.path);
+						}
+						this.path = removeDotSegments(this.path);
+					}
+				}
+			}
+			if (this.scheme === undefined) {
+				throw "Malformed URI: URI is not an absolute URI and no base supplied: "
+						+ relative;
+			}
+			return this;
+		},
+
+		/**
+		 * Resolves a relative URI relative to this URI
+		 * 
+		 * @param {String}
+		 *            relative
+		 * @returns jQuery.uri
+		 */
+		resolve : function(relative) {
+			return $.uri(relative, this);
+		},
+
+		/**
+		 * Creates a relative URI giving the path from this URI to the absolute
+		 * URI passed as a parameter
+		 * 
+		 * @param {String|jQuery.uri}
+		 *            absolute
+		 * @returns String
+		 */
+		relative : function(absolute) {
+			var aPath, bPath, i = 0, j, resultPath = [], result = '';
+			if (typeof absolute === 'string') {
+				absolute = $.uri(absolute, {});
+			}
+			if (absolute.scheme !== this.scheme
+					|| absolute.authority !== this.authority) {
+				return absolute.toString();
+			}
+			if (absolute.path !== this.path) {
+				aPath = absolute.path.split('/');
+				bPath = this.path.split('/');
+				if (aPath[1] !== bPath[1]) {
+					result = absolute.path;
+				} else {
+					while (aPath[i] === bPath[i]) {
+						i += 1;
+					}
+					j = i;
+					for (; i < bPath.length - 1; i += 1) {
+						resultPath.push('..');
+					}
+					for (; j < aPath.length; j += 1) {
+						resultPath.push(aPath[j]);
+					}
+					result = resultPath.join('/');
+				}
+				result = absolute.query === undefined ? result : result + '?'
+						+ absolute.query;
+				result = absolute.fragment === undefined ? result : result
+						+ '#' + absolute.fragment;
+				return result;
+			}
+			if (absolute.query !== undefined && absolute.query !== this.query) {
+				return '?'
+						+ absolute.query
+						+ (absolute.fragment === undefined ? '' : '#'
+								+ absolute.fragment);
+			}
+			if (absolute.fragment !== undefined
+					&& absolute.fragment !== this.fragment) {
+				return '#' + absolute.fragment;
+			}
+			return '';
+		},
+
+		/**
+		 * Returns the URI as an absolute string
+		 * 
+		 * @returns String
+		 */
+		toString : function() {
+			var result = '';
+			if (this._string) {
+				return this._string;
+			} else {
+				result = this.scheme === undefined ? result : (result
+						+ this.scheme + ':');
+				result = this.authority === undefined ? result
+						: (result + '//' + this.authority);
+				result = result + this.path;
+				result = this.query === undefined ? result
+						: (result + '?' + this.query);
+				result = this.fragment === undefined ? result
+						: (result + '#' + this.fragment);
+				this._string = result;
+				return result;
+			}
+		}
+
+	};
+
+	$.uri.fn.init.prototype = $.uri.fn;
+
+	/**
+	 * Creates a {@link jQuery.uri} from a known-to-be-absolute URI
+	 * 
+	 * @param {String}
+	 * @returns {jQuery.uri}
+	 */
+	$.uri.absolute = function(uri) {
+		return $.uri(uri, {});
+	};
+
+	/**
+	 * Creates a {@link jQuery.uri} from a relative URI and an optional base URI
+	 * 
+	 * @returns {jQuery.uri}
+	 * @see jQuery.uri
+	 */
+	$.uri.resolve = function(relative, base) {
+		return $.uri(relative, base);
+	};
+
+	/**
+	 * Creates a string giving the relative path from a base URI to an absolute
+	 * URI
+	 * 
+	 * @param {String}
+	 *            absolute
+	 * @param {String}
+	 *            base
+	 * @returns {String}
+	 */
+	$.uri.relative = function(absolute, base) {
+		return $.uri(base, {}).relative(absolute);
+	};
+
+	/**
+	 * Returns the base URI of the page
+	 * 
+	 * @returns {jQuery.uri}
+	 */
+	$.uri.base = function() {
+		return $(document).base();
+	};
+
+	/**
+	 * Returns the base URI in scope for the first selected element
+	 * 
+	 * @methodOf jQuery#
+	 * @name jQuery#base
+	 * @returns {jQuery.uri}
+	 * @example baseURI = $('img').base();
+	 */
+	$.fn.base = function() {
+		var base = $(this).parents().andSelf().find('base').attr('href'), doc = $(this)[0].ownerDocument
+				|| document, docURI = $.uri
+				.absolute(doc.location === null ? document.location.href
+						: doc.location.href);
+		return base === undefined ? docURI : $.uri(base, docURI);
+	};
+
+})(jQuery);
+/*
+ * jQuery CURIE
+ * 
+ * @VERSION
+ * 
+ * Copyright (c) 2008,2009 Jeni Tennison Licensed under the MIT
+ * (MIT-LICENSE.txt)
+ * 
+ * Depends: jquery.uri.js
+ */
+/**
+ * @fileOverview XML Namespace processing
+ * @author <a href="mailto:jeni@jenitennison.com">Jeni Tennison</a>
+ * @copyright (c) 2008,2009 Jeni Tennison
+ * @license MIT license (MIT-LICENSE.txt)
+ * @version 1.0
+ * @requires jquery.uri.js
+ */
+
+/* global jQuery */
+(function($) {
+
+	var xmlnsRegex = /\sxmlns(?::([^ =]+))?\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
+
+	/**
+	 * Returns the namespaces declared in the scope of the first selected
+	 * element, or adds a namespace declaration to all selected elements. Pass
+	 * in no parameters to return all namespaces bindings on the first selected
+	 * element. If only the prefix parameter is specified, this method will
+	 * return the namespace URI that is bound to the specified prefix on the
+	 * first element in the selection If the prefix and uri parameters are both
+	 * specified, this method will add the binding of the specified prefix and
+	 * namespace URI to all elements in the selection.
+	 * 
+	 * @methodOf jQuery#
+	 * @name jQuery#xmlns
+	 * @param {String}
+	 *            [prefix] Restricts the namespaces returned to only the
+	 *            namespace with the specified namespace prefix.
+	 * @param {String|jQuery.uri}
+	 *            [uri] Adds a namespace declaration to the selected elements
+	 *            that maps the specified prefix to the specified namespace.
+	 * @param {Object}
+	 *            [inherited] A map of inherited namespace bindings.
+	 * @returns {Object|jQuery.uri|jQuery}
+	 * @example // Retrieve all of the namespace bindings on the HTML document
+	 *          element var nsMap = $('html').xmlns();
+	 * @example // Retrieve the namespace URI mapped to the 'dc' prefix on the
+	 *          HTML document element var dcNamespace = $('html').xmlns('dc');
+	 * @example // Create a namespace declaration that binds the 'dc' prefix to
+	 *          the URI 'http://purl.org/dc/elements/1.1/' $('html').xmlns('dc',
+	 *          'http://purl.org/dc/elements/1.1/');
+	 */
+	$.fn.xmlns = function(prefix, uri, inherited) {
+		var elem = this.eq(0), ns = elem.data('xmlns'), e = elem[0], a, p, i, decl = prefix ? 'xmlns:'
+				+ prefix
+				: 'xmlns', value, tag, found = false;
+		if (uri === undefined) {
+			if (prefix === undefined) { // get the in-scope declarations on the
+				// first element
+				if (ns === undefined) {
+					ns = {};
+					if (e.attributes && e.attributes.getNamedItemNS) {
+						for (i = 0; i < e.attributes.length; i += 1) {
+							a = e.attributes[i];
+							if (/^xmlns(:(.+))?$/.test(a.nodeName)) {
+								prefix = /^xmlns(:(.+))?$/.exec(a.nodeName)[2]
+										|| '';
+								value = a.nodeValue;
+								if (prefix === '' || value !== '') {
+									ns[prefix] = $.uri(a.nodeValue);
+									found = true;
+								}
+							}
+						}
+					} else {
+						tag = /<[^>]+>/.exec(e.outerHTML);
+						a = xmlnsRegex.exec(tag);
+						while (a !== null) {
+							prefix = a[1] || '';
+							value = a[2] || a[3];
+							if (prefix === '' || value !== '') {
+								ns[prefix] = $.uri(a[2] || a[3]);
+								found = true;
+							}
+							a = xmlnsRegex.exec(tag);
+						}
+						xmlnsRegex.lastIndex = 0;
+					}
+					inherited = inherited
+							|| (e.parentNode.nodeType === 1 ? elem.parent()
+									.xmlns() : {});
+					ns = found ? $.extend({}, inherited, ns) : inherited;
+					elem.data('xmlns', ns);
+				}
+				return ns;
+			} else if (typeof prefix === 'object') { // set the prefix
+														// mappings
+				// defined in the object
+				for (p in prefix) {
+					if (typeof prefix[p] === 'string') {
+						this.xmlns(p, prefix[p]);
+					}
+				}
+				this.find('*').andSelf().removeData('xmlns');
+				return this;
+			} else { // get the in-scope declaration associated with this
+						// prefix on
+				// the first element
+				if (ns === undefined) {
+					ns = elem.xmlns();
+				}
+				return ns[prefix];
+			}
+		} else { // set
+			this.find('*').andSelf().removeData('xmlns');
+			return this.attr(decl, uri);
+		}
+	};
+
+	/**
+	 * Removes one or more XML namespace bindings from the selected elements.
+	 * 
+	 * @methodOf jQuery#
+	 * @name jQuery#removeXmlns
+	 * @param {String|Object|String[]}
+	 *            prefix The prefix(es) of the XML namespace bindings that are
+	 *            to be removed from the selected elements.
+	 * @returns {jQuery} The original jQuery object.
+	 * @example // Remove the foaf namespace declaration from the body element:
+	 *          $('body').removeXmlns('foaf');
+	 * @example // Remove the foo and bar namespace declarations from all h2
+	 *          elements $('h2').removeXmlns(['foo', 'bar']);
+	 * @example // Remove the foo and bar namespace declarations from all h2
+	 *          elements var namespaces = { foo : 'http://www.example.org/foo',
+	 *          bar : 'http://www.example.org/bar' };
+	 *          $('h2').removeXmlns(namespaces);
+	 */
+	$.fn.removeXmlns = function(prefix) {
+		var decl, p, i;
+		if (typeof prefix === 'object') {
+			if (prefix.length === undefined) { // assume an object representing
+				// namespaces
+				for (p in prefix) {
+					if (typeof prefix[p] === 'string') {
+						this.removeXmlns(p);
+					}
+				}
+			} else { // it's an array
+				for (i = 0; i < prefix.length; i += 1) {
+					this.removeXmlns(prefix[i]);
+				}
+			}
+		} else {
+			decl = prefix ? 'xmlns:' + prefix : 'xmlns';
+			this.removeAttr(decl);
+		}
+		this.find('*').andSelf().removeData('xmlns');
+		return this;
+	};
+
+	$.fn.qname = function(name) {
+		var m, prefix, namespace;
+		if (name === undefined) {
+			if (this[0].outerHTML === undefined) {
+				name = this[0].nodeName.toLowerCase();
+			} else {
+				name = /<([^ >]+)/.exec(this[0].outerHTML)[1].toLowerCase();
+			}
+		}
+		if (name === '?xml:namespace') {
+			// there's a prefix on the name, but we can't get at it
+			throw "XMLinHTML: Unable to get the prefix to resolve the name of this element";
+		}
+		m = /^(([^:]+):)?([^:]+)$/.exec(name);
+		prefix = m[2] || '';
+		namespace = this.xmlns(prefix);
+		if (namespace === undefined && prefix !== '') {
+			throw "MalformedQName: The prefix " + prefix + " is not declared";
+		}
+		return {
+			namespace : namespace,
+			localPart : m[3],
+			prefix : prefix,
+			name : name
+		};
+	};
+
+})(jQuery);
+/*
+ * jQuery CURIE
+ * 
+ * @VERSION
+ * 
+ * Copyright (c) 2008,2009 Jeni Tennison Licensed under the MIT
+ * (MIT-LICENSE.txt)
+ * 
+ * Depends: jquery.uri.js
+ */
+/**
+ * @fileOverview XML Schema datatype handling
+ * @author <a href="mailto:jeni@jenitennison.com">Jeni Tennison</a>
+ * @copyright (c) 2008,2009 Jeni Tennison
+ * @license MIT license (MIT-LICENSE.txt)
+ * @version 1.0
+ * @requires jquery.uri.js
+ */
+
+(function($) {
+
+	var strip = function(value) {
+		return value.replace(/[ \t\n\r]+/, ' ').replace(/^ +/, '').replace(
+				/ +$/, '');
+	};
+
+	/**
+	 * Creates a new jQuery.typedValue object. This should be invoked as a
+	 * method rather than constructed using new.
+	 * 
+	 * @class Represents a value with an XML Schema datatype
+	 * @param {String}
+	 *            value The string representation of the value
+	 * @param {String}
+	 *            datatype The XML Schema datatype URI
+	 * @returns {jQuery.typedValue}
+	 * @example intValue = jQuery.typedValue('42',
+	 *          'http://www.w3.org/2001/XMLSchema#integer');
+	 */
+	$.typedValue = function(value, datatype) {
+		return $.typedValue.fn.init(value, datatype);
+	};
+
+	$.typedValue.fn = $.typedValue.prototype = {
+		/**
+		 * The string representation of the value
+		 * 
+		 * @memberOf jQuery.typedValue#
+		 */
+		representation : undefined,
+		/**
+		 * The value as an object. The type of the object will depend on the XML
+		 * Schema datatype URI specified in the constructor. The following table
+		 * lists the mappings currently supported: <table>
+		 * <tr>
+		 * <th>XML Schema Datatype</th>
+		 * <th>Value type</th>
+		 * </tr>
+		 * <tr>
+		 * <td>http://www.w3.org/2001/XMLSchema#string</td>
+		 * <td>string</td>
+		 * </tr>
+		 * <tr>
+		 * <td>http://www.w3.org/2001/XMLSchema#boolean</td>
+		 * <td>bool</td>
+		 * </tr>
+		 * <tr>
+		 * <td>http://www.w3.org/2001/XMLSchema#decimal</td>
+		 * <td>string</td>
+		 * </tr>
+		 * <tr>
+		 * <td>http://www.w3.org/2001/XMLSchema#integer</td>
+		 * <td>int</td>
+		 * </tr>
+		 * <tr>
+		 * <td>http://www.w3.org/2001/XMLSchema#int</td>
+		 * <td>int</td>
+		 * </tr>
+		 * <tr>
+		 * <td>http://www.w3.org/2001/XMLSchema#float</td>
+		 * <td>float</td>
+		 * </tr>
+		 * <tr>
+		 * <td>http://www.w3.org/2001/XMLSchema#double</td>
+		 * <td>float</td>
+		 * </tr>
+		 * <tr>
+		 * <td>http://www.w3.org/2001/XMLSchema#dateTime</td>
+		 * <td>string</td>
+		 * </tr>
+		 * <tr>
+		 * <td>http://www.w3.org/2001/XMLSchema#date</td>
+		 * <td>string</td>
+		 * </tr>
+		 * <tr>
+		 * <td>http://www.w3.org/2001/XMLSchema#gMonthDay</td>
+		 * <td>string</td>
+		 * </tr>
+		 * <tr>
+		 * <td>http://www.w3.org/2001/XMLSchema#anyURI</td>
+		 * <td>string</td>
+		 * </tr>
+		 * </table>
+		 * 
+		 * @memberOf jQuery.typedValue#
+		 */
+		value : undefined,
+		/**
+		 * The XML Schema datatype URI for the value's datatype
+		 * 
+		 * @memberOf jQuery.typedValue#
+		 */
+		datatype : undefined,
+
+		init : function(value, datatype) {
+			var d;
+			if ($.typedValue.valid(value, datatype)) {
+				d = $.typedValue.types[datatype];
+				this.representation = value;
+				this.datatype = datatype;
+				this.value = d.value(d.strip ? strip(value) : value);
+				return this;
+			} else {
+				throw {
+					name : 'InvalidValue',
+					message : value + ' is not a valid ' + datatype + ' value'
+				};
+			}
+		}
+	};
+
+	$.typedValue.fn.init.prototype = $.typedValue.fn;
+
+	/**
+	 * An object that holds the datatypes supported by the script. The
+	 * properties of this object are the URIs of the datatypes, and each
+	 * datatype has four properties:
+	 * <dl>
+	 * <dt>strip</dt>
+	 * <dd>A boolean value that indicates whether whitespace should be stripped
+	 * from the value prior to testing against the regular expression or passing
+	 * to the value function.</dd>
+	 * <dt>regex</dt>
+	 * <dd>A regular expression that valid values of the type must match.</dd>
+	 * <dt>validate</dt>
+	 * <dd>Optional. A function that performs further testing on the value.</dd>
+	 * <dt>value</dt>
+	 * <dd>A function that returns a Javascript object equivalent for the
+	 * value.</dd>
+	 * </dl>
+	 * You can add to this object as necessary for your own datatypes, and
+	 * {@link jQuery.typedValue} and {@link jQuery.typedValue.valid} will work
+	 * with them.
+	 * 
+	 * @see jQuery.typedValue
+	 * @see jQuery.typedValue.valid
+	 */
+	$.typedValue.types = {};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#string'] = {
+		regex : /^.*$/,
+		strip : false,
+		/** @ignore */
+		value : function(v) {
+			return v;
+		}
+	};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#boolean'] = {
+		regex : /^(?:true|false|1|0)$/,
+		strip : true,
+		/** @ignore */
+		value : function(v) {
+			return v === 'true' || v === '1';
+		}
+	};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#decimal'] = {
+		regex : /^[\-\+]?(?:[0-9]+\.[0-9]*|\.[0-9]+|[0-9]+)$/,
+		strip : true,
+		/** @ignore */
+		value : function(v) {
+			return v;
+		}
+	};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#integer'] = {
+		regex : /^[\-\+]?[0-9]+$/,
+		strip : true,
+		/** @ignore */
+		value : function(v) {
+			return parseInt(v, 10);
+		}
+	};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#int'] = {
+		regex : /^[\-\+]?[0-9]+$/,
+		strip : true,
+		/** @ignore */
+		value : function(v) {
+			return parseInt(v, 10);
+		}
+	};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#float'] = {
+		regex : /^(?:[\-\+]?(?:[0-9]+\.[0-9]*|\.[0-9]+|[0-9]+)(?:[eE][\-\+]?[0-9]+)?|[\-\+]?INF|NaN)$/,
+		strip : true,
+		/** @ignore */
+		value : function(v) {
+			if (v === '-INF') {
+				return -1 / 0;
+			} else if (v === 'INF' || v === '+INF') {
+				return 1 / 0;
+			} else {
+				return parseFloat(v);
+			}
+		}
+	};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#double'] = {
+		regex : $.typedValue.types['http://www.w3.org/2001/XMLSchema#float'].regex,
+		strip : true,
+		value : $.typedValue.types['http://www.w3.org/2001/XMLSchema#float'].value
+	};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#duration'] = {
+		regex : /^([\-\+])?P(?:([0-9]+)Y)?(?:([0-9]+)M)?(?:([0-9]+)D)?(?:T(?:([0-9]+)H)?(?:([0-9]+)M)?(?:([0-9]+(?:\.[0-9]+))?S)?)$/,
+		/** @ignore */
+		validate : function(v) {
+			var m = this.regex.exec(v);
+			return m[2] || m[3] || m[4] || m[5] || m[6] || m[7];
+		},
+		strip : true,
+		/** @ignore */
+		value : function(v) {
+			return v;
+		}
+	};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#dateTime'] = {
+		regex : /^(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):(([0-9]{2})(\.([0-9]+))?)((?:[\-\+]([0-9]{2}):([0-9]{2}))|Z)?$/,
+		/** @ignore */
+		validate : function(v) {
+			var m = this.regex.exec(v), year = parseInt(m[1], 10), tz = m[10] === undefined
+					|| m[10] === 'Z' ? '+0000' : m[10].replace(/:/, ''), date;
+			if (year === 0 || parseInt(tz, 10) < -1400
+					|| parseInt(tz, 10) > 1400) {
+				return false;
+			}
+			try {
+				year = year < 100 ? Math.abs(year) + 1000 : year;
+				month = parseInt(m[2], 10);
+				day = parseInt(m[3], 10);
+				if (day > 31) {
+					return false;
+				} else if (day > 30
+						&& !(month === 1 || month === 3 || month === 5
+								|| month === 7 || month === 8 || month === 10 || month === 12)) {
+					return false;
+				} else if (month === 2) {
+					if (day > 29) {
+						return false;
+					} else if (day === 29
+							&& (year % 4 !== 0 || (year % 100 === 0 && year % 400 !== 0))) {
+						return false;
+					}
+				}
+				date = '' + year + '/' + m[2] + '/' + m[3] + ' ' + m[4] + ':'
+						+ m[5] + ':' + m[7] + ' ' + tz;
+				date = new Date(date);
+				return true;
+			} catch (e) {
+				return false;
+			}
+		},
+		strip : true,
+		/** @ignore */
+		value : function(v) {
+			return v;
+		}
+	};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#date'] = {
+		regex : /^(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})((?:[\-\+]([0-9]{2}):([0-9]{2}))|Z)?$/,
+		/** @ignore */
+		validate : function(v) {
+			var m = this.regex.exec(v), year = parseInt(m[1], 10), month = parseInt(
+					m[2], 10), day = parseInt(m[3], 10), tz = m[10] === undefined
+					|| m[10] === 'Z' ? '+0000' : m[10].replace(/:/, '');
+			if (year === 0 || month > 12 || day > 31
+					|| parseInt(tz, 10) < -1400 || parseInt(tz, 10) > 1400) {
+				return false;
+			} else {
+				return true;
+			}
+		},
+		strip : true,
+		/** @ignore */
+		value : function(v) {
+			return v;
+		}
+	};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#gMonthDay'] = {
+		regex : /^--([0-9]{2})-([0-9]{2})((?:[\-\+]([0-9]{2}):([0-9]{2}))|Z)?$/,
+		/** @ignore */
+		validate : function(v) {
+			var m = this.regex.exec(v), month = parseInt(m[1], 10), day = parseInt(
+					m[2], 10), tz = m[3] === undefined || m[3] === 'Z' ? '+0000'
+					: m[3].replace(/:/, '');
+			if (month > 12 || day > 31 || parseInt(tz, 10) < -1400
+					|| parseInt(tz, 10) > 1400) {
+				return false;
+			} else if (month === 2 && day > 29) {
+				return false;
+			} else if ((month === 4 || month === 6 || month === 9 || month === 11)
+					&& day > 30) {
+				return false;
+			} else {
+				return true;
+			}
+		},
+		strip : true,
+		/** @ignore */
+		value : function(v) {
+			return v;
+		}
+	};
+
+	$.typedValue.types['http://www.w3.org/2001/XMLSchema#anyURI'] = {
+		regex : /^.*$/,
+		strip : true,
+		/** @ignore */
+		value : function(v, options) {
+			var opts = $.extend({}, $.typedValue.defaults, options);
+			return $.uri.resolve(v, opts.base);
+		}
+	};
+
+	$.typedValue.defaults = {
+		base : $.uri.base(),
+		namespaces : {}
+	};
+
+	/**
+	 * Checks whether a value is valid according to a given datatype. The
+	 * datatype must be held in the {@link jQuery.typedValue.types} object.
+	 * 
+	 * @param {String}
+	 *            value The value to validate.
+	 * @param {String}
+	 *            datatype The URI for the datatype against which the value will
+	 *            be validated.
+	 * @returns {boolean} True if the value is valid.
+	 * @throws {String}
+	 *             Errors if the datatype has not been specified in the
+	 *             {@link jQuery.typedValue.types} object.
+	 * @example validDate = $.typedValue.valid(date,
+	 *          'http://www.w3.org/2001/XMLSchema#date');
+	 */
+	$.typedValue.valid = function(value, datatype) {
+		var d = $.typedValue.types[datatype];
+		if (d === undefined) {
+			throw "InvalidDatatype: The datatype " + datatype
+					+ " can't be recognised";
+		} else {
+			value = d.strip ? strip(value) : value;
+			if (d.regex.test(value)) {
+				return d.validate === undefined ? true : d.validate(value);
+			} else {
+				return false;
+			}
+		}
+	};
+
+})(jQuery);
+/*
+ * jQuery CURIE
+ * 
+ * @VERSION
+ * 
+ * Copyright (c) 2008,2009 Jeni Tennison Licensed under the MIT
+ * (MIT-LICENSE.txt)
+ * 
+ * Depends: jquery.uri.js jquery.xmlns.js
+ */
+
+/**
+ * @fileOverview jQuery CURIE handling
+ * @author <a href="mailto:jeni@jenitennison.com">Jeni Tennison</a>
+ * @copyright (c) 2008,2009 Jeni Tennison
+ * @license MIT license (MIT-LICENSE.txt)
+ * @version 1.0
+ * @requires jquery.uri.js
+ * @requires jquery.xmlns.js
+ */
+(function($) {
+
+	/**
+	 * Creates a {@link jQuery.uri} object by parsing a CURIE.
+	 * 
+	 * @methodOf jQuery
+	 * @param {String}
+	 *            curie The CURIE to be parsed
+	 * @param {String}
+	 *            uri The URI string to be converted to a CURIE.
+	 * @param {Object}
+	 *            [options] CURIE parsing options
+	 * @param {string}
+	 *            [options.reservedNamespace='http://www.w3.org/1999/xhtml/vocab#']
+	 *            The namespace to apply to a CURIE that has no prefix and
+	 *            either starts with a colon or is in the list of reserved local
+	 *            names
+	 * @param {string}
+	 *            [options.defaultNamespace] The namespace to apply to a CURIE
+	 *            with no prefix which is not mapped to the reserved namespace
+	 *            by the rules given above.
+	 * @param {Object}
+	 *            [options.namespaces] A map of namespace bindings used to map
+	 *            CURIE prefixes to URIs.
+	 * @param {string[]}
+	 *            [options.reserved=['alternate', 'appendix', 'bookmark',
+	 *            'cite', 'chapter', 'contents', 'copyright', 'first',
+	 *            'glossary', 'help', 'icon', 'index', 'last', 'license',
+	 *            'meta', 'next', 'p3pv1', 'prev', 'role', 'section',
+	 *            'stylesheet', 'subsection', 'start', 'top', 'up']] A list of
+	 *            local names that will always be mapped to the URI specified by
+	 *            reservedNamespace.
+	 * @param {string}
+	 *            [options.charcase='lower'] Specifies whether the curie's case
+	 *            is altered before it's interpreted. Acceptable values are:
+	 *            <dl>
+	 *            <dt>lower</dt>
+	 *            <dd>Force the CURIE string to lower case.</dd>
+	 *            <dt>upper</dt>
+	 *            <dd>Force the CURIE string to upper case.</dd>
+	 *            <dt>preserve</dt>
+	 *            <dd>Preserve the original case of the CURIE. Note that this
+	 *            might not be possible if the CURIE has been taken from an HTML
+	 *            attribute value because of the case conversions performed
+	 *            automatically by browsers. For this reason, it's a good idea
+	 *            to avoid mixed-case CURIEs within RDFa.</dd>
+	 *            </dl>
+	 * @returns {jQuery.uri} A new {@link jQuery.uri} object representing the
+	 *          full absolute URI specified by the CURIE.
+	 */
+	$.curie = function(curie, options) {
+		var opts = $.extend({}, $.curie.defaults, options || {}), m = /^(([^:]*):)?(.+)$/
+				.exec(curie), prefix = m[2], local = m[3], ns = opts.namespaces[prefix];
+		if (/^:.+/.test(curie)) { // This is the case of a CURIE like ":test"
+			if (opts.reservedNamespace === undefined
+					|| opts.reservedNamespace === null) {
+				throw "Malformed CURIE: No prefix and no default namespace for unprefixed CURIE "
+						+ curie;
+			} else {
+				ns = opts.reservedNamespace;
+			}
+		} else if (prefix) {
+			if (ns === undefined) {
+				throw "Malformed CURIE: No namespace binding for " + prefix
+						+ " in CURIE " + curie;
+			}
+		} else {
+			if (opts.charcase === 'lower') {
+				curie = curie.toLowerCase();
+			} else if (opts.charcase === 'upper') {
+				curie = curie.toUpperCase();
+			}
+			if (opts.reserved.length && $.inArray(curie, opts.reserved) >= 0) {
+				ns = opts.reservedNamespace;
+				local = curie;
+			} else if (opts.defaultNamespace === undefined
+					|| opts.defaultNamespace === null) {
+				// the default namespace is provided by the application; it's
+				// not clear
+				// whether
+				// the default XML namespace should be used if there's a colon
+				// but no
+				// prefix
+				throw "Malformed CURIE: No prefix and no default namespace for unprefixed CURIE "
+						+ curie;
+			} else {
+				ns = opts.defaultNamespace;
+			}
+		}
+		return $.uri(ns + local);
+	};
+
+	$.curie.defaults = {
+		namespaces : {},
+		reserved : [],
+		reservedNamespace : undefined,
+		defaultNamespace : undefined,
+		charcase : 'preserve'
+	};
+
+	/**
+	 * Creates a {@link jQuery.uri} object by parsing a safe CURIE string (a
+	 * CURIE contained within square brackets). If the input safeCurie string
+	 * does not start with '[' and end with ']', the entire string content will
+	 * be interpreted as a URI string.
+	 * 
+	 * @methodOf jQuery
+	 * @param {String}
+	 *            safeCurie The safe CURIE string to be parsed.
+	 * @param {Object}
+	 *            [options] CURIE parsing options
+	 * @param {string}
+	 *            [options.reservedNamespace='http://www.w3.org/1999/xhtml/vocab#']
+	 *            The namespace to apply to a CURIE that has no prefix and
+	 *            either starts with a colon or is in the list of reserved local
+	 *            names
+	 * @param {string}
+	 *            [options.defaultNamespace] The namespace to apply to a CURIE
+	 *            with no prefix which is not mapped to the reserved namespace
+	 *            by the rules given above.
+	 * @param {Object}
+	 *            [options.namespaces] A map of namespace bindings used to map
+	 *            CURIE prefixes to URIs.
+	 * @param {string[]}
+	 *            [options.reserved=['alternate', 'appendix', 'bookmark',
+	 *            'cite', 'chapter', 'contents', 'copyright', 'first',
+	 *            'glossary', 'help', 'icon', 'index', 'last', 'license',
+	 *            'meta', 'next', 'p3pv1', 'prev', 'role', 'section',
+	 *            'stylesheet', 'subsection', 'start', 'top', 'up']] A list of
+	 *            local names that will always be mapped to the URI specified by
+	 *            reservedNamespace.
+	 * @param {string}
+	 *            [options.charcase='lower'] Specifies whether the curie's case
+	 *            is altered before it's interpreted. Acceptable values are:
+	 *            <dl>
+	 *            <dt>lower</dt>
+	 *            <dd>Force the CURIE string to lower case.</dd>
+	 *            <dt>upper</dt>
+	 *            <dd>Force the CURIE string to upper case.</dd>
+	 *            <dt>preserve</dt>
+	 *            <dd>Preserve the original case of the CURIE. Note that this
+	 *            might not be possible if the CURIE has been taken from an HTML
+	 *            attribute value because of the case conversions performed
+	 *            automatically by browsers. For this reason, it's a good idea
+	 *            to avoid mixed-case CURIEs within RDFa.</dd>
+	 *            </dl>
+	 * @returns {jQuery.uri} A new {@link jQuery.uri} object representing the
+	 *          full absolute URI specified by the CURIE.
+	 */
+	$.safeCurie = function(safeCurie, options) {
+		var m = /^\[([^\]]+)\]$/.exec(safeCurie);
+		return m ? $.curie(m[1], options) : $.uri(safeCurie);
+	};
+
+	/**
+	 * Creates a CURIE string from a URI string.
+	 * 
+	 * @methodOf jQuery
+	 * @param {String}
+	 *            uri The URI string to be converted to a CURIE.
+	 * @param {Object}
+	 *            [options] CURIE parsing options
+	 * @param {string}
+	 *            [options.reservedNamespace='http://www.w3.org/1999/xhtml/vocab#']
+	 *            If the input URI starts with this value, the generated CURIE
+	 *            will have no namespace prefix and will start with a colon
+	 *            character (:), unless the local part of the CURIE is one of
+	 *            the reserved names specified by the reservedNames option (see
+	 *            below), in which case the generated CURIE will have no
+	 *            namespace prefix and will not start with a colon character.
+	 * @param {string}
+	 *            [options.defaultNamespace] If the input URI starts with this
+	 *            value, the generated CURIE will have no namespace prefix and
+	 *            will not start with a colon.
+	 * @param {Object}
+	 *            [options.namespaces] A map of namespace bindings used to map
+	 *            CURIE prefixes to URIs.
+	 * @param {string[]}
+	 *            [options.reserved=['alternate', 'appendix', 'bookmark',
+	 *            'cite', 'chapter', 'contents', 'copyright', 'first',
+	 *            'glossary', 'help', 'icon', 'index', 'last', 'license',
+	 *            'meta', 'next', 'p3pv1', 'prev', 'role', 'section',
+	 *            'stylesheet', 'subsection', 'start', 'top', 'up']] A list of
+	 *            local names that will always be mapped to the URI specified by
+	 *            reservedNamespace.
+	 * @param {string}
+	 *            [options.charcase='lower'] Specifies the case normalisation
+	 *            done to the CURIE. Acceptable values are:
+	 *            <dl>
+	 *            <dt>lower</dt>
+	 *            <dd>Normalise the CURIE to lower case.</dd>
+	 *            <dt>upper</dt>
+	 *            <dd>Normalise the CURIE to upper case.</dd>
+	 *            <dt>preserve</dt>
+	 *            <dd>Preserve the original case of the CURIE. Note that this
+	 *            might not be possible if the CURIE has been taken from an HTML
+	 *            attribute value because of the case conversions performed
+	 *            automatically by browsers. For this reason, it's a good idea
+	 *            to avoid mixed-case CURIEs within RDFa.</dd>
+	 *            </dl>
+	 * @returns {jQuery.uri} A new {@link jQuery.uri} object representing the
+	 *          full absolute URI specified by the CURIE.
+	 */
+	$.createCurie = function(uri, options) {
+		var opts = $.extend({}, $.curie.defaults, options || {}), ns = opts.namespaces, curie;
+		uri = $.uri(uri).toString();
+		if (opts.reservedNamespace !== undefined
+				&& uri.substring(0, opts.reservedNamespace.toString().length) === opts.reservedNamespace
+						.toString()) {
+			curie = uri.substring(opts.reservedNamespace.toString().length);
+			if ($.inArray(curie, opts.reserved) === -1) {
+				curie = ':' + curie;
+			}
+		} else {
+			$.each(ns, function(prefix, namespace) {
+				if (uri.substring(0, namespace.toString().length) === namespace
+						.toString()) {
+					curie = prefix + ':'
+							+ uri.substring(namespace.toString().length);
+					return null;
+				}
+			});
+		}
+		if (curie === undefined) {
+			throw "No Namespace Binding: There's no appropriate namespace binding for generating a CURIE from "
+					+ uri;
+		} else {
+			return curie;
+		}
+	};
+
+	/**
+	 * Creates a {@link jQuery.uri} object by parsing the specified CURIE string
+	 * in the context of the namespaces defined by the jQuery selection.
+	 * 
+	 * @methodOf jQuery#
+	 * @name jQuery#curie
+	 * @param {String}
+	 *            curie The CURIE string to be parsed
+	 * @param {Object}
+	 *            options The CURIE parsing options. See {@link jQuery.curie}
+	 *            for details of the supported options. The namespace
+	 *            declarations declared on the current jQuery selection (and
+	 *            inherited from any ancestor elements) will automatically be
+	 *            included in the options.namespaces property.
+	 * @returns {jQuery.uri}
+	 * @see jQuery.curie
+	 */
+	$.fn.curie = function(curie, options) {
+		var opts = $.extend({}, $.fn.curie.defaults, {
+			namespaces : this.xmlns()
+		}, options || {});
+		return $.curie(curie, opts);
+	};
+
+	/**
+	 * Creates a {@link jQuery.uri} object by parsing the specified safe CURIE
+	 * string in the context of the namespaces defined by the jQuery selection.
+	 * 
+	 * @methodOf jQuery#
+	 * @name jQuery#safeCurie
+	 * @param {String}
+	 *            safeCurie The safe CURIE string to be parsed. See
+	 *            {@link jQuery.safeCurie} for details on how safe CURIE strings
+	 *            are processed.
+	 * @param {Object}
+	 *            options The CURIE parsing options. See
+	 *            {@link jQuery.safeCurie} for details of the supported options.
+	 *            The namespace declarations declared on the current jQuery
+	 *            selection (and inherited from any ancestor elements) will
+	 *            automatically be included in the options.namespaces property.
+	 * @returns {jQuery.uri}
+	 * @see jQuery.safeCurie
+	 */
+	$.fn.safeCurie = function(safeCurie, options) {
+		var opts = $.extend({}, $.fn.curie.defaults, {
+			namespaces : this.xmlns()
+		}, options || {});
+		return $.safeCurie(safeCurie, opts);
+	};
+
+	/**
+	 * Creates a CURIE string from a URI string using the namespace bindings in
+	 * the context of the current jQuery selection.
+	 * 
+	 * @methodOf jQuery#
+	 * @name jQuery#createCurie
+	 * @param {String|jQuery.uri}
+	 *            uri The URI string to be converted to a CURIE
+	 * @param {Object}
+	 *            options the CURIE parsing options. See
+	 *            {@link jQuery.createCurie} for details of the supported
+	 *            options. The namespace declarations declared on the current
+	 *            jQuery selection (and inherited from any ancestor elements)
+	 *            will automatically be included in the options.namespaces
+	 *            property.
+	 * @returns {String}
+	 * @see jQuery.createCurie
+	 */
+	$.fn.createCurie = function(uri, options) {
+		var opts = $.extend({}, $.fn.curie.defaults, {
+			namespaces : this.xmlns()
+		}, options || {});
+		return $.createCurie(uri, opts);
+	};
+
+	$.fn.curie.defaults = {
+		reserved : [ 'alternate', 'appendix', 'bookmark', 'cite', 'chapter',
+				'contents', 'copyright', 'first', 'glossary', 'help', 'icon',
+				'index', 'last', 'license', 'meta', 'next', 'p3pv1', 'prev',
+				'role', 'section', 'stylesheet', 'subsection', 'start', 'top',
+				'up' ],
+		reservedNamespace : 'http://www.w3.org/1999/xhtml/vocab#',
+		defaultNamespace : undefined,
+		charcase : 'lower'
+	};
+
+})(jQuery);
+/*
+ * jQuery RDF
+ * 
+ * @VERSION
+ * 
+ * Copyright (c) 2008,2009 Jeni Tennison Licensed under the MIT
+ * (MIT-LICENSE.txt)
+ * 
+ * Depends: jquery.uri.js jquery.xmlns.js jquery.datatype.js jquery.curie.js
+ * jquery.json.js
+ */
+/**
+ * @fileOverview jQuery RDF
+ * @author <a href="mailto:jeni@jenitennison.com">Jeni Tennison</a>
+ * @copyright (c) 2008,2009 Jeni Tennison
+ * @license MIT license (MIT-LICENSE.txt)
+ * @version 1.0
+ */
+/**
+ * @exports $ as jQuery
+ */
+/**
+ * @ignore
+ */
+(function($) {
+
+	var memResource = {}, memBlank = {}, memLiteral = {}, memTriple = {}, memPattern = {}, xsdNs = "http://www.w3.org/2001/XMLSchema#", rdfNs = "http://www.w3.org/1999/02/22-rdf-syntax-ns#", rdfsNs = "http://www.w3.org/2000/01/rdf-schema#", uriRegex = /^<(([^>]|\\>)*)>$/, literalRegex = /^("""((\\"|[^"])*)"""|"((\\"|[^"])*)")(@([a-z]+(-[a-z0-9]+)*)|\^\^(.+))?$/, tripleRegex = /(("""((\\"|[^"])*)""")|("(\\"|[^"]|)*")|(<(\\>|[^>])*>)|\S)+/g,
+
+	blankNodeSeed = databankSeed = new Date().getTime() % 1000, blankNodeID = function() {
+		blankNodeSeed += 1;
+		return 'b' + blankNodeSeed.toString(16);
+	},
+
+	databankID = function() {
+		databankSeed += 1;
+		return 'data' + databankSeed.toString(16);
+	},
+
+	subject = function(subject, opts) {
+		if (typeof subject === 'string') {
+			try {
+				return $.rdf.resource(subject, opts);
+			} catch (e) {
+				try {
+					return $.rdf.blank(subject, opts);
+				} catch (f) {
+					throw "Bad Triple: Subject " + subject
+							+ " is not a resource: " + f;
+				}
+			}
+		} else {
+			return subject;
+		}
+	},
+
+	property = function(property, opts) {
+		if (property === 'a') {
+			return $.rdf.type;
+		} else if (typeof property === 'string') {
+			try {
+				return $.rdf.resource(property, opts);
+			} catch (e) {
+				throw "Bad Triple: Property " + property
+						+ " is not a resource: " + e;
+			}
+		} else {
+			return property;
+		}
+	},
+
+	object = function(object, opts) {
+		if (typeof object === 'string') {
+			try {
+				return $.rdf.resource(object, opts);
+			} catch (e) {
+				try {
+					return $.rdf.blank(object, opts);
+				} catch (f) {
+					try {
+						return $.rdf.literal(object, opts);
+					} catch (g) {
+						throw "Bad Triple: Object " + object
+								+ " is not a resource or a literal " + g;
+					}
+				}
+			}
+		} else {
+			return object;
+		}
+	},
+
+	testResource = function(resource, filter, existing) {
+		var variable;
+		if (typeof filter === 'string') {
+			variable = filter.substring(1);
+			if (existing[variable] && existing[variable] !== resource) {
+				return null;
+			} else {
+				existing[variable] = resource;
+				return existing;
+			}
+		} else if (filter === resource) {
+			return existing;
+		} else {
+			return null;
+		}
+	},
+
+	findMatches = function(triples, pattern) {
+		return $.map(triples, function(triple) {
+			var bindings = pattern.exec(triple);
+			return bindings === null ? null : {
+				bindings : bindings,
+				triples : [ triple ]
+			};
+		});
+	},
+
+	mergeMatches = function(existingMs, newMs, optional) {
+		return $
+				.map(
+						existingMs,
+						function(existingM, i) {
+							var compatibleMs = $
+									.map(
+											newMs,
+											function(newM) {
+												// For newM to be compatible
+												// with existingM, all the
+												// bindings
+												// in newM must either be the
+												// same as in existingM, or not
+												// exist in existingM
+												var isCompatible = true;
+												$
+														.each(
+																newM.bindings,
+																function(k, b) {
+																	if (!(existingM.bindings[k] === undefined || existingM.bindings[k] === b)) {
+																		isCompatible = false;
+																		return false;
+																	}
+																});
+												return isCompatible ? newM
+														: null;
+											});
+							if (compatibleMs.length > 0) {
+								return $
+										.map(
+												compatibleMs,
+												function(compatibleM) {
+													return {
+														bindings : $
+																.extend(
+																		{},
+																		existingM.bindings,
+																		compatibleM.bindings),
+														triples : $
+																.unique(existingM.triples
+																		.concat(compatibleM.triples))
+													};
+												});
+							} else {
+								return optional ? existingM : null;
+							}
+						});
+	},
+
+	registerQuery = function(databank, query) {
+		var s, p, o;
+		if (query.filterExp !== undefined && !$.isFunction(query.filterExp)) {
+			if (databank.union === undefined) {
+				s = typeof query.filterExp.subject === 'string' ? ''
+						: query.filterExp.subject;
+				p = typeof query.filterExp.property === 'string' ? ''
+						: query.filterExp.property;
+				o = typeof query.filterExp.object === 'string' ? ''
+						: query.filterExp.object;
+				if (databank.queries[s] === undefined) {
+					databank.queries[s] = {};
+				}
+				if (databank.queries[s][p] === undefined) {
+					databank.queries[s][p] = {};
+				}
+				if (databank.queries[s][p][o] === undefined) {
+					databank.queries[s][p][o] = [];
+				}
+				databank.queries[s][p][o].push(query);
+			} else {
+				$.each(databank.union, function(i, databank) {
+					registerQuery(databank, query);
+				});
+			}
+		}
+	},
+
+	resetQuery = function(query) {
+		query.length = 0;
+		query.matches = [];
+		$.each(query.children, function(i, child) {
+			resetQuery(child);
+		});
+		$.each(query.partOf, function(i, union) {
+			resetQuery(union);
+		});
+	},
+
+	updateQuery = function(query, matches) {
+		if (matches.length > 0) {
+			$.each(query.children, function(i, child) {
+				leftActivate(child, matches);
+			});
+			$.each(query.partOf, function(i, union) {
+				updateQuery(union, matches);
+			});
+			$.each(matches, function(i, match) {
+				query.matches.push(match);
+				Array.prototype.push.call(query, match.bindings);
+			});
+		}
+	},
+
+	leftActivate = function(query, matches) {
+		var newMatches;
+		if (query.union === undefined) {
+			if (query.top || query.parent.top) {
+				newMatches = query.alphaMemory;
+			} else {
+				matches = matches || query.parent.matches;
+				if ($.isFunction(query.filterExp)) {
+					newMatches = $.map(matches, function(match, i) {
+						return query.filterExp.call(match.bindings, i,
+								match.bindings, match.triples) ? match : null;
+					});
+				} else {
+					newMatches = mergeMatches(matches, query.alphaMemory,
+							query.filterExp.optional);
+				}
+			}
+		} else {
+			newMatches = $.map(query.union, function(q) {
+				return q.matches;
+			});
+		}
+		updateQuery(query, newMatches);
+	},
+
+	rightActivate = function(query, match) {
+		var newMatches;
+		if (query.filterExp.optional) {
+			resetQuery(query);
+			leftActivate(query);
+		} else {
+			if (query.top || query.parent.top) {
+				newMatches = [ match ];
+			} else {
+				newMatches = mergeMatches(query.parent.matches, [ match ],
+						false);
+			}
+			updateQuery(query, newMatches);
+		}
+	},
+
+	addToQuery = function(query, triple) {
+		var match, bindings = query.filterExp.exec(triple);
+		if (bindings !== null) {
+			match = {
+				triples : [ triple ],
+				bindings : bindings
+			};
+			query.alphaMemory.push(match);
+			rightActivate(query, match);
+		}
+	},
+
+	removeFromQuery = function(query, triple) {
+		query.alphaMemory.splice($.inArray(triple, query.alphaMemory), 1);
+		resetQuery(query);
+		leftActivate(query);
+	},
+
+	addToQueries = function(queries, triple) {
+		$.each(queries, function(i, query) {
+			addToQuery(query, triple);
+		});
+	},
+
+	removeFromQueries = function(queries, triple) {
+		$.each(queries, function(i, query) {
+			removeFromQuery(query, triple);
+		});
+	},
+
+	addToDatabankQueries = function(databank, triple) {
+		var s = triple.subject, p = triple.property, o = triple.object;
+		if (databank.union === undefined) {
+			if (databank.queries[s] !== undefined) {
+				if (databank.queries[s][p] !== undefined) {
+					if (databank.queries[s][p][o] !== undefined) {
+						addToQueries(databank.queries[s][p][o], triple);
+					}
+					if (databank.queries[s][p][''] !== undefined) {
+						addToQueries(databank.queries[s][p][''], triple);
+					}
+				}
+				if (databank.queries[s][''] !== undefined) {
+					if (databank.queries[s][''][o] !== undefined) {
+						addToQueries(databank.queries[s][''][o], triple);
+					}
+					if (databank.queries[s][''][''] !== undefined) {
+						addToQueries(databank.queries[s][''][''], triple);
+					}
+				}
+			}
+			if (databank.queries[''] !== undefined) {
+				if (databank.queries[''][p] !== undefined) {
+					if (databank.queries[''][p][o] !== undefined) {
+						addToQueries(databank.queries[''][p][o], triple);
+					}
+					if (databank.queries[''][p][''] !== undefined) {
+						addToQueries(databank.queries[''][p][''], triple);
+					}
+				}
+				if (databank.queries[''][''] !== undefined) {
+					if (databank.queries[''][''][o] !== undefined) {
+						addToQueries(databank.queries[''][''][o], triple);
+					}
+					if (databank.queries[''][''][''] !== undefined) {
+						addToQueries(databank.queries[''][''][''], triple);
+					}
+				}
+			}
+		} else {
+			$.each(databank.union, function(i, databank) {
+				addToDatabankQueries(databank, triple);
+			});
+		}
+	},
+
+	removeFromDatabankQueries = function(databank, triple) {
+		var s = triple.subject, p = triple.property, o = triple.object;
+		if (databank.union === undefined) {
+			if (databank.queries[s] !== undefined) {
+				if (databank.queries[s][p] !== undefined) {
+					if (databank.queries[s][p][o] !== undefined) {
+						removeFromQueries(databank.queries[s][p][o], triple);
+					}
+					if (databank.queries[s][p][''] !== undefined) {
+						removeFromQueries(databank.queries[s][p][''], triple);
+					}
+				}
+				if (databank.queries[s][''] !== undefined) {
+					if (databank.queries[s][''][o] !== undefined) {
+						removeFromQueries(databank.queries[s][''][o], triple);
+					}
+					if (databank.queries[s][''][''] !== undefined) {
+						removeFromQueries(databank.queries[s][''][''], triple);
+					}
+				}
+			}
+			if (databank.queries[''] !== undefined) {
+				if (databank.queries[''][p] !== undefined) {
+					if (databank.queries[''][p][o] !== undefined) {
+						removeFromQueries(databank.queries[''][p][o], triple);
+					}
+					if (databank.queries[''][p][''] !== undefined) {
+						removeFromQueries(databank.queries[''][p][''], triple);
+					}
+				}
+				if (databank.queries[''][''] !== undefined) {
+					if (databank.queries[''][''][o] !== undefined) {
+						removeFromQueries(databank.queries[''][''][o], triple);
+					}
+					if (databank.queries[''][''][''] !== undefined) {
+						removeFromQueries(databank.queries[''][''][''], triple);
+					}
+				}
+			}
+		} else {
+			$.each(databank.union, function(i, databank) {
+				removeFromDatabankQueries(databank, triple);
+			});
+		}
+	},
+
+	createJson = function(triples) {
+		var e = {}, i, t, s, p;
+		for (i = 0; i < triples.length; i += 1) {
+			t = triples[i];
+			s = t.subject.value.toString();
+			p = t.property.value.toString();
+			if (e[s] === undefined) {
+				e[s] = {};
+			}
+			if (e[s][p] === undefined) {
+				e[s][p] = [];
+			}
+			e[s][p].push(t.object.dump());
+		}
+		return e;
+	},
+
+	parseJson = function(data) {
+		var s, subject, p, property, o, object, i, opts, triples = [];
+		for (s in data) {
+			subject = (s.substring(0, 2) === '_:') ? $.rdf.blank(s) : $.rdf
+					.resource('<' + s + '>');
+			for (p in data[s]) {
+				property = $.rdf.resource('<' + p + '>');
+				for (i = 0; i < data[s][p].length; i += 1) {
+					o = data[s][p][i];
+					if (o.type === 'uri') {
+						object = $.rdf.resource('<' + o.value + '>');
+					} else if (o.type === 'bnode') {
+						object = $.rdf.blank(o.value);
+					} else {
+						// o.type === 'literal'
+						if (o.datatype !== undefined) {
+							object = $.rdf.literal(o.value, {
+								datatype : o.datatype
+							});
+						} else {
+							opts = {};
+							if (o.lang !== undefined) {
+								opts.lang = o.lang;
+							}
+							object = $.rdf.literal('"' + o.value + '"', opts);
+						}
+					}
+					triples.push($.rdf.triple(subject, property, object));
+				}
+			}
+		}
+		return triples;
+	},
+
+	addAttribute = function(parent, namespace, name, value) {
+		var doc = parent.ownerDocument, a;
+		if (namespace !== undefined && namespace !== null) {
+			if (doc.createAttributeNS) {
+				a = doc.createAttributeNS(namespace, name);
+				a.nodeValue = value;
+				parent.attributes.setNamedItemNS(a);
+			} else {
+				a = doc.createNode(2, name, namespace);
+				a.nodeValue = value;
+				parent.attributes.setNamedItem(a);
+			}
+		} else {
+			a = doc.createAttribute(name);
+			a.nodeValue = value;
+			parent.attributes.setNamedItem(a);
+		}
+		return parent;
+	},
+
+	createXmlnsAtt = function(parent, namespace, prefix) {
+		if (prefix) {
+			addAttribute(parent, 'http://www.w3.org/2000/xmlns/', 'xmlns:'
+					+ prefix, namespace);
+		} else {
+			addAttribute(parent, undefined, 'xmlns', namespace);
+		}
+		return parent;
+	},
+
+	createDocument = function(namespace, name) {
+		var doc, xmlns = '', prefix, addAttribute = false;
+		if (namespace !== undefined && namespace !== null) {
+			if (/:/.test(name)) {
+				prefix = /([^:]+):/.exec(name)[1];
+			}
+			addAttribute = true;
+		}
+		if (document.implementation && document.implementation.createDocument) {
+			doc = document.implementation.createDocument(namespace, name, null);
+			if (addAttribute) {
+				createXmlnsAtt(doc.documentElement, namespace, prefix);
+			}
+			return doc;
+		} else {
+			doc = new ActiveXObject("Microsoft.XMLDOM");
+			doc.async = "false";
+			if (prefix === undefined) {
+				xmlns = ' xmlns="' + namespace + '"';
+			} else {
+				xmlns = ' xmlns:' + prefix + '="' + namespace + '"';
+			}
+			doc.loadXML('<' + name + xmlns + '/>');
+			return doc;
+		}
+	},
+
+	appendElement = function(parent, namespace, name) {
+		var doc = parent.ownerDocument, e;
+		if (namespace !== undefined && namespace !== null) {
+			e = doc.createElementNS ? doc.createElementNS(namespace, name)
+					: doc.createNode(1, name, namespace);
+		} else {
+			e = doc.createElement(name);
+		}
+		parent.appendChild(e);
+		return e;
+	},
+
+	appendText = function(parent, text) {
+		var doc = parent.ownerDocument, t;
+		t = doc.createTextNode(text);
+		parent.appendChild(t);
+		return parent;
+	},
+
+	appendXML = function(parent, xml) {
+		var parser, doc, i, child;
+		try {
+			doc = new ActiveXObject('Microsoft.XMLDOM');
+			doc.async = "false";
+			doc.loadXML('<temp>' + xml + '</temp>');
+		} catch (e) {
+			parser = new DOMParser();
+			doc = parser
+					.parseFromString('<temp>' + xml + '</temp>', 'text/xml');
+		}
+		if (doc.documentElement) {
+			for (i = 0; i < doc.documentElement.childNodes.length; i += 1) {
+				parent.appendChild(doc.documentElement.childNodes[i]
+						.cloneNode(true));
+			}
+		}
+		return parent;
+	},
+
+	createRdfXml = function(triples, options) {
+		var doc = createDocument(rdfNs, 'rdf:RDF'), dump = createJson(triples), namespaces = options.namespaces
+				|| {}, n, s, se, p, pe, i, v, m, local, ns, prefix;
+		for (n in namespaces) {
+			createXmlnsAtt(doc.documentElement, namespaces[n], n);
+		}
+		for (s in dump) {
+			if (dump[s][$.rdf.type.value] !== undefined) {
+				m = /(.+[#\/])([^#\/]+)/
+						.exec(dump[s][$.rdf.type.value][0].value);
+				ns = m[1];
+				local = m[2];
+				for (n in namespaces) {
+					if (namespaces[n] === ns) {
+						prefix = n;
+						break;
+					}
+				}
+				se = appendElement(doc.documentElement, ns, prefix + ':'
+						+ local);
+			} else {
+				se = appendElement(doc.documentElement, rdfNs,
+						'rdf:Description');
+			}
+			if (/^_:/.test(s)) {
+				addAttribute(se, rdfNs, 'rdf:nodeID', s.substring(2));
+			} else {
+				addAttribute(se, rdfNs, 'rdf:about', s);
+			}
+			for (p in dump[s]) {
+				if (p !== $.rdf.type.value.toString() || dump[s][p].length > 1) {
+					m = /(.+[#\/])([^#\/]+)/.exec(p);
+					ns = m[1];
+					local = m[2];
+					for (n in namespaces) {
+						if (namespaces[n] === ns) {
+							prefix = n;
+							break;
+						}
+					}
+					for (i = (p === $.rdf.type.value.toString() ? 1 : 0); i < dump[s][p].length; i += 1) {
+						v = dump[s][p][i];
+						pe = appendElement(se, ns, prefix + ':' + local);
+						if (v.type === 'uri') {
+							addAttribute(pe, rdfNs, 'rdf:resource', v.value);
+						} else if (v.type === 'literal') {
+							if (v.datatype !== undefined) {
+								if (v.datatype === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral') {
+									addAttribute(pe, rdfNs, 'rdf:parseType',
+											'Literal');
+									appendXML(pe, v.value);
+								} else {
+									addAttribute(pe, rdfNs, 'rdf:datatype',
+											v.datatype);
+									appendText(pe, v.value);
+								}
+							} else if (v.lang !== undefined) {
+								addAttribute(pe,
+										'http://www.w3.org/XML/1998/namespace',
+										'xml:lang', v.lang);
+								appendText(pe, v.value);
+							} else {
+								appendText(pe, v.value);
+							}
+						} else {
+							// blank node
+							addAttribute(pe, rdfNs, 'rdf:nodeID', v.value
+									.substring(2));
+						}
+					}
+				}
+			}
+		}
+		return doc;
+	},
+
+	getDefaultNamespacePrefix = function(namespaceUri) {
+		switch (namespaceUri) {
+		case 'http://www.w3.org/1999/02/22-rdf-syntax-ns':
+			return 'rdf';
+		case 'http://www.w3.org/XML/1998/namespace':
+			return 'xml';
+		case 'http://www.w3.org/2000/xmlns/':
+			return 'xmlns';
+		default:
+			throw ('No default prefix mapped for namespace ' + namespaceUri);
+		}
+	},
+
+	hasAttributeNS = function(elem, namespace, name) {
+		var basename;
+		if (elem.hasAttributeNS) {
+			return elem.hasAttributeNS(namespace, name);
+		} else {
+			try {
+				basename = /:/.test(name) ? /:(.+)$/.exec(name)[1] : name;
+				return elem.attributes.getQualifiedItem(basename, namespace) !== null;
+			} catch (e) {
+				return elem.getAttribute(getDefaultNamespacePrefix(namespace)
+						+ ':' + name) !== null;
+			}
+		}
+	},
+
+	getAttributeNS = function(elem, namespace, name) {
+		var basename;
+		if (elem.getAttributeNS) {
+			return elem.getAttributeNS(namespace, name);
+		} else {
+			try {
+				basename = /:/.test(name) ? /:(.+)$/.exec(name)[1] : name;
+				return elem.attributes.getQualifiedItem(basename, namespace).nodeValue;
+			} catch (e) {
+				return elem.getAttribute(getDefaultNamespacePrefix(namespace)
+						+ ':' + name);
+			}
+		}
+	},
+
+	getLocalName = function(elem) {
+		return elem.localName || elem.baseName;
+	},
+
+	parseRdfXmlSubject = function(elem, base) {
+		var s, subject;
+		if (hasAttributeNS(elem, rdfNs, 'about')) {
+			s = getAttributeNS(elem, rdfNs, 'about');
+			subject = $.rdf.resource('<' + s + '>', {
+				base : base
+			});
+		} else if (hasAttributeNS(elem, rdfNs, 'ID')) {
+			s = getAttributeNS(elem, rdfNs, 'ID');
+			subject = $.rdf.resource('<#' + s + '>', {
+				base : base
+			});
+		} else if (hasAttributeNS(elem, rdfNs, 'nodeID')) {
+			s = getAttributeNS(elem, rdfNs, 'nodeID');
+			subject = $.rdf.blank('_:' + s);
+		} else {
+			subject = $.rdf.blank('[]');
+		}
+		return subject;
+	},
+
+	parseRdfXmlDescription = function(elem, isDescription, base, lang) {
+		var subject, p, property, o, object, reified, lang, i, j, li = 1, collection1, collection2, collectionItem, collectionItems = [], parseType, serializer, literalOpts = {}, oTriples, triples = [];
+		lang = getAttributeNS(elem, 'http://www.w3.org/XML/1998/namespace',
+				'lang')
+				|| lang;
+		base = getAttributeNS(elem, 'http://www.w3.org/XML/1998/namespace',
+				'base')
+				|| base;
+		if (lang !== null && lang !== undefined && lang !== '') {
+			literalOpts = {
+				lang : lang
+			};
+		}
+		subject = parseRdfXmlSubject(elem, base);
+		if (isDescription
+				&& (elem.namespaceURI !== rdfNs || getLocalName(elem) !== 'Description')) {
+			property = $.rdf.type;
+			object = $.rdf.resource('<' + elem.namespaceURI
+					+ getLocalName(elem) + '>');
+			triples.push($.rdf.triple(subject, property, object));
+		}
+		for (i = 0; i < elem.attributes.length; i += 1) {
+			p = elem.attributes.item(i);
+			if (p.namespaceURI !== undefined
+					&& p.namespaceURI !== 'http://www.w3.org/2000/xmlns/'
+					&& p.namespaceURI !== 'http://www.w3.org/XML/1998/namespace'
+					&& p.prefix !== 'xmlns' && p.prefix !== 'xml') {
+				if (p.namespaceURI !== rdfNs) {
+					property = $.rdf.resource('<' + p.namespaceURI
+							+ getLocalName(p) + '>');
+					object = $.rdf
+							.literal('"' + p.nodeValue + '"', literalOpts);
+					triples.push($.rdf.triple(subject, property, object));
+				} else if (getLocalName(p) === 'type') {
+					property = $.rdf.type;
+					object = $.rdf.resource('<' + p.nodeValue + '>', {
+						base : base
+					});
+					triples.push($.rdf.triple(subject, property, object));
+				}
+			}
+		}
+		for (i = 0; i < elem.childNodes.length; i += 1) {
+			p = elem.childNodes[i];
+			if (p.nodeType === 1) {
+				if (p.namespaceURI === rdfNs && getLocalName(p) === 'li') {
+					property = $.rdf.resource('<' + rdfNs + '_' + li + '>');
+					li += 1;
+				} else {
+					property = $.rdf.resource('<' + p.namespaceURI
+							+ getLocalName(p) + '>');
+				}
+				lang = getAttributeNS(p,
+						'http://www.w3.org/XML/1998/namespace', 'lang')
+						|| lang;
+				if (lang !== null && lang !== undefined && lang !== '') {
+					literalOpts = {
+						lang : lang
+					};
+				}
+				if (hasAttributeNS(p, rdfNs, 'resource')) {
+					o = getAttributeNS(p, rdfNs, 'resource');
+					object = $.rdf.resource('<' + o + '>', {
+						base : base
+					});
+				} else if (hasAttributeNS(p, rdfNs, 'nodeID')) {
+					o = getAttributeNS(p, rdfNs, 'nodeID');
+					object = $.rdf.blank('_:' + o);
+				} else if (hasAttributeNS(p, rdfNs, 'parseType')) {
+					parseType = getAttributeNS(p, rdfNs, 'parseType');
+					if (parseType === 'Literal') {
+						try {
+							serializer = new XMLSerializer();
+							o = serializer.serializeToString(p
+									.getElementsByTagName('*')[0]);
+						} catch (e) {
+							o = "";
+							for (j = 0; j < p.childNodes.length; j += 1) {
+								o += p.childNodes[j].xml;
+							}
+						}
+						object = $.rdf.literal(o, {
+							datatype : rdfNs + 'XMLLiteral'
+						});
+					} else if (parseType === 'Resource') {
+						oTriples = parseRdfXmlDescription(p, false, base, lang);
+						if (oTriples.length > 0) {
+							object = oTriples[oTriples.length - 1].subject;
+							triples = triples.concat(oTriples);
+						} else {
+							object = $.rdf.blank('[]');
+						}
+					} else if (parseType === 'Collection') {
+						if (p.getElementsByTagName('*').length > 0) {
+							for (j = 0; j < p.childNodes.length; j += 1) {
+								o = p.childNodes[j];
+								if (o.nodeType === 1) {
+									collectionItems.push(o);
+								}
+							}
+							collection1 = $.rdf.blank('[]');
+							object = collection1;
+							for (j = 0; j < collectionItems.length; j += 1) {
+								o = collectionItems[j];
+								oTriples = parseRdfXmlDescription(o, true,
+										base, lang);
+								if (oTriples.length > 0) {
+									collectionItem = oTriples[oTriples.length - 1].subject;
+									triples = triples.concat(oTriples);
+								} else {
+									collectionItem = parseRdfXmlSubject(o);
+								}
+								triples.push($.rdf.triple(collection1,
+										$.rdf.first, collectionItem));
+								if (j === collectionItems.length - 1) {
+									triples.push($.rdf.triple(collection1,
+											$.rdf.rest, $.rdf.nil));
+								} else {
+									collection2 = $.rdf.blank('[]');
+									triples.push($.rdf.triple(collection1,
+											$.rdf.rest, collection2));
+									collection1 = collection2;
+								}
+							}
+						} else {
+							object = $.rdf.nil;
+						}
+					}
+				} else if (hasAttributeNS(p, rdfNs, 'datatype')) {
+					o = p.childNodes[0].nodeValue;
+					object = $.rdf.literal(o, {
+						datatype : getAttributeNS(p, rdfNs, 'datatype')
+					});
+				} else if (p.getElementsByTagName('*').length > 0) {
+					for (j = 0; j < p.childNodes.length; j += 1) {
+						o = p.childNodes[j];
+						if (o.nodeType === 1) {
+							oTriples = parseRdfXmlDescription(o, true, base,
+									lang);
+							if (oTriples.length > 0) {
+								object = oTriples[oTriples.length - 1].subject;
+								triples = triples.concat(oTriples);
+							} else {
+								object = parseRdfXmlSubject(o);
+							}
+						}
+					}
+				} else if (p.childNodes.length > 0) {
+					o = p.childNodes[0].nodeValue;
+					object = $.rdf.literal('"' + o + '"', literalOpts);
+				} else {
+					oTriples = parseRdfXmlDescription(p, false, base, lang);
+					if (oTriples.length > 0) {
+						object = oTriples[oTriples.length - 1].subject;
+						triples = triples.concat(oTriples);
+					} else {
+						object = $.rdf.blank('[]');
+					}
+				}
+				triples.push($.rdf.triple(subject, property, object));
+				if (hasAttributeNS(p, rdfNs, 'ID')) {
+					reified = $.rdf.resource('<#'
+							+ getAttributeNS(p, rdfNs, 'ID') + '>', {
+						base : base
+					});
+					triples.push($.rdf.triple(reified, $.rdf.subject, subject));
+					triples.push($.rdf
+							.triple(reified, $.rdf.property, property));
+					triples.push($.rdf.triple(reified, $.rdf.object, object));
+				}
+			}
+		}
+		return triples;
+	},
+
+	parseRdfXml = function(doc) {
+		var i, lang, d, triples = [];
+		if (doc.documentElement.namespaceURI === rdfNs
+				&& getLocalName(doc.documentElement) === 'RDF') {
+			lang = getAttributeNS(doc.documentElement,
+					'http://www.w3.org/XML/1998/namespace', 'lang');
+			base = getAttributeNS(doc.documentElement,
+					'http://www.w3.org/XML/1998/namespace', 'base')
+					|| $.uri.base();
+			for (i = 0; i < doc.documentElement.childNodes.length; i += 1) {
+				d = doc.documentElement.childNodes[i];
+				if (d.nodeType === 1) {
+					triples = triples.concat(parseRdfXmlDescription(d, true,
+							base, lang));
+				}
+			}
+		} else {
+			triples = parseRdfXmlDescription(doc.documentElement, true);
+		}
+		return triples;
+	};
+
+	$.typedValue.types['http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral'] = {
+		regex : /^.*$/m,
+		strip : false,
+		value : function(v) {
+			return v;
+		}
+	};
+
+	/**
+	 * <p>
+	 * Creates a new jQuery.rdf object. This should be invoked as a method
+	 * rather than constructed using new; indeed you will usually want to
+	 * generate these objects using a method such as {@link jQuery#rdf} or
+	 * {@link jQuery.rdf#where}.
+	 * </p>
+	 * 
+	 * @class
+	 * <p>
+	 * A jQuery.rdf object represents the results of a query over its
+	 * {@link jQuery.rdf#databank}. The results of a query are a sequence of
+	 * objects which represent the bindings of values to the variables used in
+	 * filter expressions specified using {@link jQuery.rdf#where} or
+	 * {@link jQuery.rdf#optional}. Each of the objects in this sequence has
+	 * associated with it a set of triples that are the sources for the variable
+	 * bindings, which you can get at using {@link jQuery.rdf#sources}.
+	 * </p>
+	 * <p>
+	 * The {@link jQuery.rdf} object itself is a lot like a {@link jQuery}
+	 * object. It has a {@link jQuery.rdf#length} and the individual matches can
+	 * be accessed using <code>[<var>n</var>]</code>, but you can also
+	 * iterate through the matches using {@link jQuery.rdf#map} or
+	 * {@link jQuery.rdf#each}.
+	 * </p>
+	 * <p>
+	 * {@link jQuery.rdf} is designed to mirror the functionality of <a
+	 * href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL</a> while providing
+	 * an interface that's familiar and easy to use for jQuery programmers.
+	 * </p>
+	 * @param {Object}
+	 *            [options]
+	 * @param {jQuery.rdf.databank}
+	 *            [options.databank] The databank that this query should operate
+	 *            over.
+	 * @param {jQuery.rdf.triple[]}
+	 *            [options.triples] A set of triples over which the query
+	 *            operates; this is only used if options.databank isn't
+	 *            specified, in which case a new databank with these triples is
+	 *            generated.
+	 * @param {Object}
+	 *            [options.namespaces] An object representing a set of namespace
+	 *            bindings. Rather than passing this in when you construct the
+	 *            {@link jQuery.rdf} instance, you will usually want to use the
+	 *            {@link jQuery.rdf#prefix} method.
+	 * @param {String|jQuery.uri}
+	 *            [options.base] The base URI used to interpret any relative
+	 *            URIs used within the query.
+	 * @returns {jQuery.rdf}
+	 * @example rdf = jQuery.rdf();
+	 * @see jQuery#rdf
+	 */
+	$.rdf = function(options) {
+		return new $.rdf.fn.init(options);
+	};
+
+	$.rdf.fn = $.rdf.prototype = {
+		/**
+		 * The version of rdfQuery.
+		 * 
+		 * @type String
+		 */
+		rdfquery : '0.9',
+
+		init : function(options) {
+			var databanks;
+			options = options || {};
+			/* must specify either a parent or a union, otherwise it's the top */
+			this.parent = options.parent;
+			this.union = options.union;
+			this.top = this.parent === undefined && this.union === undefined;
+			if (this.union === undefined) {
+				if (options.databank === undefined) {
+					/**
+					 * The databank over which this query operates.
+					 * 
+					 * @type jQuery.rdf.databank
+					 */
+					this.databank = this.parent === undefined ? $.rdf.databank(
+							options.triples, options) : this.parent.databank;
+				} else {
+					this.databank = options.databank;
+				}
+			} else {
+				databanks = $.map(this.union, function(query) {
+					return query.databank;
+				});
+				databanks = $.unique(databanks);
+				if (databanks[1] !== undefined) {
+					this.databank = $.rdf.databank(undefined, {
+						union : databanks
+					});
+				} else {
+					this.databank = databanks[0];
+				}
+			}
+			this.children = [];
+			this.partOf = [];
+			this.filterExp = options.filter;
+			this.alphaMemory = [];
+			this.matches = [];
+			/**
+			 * The number of matches represented by the {@link jQuery.rdf}
+			 * object.
+			 * 
+			 * @type Integer
+			 */
+			this.length = 0;
+			if (this.filterExp !== undefined) {
+				if (!$.isFunction(this.filterExp)) {
+					registerQuery(this.databank, this);
+					this.alphaMemory = findMatches(this.databank.triples(),
+							this.filterExp);
+				}
+			}
+			leftActivate(this);
+			return this;
+		},
+
+		/**
+		 * Sets or returns the base URI of the {@link jQuery.rdf#databank}.
+		 * 
+		 * @param {String|jQuery.uri}
+		 *            [base]
+		 * @returns A {@link jQuery.uri} if no base URI is specified, otherwise
+		 *          returns this {@link jQuery.rdf} object.
+		 * @example baseURI = jQuery('html').rdf().base();
+		 * @example jQuery('html').rdf().base('http://www.example.org/');
+		 * @see jQuery.rdf.databank#base
+		 */
+		base : function(base) {
+			if (base === undefined) {
+				return this.databank.base();
+			} else {
+				this.databank.base(base);
+				return this;
+			}
+		},
+
+		/**
+		 * Sets or returns a namespace binding on the
+		 * {@link jQuery.rdf#databank}.
+		 * 
+		 * @param {String}
+		 *            [prefix]
+		 * @param {String}
+		 *            [namespace]
+		 * @returns {Object|jQuery.uri|jQuery.rdf} If no prefix or namespace is
+		 *          specified, returns an object providing all namespace
+		 *          bindings on the {@link jQuery.rdf.databank}. If a prefix is
+		 *          specified without a namespace, returns the
+		 *          {@link jQuery.uri} associated with that prefix. Otherwise
+		 *          returns this {@link jQuery.rdf} object after setting the
+		 *          namespace binding.
+		 * @example namespace = jQuery('html').rdf().prefix('foaf');
+		 * @example jQuery('html').rdf().prefix('foaf',
+		 *          'http://xmlns.com/foaf/0.1/');
+		 * @see jQuery.rdf.databank#prefix
+		 */
+		prefix : function(prefix, namespace) {
+			if (namespace === undefined) {
+				return this.databank.prefix(prefix);
+			} else {
+				this.databank.prefix(prefix, namespace);
+				return this;
+			}
+		},
+
+		/**
+		 * Adds a triple to the {@link jQuery.rdf#databank} or another
+		 * {@link jQuery.rdf} object to create a union.
+		 * 
+		 * @param {String|jQuery.rdf.triple|jQuery.rdf.pattern|jQuery.rdf}
+		 *            triple The triple, {@link jQuery.rdf.pattern} or
+		 *            {@link jQuery.rdf} object to be added to this one. If the
+		 *            triple is a {@link jQuery.rdf} object, the two queries are
+		 *            unioned together. If the triple is a string, it's parsed
+		 *            as a {@link jQuery.rdf.pattern}. The pattern will be
+		 *            completed using the current matches on the
+		 *            {@link jQuery.rdf} object to create multiple triples, one
+		 *            for each set of bindings.
+		 * @param {Object}
+		 *            [options]
+		 * @param {Object}
+		 *            [options.namespaces] An object representing a set of
+		 *            namespace bindings used to interpret CURIEs within the
+		 *            triple. Defaults to the namespace bindings defined on the
+		 *            {@link jQuery.rdf#databank}.
+		 * @param {String|jQuery.uri}
+		 *            [options.base] The base URI used to interpret any relative
+		 *            URIs used within the triple. Defaults to the base URI
+		 *            defined on the {@link jQuery.rdf#databank}.
+		 * @returns {jQuery.rdf} This {@link jQuery.rdf} object.
+		 * @example var rdf = $.rdf() .prefix('dc', ns.dc) .prefix('foaf',
+		 *          ns.foaf) .add('&lt;photo1.jpg> dc:creator
+		 *          &lt;http://www.blogger.com/profile/1109404> .')
+		 *          .add('&lt;http://www.blogger.com/profile/1109404> foaf:img
+		 *          &lt;photo1.jpg> .');
+		 * @example var rdfA = $.rdf() .prefix('dc', ns.dc)
+		 *          .add('&lt;photo1.jpg> dc:creator "Jane"'); var rdfB =
+		 *          $.rdf() .prefix('foaf', ns.foaf) .add('&lt;photo1.jpg>
+		 *          foaf:depicts "Jane"'); var rdf = rdfA.add(rdfB);
+		 * @see jQuery.rdf.databank#add
+		 */
+		add : function(triple, options) {
+			var query, databank;
+			if (triple.rdfquery !== undefined) {
+				if (triple.top) {
+					databank = this.databank.add(triple.databank);
+					query = $.rdf({
+						parent : this.parent,
+						databank : databank
+					});
+					return query;
+				} else if (this.top) {
+					databank = triple.databank.add(this.databank);
+					query = $.rdf({
+						parent : triple.parent,
+						databank : databank
+					});
+					return query;
+				} else if (this.union === undefined) {
+					query = $.rdf({
+						union : [ this, triple ]
+					});
+					this.partOf.push(query);
+					triple.partOf.push(query);
+					return query;
+				} else {
+					this.union.push(triple);
+					triple.partOf.push(this);
+				}
+			} else {
+				if (typeof triple === 'string') {
+					options = $.extend({}, {
+						base : this.base(),
+						namespaces : this.prefix(),
+						source : triple
+					}, options);
+					triple = $.rdf.pattern(triple, options);
+				}
+				if (triple.isFixed()) {
+					this.databank.add(triple.triple(), options);
+				} else {
+					query = this;
+					this.each(function(i, data) {
+						var t = triple.triple(data);
+						if (t !== null) {
+							query.databank.add(t, options);
+						}
+					});
+				}
+			}
+			return this;
+		},
+
+		/**
+		 * Removes a triple or several triples from the
+		 * {@link jQuery.rdf#databank}.
+		 * 
+		 * @param {String|jQuery.rdf.triple|jQuery.rdf.pattern}
+		 *            triple The triple to be removed, or a
+		 *            {@link jQuery.rdf.pattern} that matches the triples that
+		 *            should be removed.
+		 * @param {Object}
+		 *            [options]
+		 * @param {Object}
+		 *            [options.namespaces] An object representing a set of
+		 *            namespace bindings used to interpret any CURIEs within the
+		 *            triple or pattern. Defaults to the namespace bindings
+		 *            defined on the {@link jQuery.rdf#databank}.
+		 * @param {String|jQuery.uri}
+		 *            [options.base] The base URI used to interpret any relative
+		 *            URIs used within the triple or pattern. Defaults to the
+		 *            base URI defined on the {@link jQuery.rdf#databank}.
+		 * @returns {jQuery.rdf} The {@link jQuery.rdf} object itself.
+		 * @example var rdf = $('html').rdf() .prefix('foaf', ns.foaf)
+		 *          .where('?person foaf:givenname ?gname') .where('?person
+		 *          foaf:family_name ?fname') .remove('?person foaf:family_name
+		 *          ?fname');
+		 * @see jQuery.rdf.databank#remove
+		 */
+		remove : function(triple, options) {
+			if (typeof triple === 'string') {
+				options = $.extend({}, {
+					base : this.base(),
+					namespaces : this.prefix()
+				}, options);
+				triple = $.rdf.pattern(triple, options);
+			}
+			if (triple.isFixed()) {
+				this.databank.remove(triple.triple(), options);
+			} else {
+				query = this;
+				this.each(function(i, data) {
+					var t = triple.triple(data);
+					if (t !== null) {
+						query.databank.remove(t, options);
+					}
+				});
+			}
+			return this;
+		},
+
+		/**
+		 * Loads some data into the {@link jQuery.rdf#databank}
+		 * 
+		 * @param data
+		 * @param {Object}
+		 *            [options]
+		 * @see jQuery.rdf.databank#load
+		 */
+		load : function(data, options) {
+			this.databank.load(data, options);
+			return this;
+		},
+
+		/**
+		 * Creates a new {@link jQuery.rdf} object whose databank contains all
+		 * the triples in this object's databank except for those in the
+		 * argument's databank.
+		 * 
+		 * @param {jQuery.rdf}
+		 *            query
+		 * @see jQuery.rdf.databank#except
+		 */
+		except : function(query) {
+			return $.rdf({
+				databank : this.databank.except(query.databank)
+			});
+		},
+
+		/**
+		 * Creates a new {@link jQuery.rdf} object that is the result of
+		 * filtering the matches on this {@link jQuery.rdf} object based on the
+		 * filter that's passed into it.
+		 * 
+		 * @param {String|jQuery.rdf.pattern}
+		 *            filter An expression that filters the triples in the
+		 *            {@link jQuery.rdf#databank} to locate matches based on the
+		 *            matches on this {@link jQuery.rdf} object. If it's a
+		 *            string, the filter is parsed as a
+		 *            {@link jQuery.rdf.pattern}.
+		 * @param {Object}
+		 *            [options]
+		 * @param {Object}
+		 *            [options.namespaces] An object representing a set of
+		 *            namespace bindings used to interpret any CURIEs within the
+		 *            pattern. Defaults to the namespace bindings defined on the
+		 *            {@link jQuery.rdf#databank}.
+		 * @param {String|jQuery.uri}
+		 *            [options.base] The base URI used to interpret any relative
+		 *            URIs used within the pattern. Defaults to the base URI
+		 *            defined on the {@link jQuery.rdf#databank}.
+		 * @param {boolean}
+		 *            [options.optional] Not usually used (use
+		 *            {@link jQuery.rdf#optional} instead).
+		 * @returns {jQuery.rdf} A new {@link jQuery.rdf} object whose
+		 *          {@link jQuery.rdf#parent} is this {@link jQuery.rdf}.
+		 * @see jQuery.rdf#optional
+		 * @see jQuery.rdf#filter
+		 * @see jQuery.rdf#about
+		 * @example var rdf = $.rdf() .prefix('foaf', ns.foaf) .add('_:a
+		 *          foaf:givenname "Alice" .') .add('_:a foaf:family_name
+		 *          "Hacker" .') .add('_:b foaf:givenname "Bob" .') .add('_:b
+		 *          foaf:family_name "Hacker" .') .where('?person
+		 *          foaf:family_name "Hacker"') .where('?person foaf:givenname
+		 *          "Bob");
+		 */
+		where : function(filter, options) {
+			var query, base, namespaces, optional;
+			options = options || {};
+			if (typeof filter === 'string') {
+				base = options.base || this.base();
+				namespaces = $.extend({}, this.prefix(), options.namespaces
+						|| {});
+				optional = options.optional || false;
+				filter = $.rdf.pattern(filter, {
+					namespaces : namespaces,
+					base : base,
+					optional : optional
+				});
+			}
+			query = $.rdf($.extend({}, options, {
+				parent : this,
+				filter : filter
+			}));
+			this.children.push(query);
+			return query;
+		},
+
+		/**
+		 * Creates a new {@link jQuery.rdf} object whose set of bindings might
+		 * optionally include those based on the filter pattern.
+		 * 
+		 * @param {String|jQuery.rdf.pattern}
+		 *            filter An pattern for a set of bindings that might be
+		 *            added to those in this {@link jQuery.rdf} object.
+		 * @param {Object}
+		 *            [options]
+		 * @param {Object}
+		 *            [options.namespaces] An object representing a set of
+		 *            namespace bindings used to interpret any CURIEs within the
+		 *            pattern. Defaults to the namespace bindings defined on the
+		 *            {@link jQuery.rdf#databank}.
+		 * @param {String|jQuery.uri}
+		 *            [options.base] The base URI used to interpret any relative
+		 *            URIs used within the pattern. Defaults to the base URI
+		 *            defined on the {@link jQuery.rdf#databank}.
+		 * @returns {jQuery.rdf} A new {@link jQuery.rdf} object whose
+		 *          {@link jQuery.rdf#parent} is this {@link jQuery.rdf}.
+		 * @see jQuery.rdf#where
+		 * @see jQuery.rdf#filter
+		 * @see jQuery.rdf#about
+		 * @example var rdf = $.rdf() .prefix('foaf',
+		 *          'http://xmlns.com/foaf/0.1/') .prefix('rdf',
+		 *          'http://www.w3.org/1999/02/22-rdf-syntax-ns#') .add('_:a
+		 *          rdf:type foaf:Person .') .add('_:a foaf:name "Alice" .')
+		 *          .add('_:a foaf:mbox &lt;mailto:alice@example.com> .')
+		 *          .add('_:a foaf:mbox &lt;mailto:alice@work.example> .')
+		 *          .add('_:b rdf:type foaf:Person .') .add('_:b foaf:name "Bob"
+		 *          .') .where('?x foaf:name ?name') .optional('?x foaf:mbox
+		 *          ?mbox');
+		 */
+		optional : function(filter, options) {
+			return this.where(filter, $.extend({}, options || {}, {
+				optional : true
+			}));
+		},
+
+		/**
+		 * Creates a new {@link jQuery.rdf} object whose set of bindings include
+		 * <code>property</code> and <code>value</code> for every triple
+		 * that is about the specified resource.
+		 * 
+		 * @param {String|jQuery.rdf.resource}
+		 *            resource The subject of the matching triples.
+		 * @param {Object}
+		 *            [options]
+		 * @param {Object}
+		 *            [options.namespaces] An object representing a set of
+		 *            namespace bindings used to interpret the resource if it's
+		 *            a CURIE. Defaults to the namespace bindings defined on the
+		 *            {@link jQuery.rdf#databank}.
+		 * @param {String|jQuery.uri}
+		 *            [options.base] The base URI used to interpret the resource
+		 *            if it's a relative URI (wrapped in <code>&lt;</code> and
+		 *            <code>&gt;</code>). Defaults to the base URI defined on
+		 *            the {@link jQuery.rdf#databank}.
+		 * @returns {jQuery.rdf} A new {@link jQuery.rdf} object whose
+		 *          {@link jQuery.rdf#parent} is this {@link jQuery.rdf}.
+		 * @see jQuery.rdf#where
+		 * @see jQuery.rdf#optional
+		 * @see jQuery.rdf#filter
+		 * @example var rdf = $.rdf() .prefix('dc', ns.dc) .prefix('foaf',
+		 *          ns.foaf) .add('&lt;photo1.jpg> dc:creator
+		 *          &lt;http://www.blogger.com/profile/1109404> .')
+		 *          .add('&lt;http://www.blogger.com/profile/1109404> foaf:img
+		 *          &lt;photo1.jpg> .') .add('&lt;photo2.jpg> dc:creator
+		 *          &lt;http://www.blogger.com/profile/1109404> .')
+		 *          .add('&lt;http://www.blogger.com/profile/1109404> foaf:img
+		 *          &lt;photo2.jpg> .')
+		 *          .about('&lt;http://www.blogger.com/profile/1109404>');
+		 */
+		about : function(resource, options) {
+			return this.where(resource + ' ?property ?value', options);
+		},
+
+		/**
+		 * Creates a new {@link jQuery.rdf} object whose set of bindings include
+		 * only those that satisfy some arbitrary condition. There are two main
+		 * ways to call this method: with two arguments in which case the first
+		 * is a binding to be tested and the second represents a condition on
+		 * the test, or with one argument which is a function that should return
+		 * true for acceptable bindings.
+		 * 
+		 * @param {Function|String}
+		 *            property
+		 *            <p>
+		 *            In the two-argument version, this is the name of a
+		 *            property to be tested against the condition specified in
+		 *            the second argument. In the one-argument version, this is
+		 *            a function in which <code>this</code> is an object whose
+		 *            properties are a set of {@link jQuery.rdf.resource},
+		 *            {@link jQuery.rdf.literal} or {@link jQuery.rdf.blank}
+		 *            objects and whose arguments are:
+		 *            </p>
+		 *            <dl>
+		 *            <dt>i</dt>
+		 *            <dd>The index of the set of bindings amongst the other
+		 *            matches</dd>
+		 *            <dt>bindings</dt>
+		 *            <dd>An object representing the bindings (the same as
+		 *            <code>this</code>)</dd>
+		 *            <dt>triples</dt>
+		 *            <dd>The {@link jQuery.rdf.triple}s that underly this set
+		 *            of bindings</dd>
+		 *            </dl>
+		 * @param {RegExp|String}
+		 *            condition In the two-argument version of this function,
+		 *            the condition that the property's must match. If it is a
+		 *            regular expression, the value must match the regular
+		 *            expression. If it is a {@link jQuery.rdf.literal}, the
+		 *            value of the literal must match the property's value.
+		 *            Otherwise, they must be the same resource.
+		 * @returns {jQuery.rdf} A new {@link jQuery.rdf} object whose
+		 *          {@link jQuery.rdf#parent} is this {@link jQuery.rdf}.
+		 * @see jQuery.rdf#where
+		 * @see jQuery.rdf#optional
+		 * @see jQuery.rdf#about
+		 * @example var rdf = $.rdf() .prefix('foaf',
+		 *          'http://xmlns.com/foaf/0.1/') .add('_:a foaf:surname "Jones"
+		 *          .') .add('_:b foaf:surname "Macnamara" .') .add('_:c
+		 *          foaf:surname "O\'Malley"') .add('_:d foaf:surname "MacFee"')
+		 *          .where('?person foaf:surname ?surname') .filter('surname',
+		 *          /^Ma?c/) .each(function () {
+		 *          scottish.push(this.surname.value); }) .end()
+		 *          .filter('surname', /^O'/) .each(function () {
+		 *          irish.push(this.surname.value); }) .end();
+		 * @example var rdf = $.rdf() .prefix('foaf',
+		 *          'http://xmlns.com/foaf/0.1/') .add('_:a foaf:surname "Jones"
+		 *          .') .add('_:b foaf:surname "Macnamara" .') .add('_:c
+		 *          foaf:surname "O\'Malley"') .add('_:d foaf:surname "MacFee"')
+		 *          .where('?person foaf:surname ?surname') .filter(function () {
+		 *          return this.surname !== "Jones"; })
+		 */
+		filter : function(property, condition) {
+			var func, query;
+			if (typeof property === 'string') {
+				if (condition.constructor === RegExp) {
+					/** @ignore func */
+					func = function() {
+						return condition.test(this[property].value);
+					};
+				} else {
+					func = function() {
+						return this[property].type === 'literal' ? this[property].value === condition
+								: this[property] === condition;
+					};
+				}
+			} else {
+				func = property;
+			}
+			query = $.rdf({
+				parent : this,
+				filter : func
+			});
+			this.children.push(query);
+			return query;
+		},
+
+		/**
+		 * Filters the variable bindings held by this {@link jQuery.rdf} object
+		 * down to those listed in the bindings parameter. This mirrors the <a
+		 * href="http://www.w3.org/TR/rdf-sparql-query/#select">SELECT</a> form
+		 * in SPARQL.
+		 * 
+		 * @param {String[]}
+		 *            [bindings] The variables that you're interested in. The
+		 *            returned objects will only contain those variables. If
+		 *            bindings is undefined, you will get all the variable
+		 *            bindings in the returned objects.
+		 * @returns {Object[]} An array of objects with the properties named by
+		 *          the bindings parameter.
+		 * @example var filtered = rdf .where('?photo dc:creator ?creator')
+		 *          .where('?creator foaf:img ?photo'); var selected =
+		 *          rdf.select(['creator']);
+		 */
+		select : function(bindings) {
+			var s = [], i, j;
+			for (i = 0; i < this.length; i += 1) {
+				if (bindings === undefined) {
+					s[i] = this[i];
+				} else {
+					s[i] = {};
+					for (j = 0; j < bindings.length; j += 1) {
+						s[i][bindings[j]] = this[i][bindings[j]];
+					}
+				}
+			}
+			return s;
+		},
+
+		/**
+		 * Provides <a
+		 * href="http://n2.talis.com/wiki/Bounded_Descriptions_in_RDF#Simple_Concise_Bounded_Description">simple
+		 * concise bounded descriptions</a> of the resources or bindings that
+		 * are passed in the argument. This mirrors the <a
+		 * href="http://www.w3.org/TR/rdf-sparql-query/#describe">DESCRIBE</a>
+		 * form in SPARQL.
+		 * 
+		 * @param {(String|jQuery.rdf.resource)[]}
+		 *            bindings An array that can contain strings,
+		 *            {@link jQuery.rdf.resource}s or a mixture of the two. Any
+		 *            strings that begin with a question mark (<code>?</code>)
+		 *            are taken as variable names; each matching resource is
+		 *            described by the function.
+		 * @returns {jQuery} A {@link jQuery} object that contains
+		 *          {@link jQuery.rdf.triple}s that describe the listed
+		 *          resources.
+		 * @see jQuery.rdf.databank#describe
+		 * @example $.rdf.dump($('html').rdf().describe(['<photo1.jpg>']));
+		 * @example $('html').rdf() .where('?person foaf:img ?picture')
+		 *          .describe(['?photo'])
+		 */
+		describe : function(bindings) {
+			var i, j, binding, resources = [];
+			for (i = 0; i < bindings.length; i += 1) {
+				binding = bindings[i];
+				if (binding.substring(0, 1) === '?') {
+					binding = binding.substring(1);
+					for (j = 0; j < this.length; j += 1) {
+						resources.push(this[j][binding]);
+					}
+				} else {
+					resources.push(binding);
+				}
+			}
+			return this.databank.describe(resources);
+		},
+
+		/**
+		 * Returns a new {@link jQuery.rdf} object that contains only one set of
+		 * variable bindings. This is designed to mirror the <a
+		 * href="http://docs.jquery.com/Traversing/eq#index">jQuery#eq</a>
+		 * method.
+		 * 
+		 * @param {Integer}
+		 *            n The index number of the match that should be selected.
+		 * @returns {jQuery.rdf} A new {@link jQuery.rdf} object with just that
+		 *          match.
+		 * @example var rdf = $.rdf() .prefix('foaf',
+		 *          'http://xmlns.com/foaf/0.1/') .add('_:a foaf:name "Alice"
+		 *          .') .add('_:a foaf:homepage <http://work.example.org/alice/>
+		 *          .') .add('_:b foaf:name "Bob" .') .add('_:b foaf:mbox
+		 *          <mailto:bob@work.example> .') .where('?x foaf:name ?name')
+		 *          .eq(1);
+		 */
+		eq : function(n) {
+			return this.filter(function(i) {
+				return i === n;
+			});
+		},
+
+		/**
+		 * Returns a {@link jQuery.rdf} object that includes no filtering (and
+		 * therefore has no matches) over the {@link jQuery.rdf#databank}.
+		 * 
+		 * @returns {jQuery.rdf} An empty {@link jQuery.rdf} object.
+		 * @example $('html').rdf() .where('?person foaf:family_name "Hacker"')
+		 *          .where('?person foaf:givenname "Alice"') .each(...do
+		 *          something with Alice Hacker...) .reset() .where('?person
+		 *          foaf:family_name "Jones"') .where('?person foaf:givenname
+		 *          "Bob"') .each(...do something with Bob Jones...);
+		 */
+		reset : function() {
+			var query = this;
+			while (query.parent !== undefined) {
+				query = query.parent;
+			}
+			return query;
+		},
+
+		/**
+		 * Returns the parent {@link jQuery.rdf} object, which is equivalent to
+		 * undoing the most recent filtering operation (such as
+		 * {@link jQuery.rdf#where} or {@link jQuery.rdf#filter}). This is
+		 * designed to mirror the <a
+		 * href="http://docs.jquery.com/Traversing/end">jQuery#end</a> method.
+		 * 
+		 * @returns {jQuery.rdf}
+		 * @example $('html').rdf() .where('?person foaf:family_name "Hacker"')
+		 *          .where('?person foaf:givenname "Alice"') .each(...do
+		 *          something with Alice Hacker...) .end() .where('?person
+		 *          foaf:givenname "Bob"') .each(...do something with Bob
+		 *          Hacker...);
+		 */
+		end : function() {
+			return this.parent;
+		},
+
+		/**
+		 * Returns the number of matches in this {@link jQuery.rdf} object
+		 * (equivalent to {@link jQuery.rdf#length}).
+		 * 
+		 * @returns {Integer} The number of matches in this {@link jQuery.rdf}
+		 *          object.
+		 * @see jQuery.rdf#length
+		 */
+		size : function() {
+			return this.length;
+		},
+
+		/**
+		 * Gets the triples that form the basis of the variable bindings that
+		 * are the primary product of {@link jQuery.rdf}. Getting hold of the
+		 * triples can be useful for understanding the facts that form the basis
+		 * of the variable bindings.
+		 * 
+		 * @returns {jQuery} A {@link jQuery} object containing arrays of
+		 *          {@link jQuery.rdf.triple} objects. A {@link jQuery} object
+		 *          is returned so that you can easily iterate over the
+		 *          contents.
+		 * @example $('html').rdf() .where('?thing a foaf:Person') .sources()
+		 *          .each(function () { ...do something with the array of
+		 *          triples... });
+		 */
+		sources : function() {
+			return $($.map(this.matches, function(match) {
+				// return an array-of-an-array because arrays automatically get
+				// expanded
+				// by $.map()
+				return [ match.triples ];
+			}));
+		},
+
+		/**
+		 * Dumps the triples that form the basis of the variable bindings that
+		 * are the primary product of {@link jQuery.rdf} into a format that can
+		 * be shown to the user or sent to a server.
+		 * 
+		 * @param {Object}
+		 *            [options] Options that control the formatting of the
+		 *            triples. See {@link jQuery.rdf.dump} for details.
+		 * @see jQuery.rdf.dump
+		 */
+		dump : function(options) {
+			var triples = $.map(this.matches, function(match) {
+				return match.triples;
+			});
+			options = $.extend({
+				namespaces : this.databank.namespaces,
+				base : this.databank.base
+			}, options || {});
+			return $.rdf.dump(triples, options);
+		},
+
+		/**
+		 * Either returns the item specified by the argument or turns the
+		 * {@link jQuery.rdf} object into an array. This mirrors the <a
+		 * href="http://docs.jquery.com/Core/get">jQuery#get</a> method.
+		 * 
+		 * @param {Integer}
+		 *            [num] The number of the item to be returned.
+		 * @returns {Object[]|Object} Returns either a single Object
+		 *          representing variable bindings or an array of such.
+		 * @example $('html').rdf() .where('?person a foaf:Person') .get(0)
+		 *          .subject .value;
+		 */
+		get : function(num) {
+			return (num === undefined) ? $.makeArray(this) : this[num];
+		},
+
+		/**
+		 * Iterates over the matches held by the {@link jQuery.rdf} object and
+		 * performs a function on each of them. This mirrors the <a
+		 * href="http://docs.jquery.com/Core/each">jQuery#each</a> method.
+		 * 
+		 * @param {Function}
+		 *            callback A function that is called for each match on the
+		 *            {@link jQuery.rdf} object. Within the function,
+		 *            <code>this</code> is set to the object representing the
+		 *            variable bindings. The function can take up to three
+		 *            parameters:
+		 *            <dl>
+		 *            <dt>i</dt>
+		 *            <dd>The index of the match amongst the other matches.</dd>
+		 *            <dt>bindings</dt>
+		 *            <dd>An object representing the variable bindings for the
+		 *            match, the same as <code>this</code>.</dd>
+		 *            <dt>triples</dt>
+		 *            <dd>An array of {@link jQuery.rdf.triple}s associated
+		 *            with the particular match.</dd>
+		 *            </dl>
+		 * @returns {jQuery.rdf} The {@link jQuery.rdf} object.
+		 * @see jQuery.rdf#map
+		 * @example var rdf = $('html').rdf() .where('?photo dc:creator
+		 *          ?creator') .where('?creator foaf:img ?photo') .each(function () {
+		 *          photos.push(this.photo.value); });
+		 */
+		each : function(callback) {
+			$.each(this.matches,
+					function(i, match) {
+						callback.call(match.bindings, i, match.bindings,
+								match.triples);
+					});
+			return this;
+		},
+
+		/**
+		 * Iterates over the matches held by the {@link jQuery.rdf} object and
+		 * creates a new {@link jQuery} object that holds the result of applying
+		 * the passed function to each one. This mirrors the <a
+		 * href="http://docs.jquery.com/Traversing/map">jQuery#map</a> method.
+		 * 
+		 * @param {Function}
+		 *            callback A function that is called for each match on the
+		 *            {@link jQuery.rdf} object. Within the function,
+		 *            <code>this</code> is set to the object representing the
+		 *            variable bindings. The function can take up to three
+		 *            parameters and should return some kind of value:
+		 *            <dl>
+		 *            <dt>i</dt>
+		 *            <dd>The index of the match amongst the other matches.</dd>
+		 *            <dt>bindings</dt>
+		 *            <dd>An object representing the variable bindings for the
+		 *            match, the same as <code>this</code>.</dd>
+		 *            <dt>triples</dt>
+		 *            <dd>An array of {@link jQuery.rdf.triple}s associated
+		 *            with the particular match.</dd>
+		 *            </dl>
+		 * @returns {jQuery} A jQuery object holding the results of the function
+		 *          for each of the matches on the original {@link jQuery.rdf}
+		 *          object.
+		 * @example var photos = $('html').rdf() .where('?photo dc:creator
+		 *          ?creator') .where('?creator foaf:img ?photo') .map(function () {
+		 *          return this.photo.value; });
+		 */
+		map : function(callback) {
+			return $($.map(this.matches, function(match, i) {
+				// in the callback, "this" is the bindings, and the arguments
+				// are
+				// swapped from $.map()
+				return callback.call(match.bindings, i, match.bindings,
+						match.triples);
+			}));
+		},
+
+		/**
+		 * Returns a {@link jQuery} object that wraps this {@link jQuery.rdf}
+		 * object.
+		 * 
+		 * @returns {jQuery}
+		 */
+		jquery : function() {
+			return $(this);
+		}
+	};
+
+	$.rdf.fn.init.prototype = $.rdf.fn;
+
+	$.rdf.gleaners = [];
+
+	/**
+	 * Dumps the triples passed as the first argument into a format that can be
+	 * shown to the user or sent to a server.
+	 * 
+	 * @param {jQuery.rdf.triple[]}
+	 *            triples An array (or {@link jQuery} object) of
+	 *            {@link jQuery.rdf.triple}s.
+	 * @param {Object}
+	 *            [options] Options that control the format of the dump.
+	 * @param {String}
+	 *            [options.format='application/json'] The mime type of the
+	 *            format of the dump. The supported formats are: <table>
+	 *            <tr>
+	 *            <th>mime type</th>
+	 *            <th>description</th>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><code>application/json</code></td>
+	 *            <td>An <a
+	 *            href="http://n2.talis.com/wiki/RDF_JSON_Specification">RDF/JSON</a>
+	 *            object</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><code>application/rdf+xml</code></td>
+	 *            <td>An DOMDocument node holding XML in <a
+	 *            href="http://www.w3.org/TR/rdf-syntax-grammar/">RDF/XML syntax</a></td>
+	 *            </tr>
+	 *            </table>
+	 * @param {Object}
+	 *            [options.namespaces={}] A set of namespace bindings used when
+	 *            mapping resource URIs to CURIEs or QNames (particularly in a
+	 *            RDF/XML serialisation).
+	 * @param {boolean}
+	 *            [options.serialize=false] If true, rather than creating an
+	 *            Object, the function will return a string which is ready to
+	 *            display or send to a server.
+	 * @returns {Object|String} The alternative representation of the triples.
+	 */
+	$.rdf.dump = function(triples, options) {
+		var opts = $.extend({}, $.rdf.dump.defaults, options || {}), format = opts.format, serialize = opts.serialize, dump;
+		if (format === 'application/json') {
+			dump = createJson(triples, opts);
+			return serialize ? $.toJSON(dump) : dump;
+		} else if (format === 'application/rdf+xml') {
+			dump = createRdfXml(triples, opts);
+			if (serialize) {
+				if (dump.xml) {
+					return dump.xml.replace(/\s+$/, '');
+				} else {
+					serializer = new XMLSerializer();
+					return serializer.serializeToString(dump);
+				}
+			} else {
+				return dump;
+			}
+		} else {
+			throw "Unrecognised dump format: " + format
+					+ ". Expected application/json or application/rdf+xml.";
+		}
+	};
+
+	$.rdf.dump.defaults = {
+		format : 'application/json',
+		serialize : false,
+		namespaces : {}
+	}
+
+	/**
+	 * Gleans RDF triples from the nodes held by the {@link jQuery} object, puts
+	 * them into a {@link jQuery.rdf.databank} and returns a {@link jQuery.rdf}
+	 * object that allows you to query and otherwise manipulate them. The
+	 * mechanism for gleaning RDF triples from the web page depends on the
+	 * rdfQuery modules that have been included. The core version of rdfQuery
+	 * doesn't support any gleaners; other versions support a RDFa gleaner, and
+	 * there are some modules available for common microformats.
+	 * 
+	 * @methodOf jQuery#
+	 * @name jQuery#rdf
+	 * @returns {jQuery.rdf} An empty query over the triples stored within the
+	 *          page.
+	 * @example $('#content').rdf().databank.dump();
+	 */
+	$.fn.rdf = function() {
+		var triples = [];
+		if ($(this)[0] && $(this)[0].nodeType === 9) {
+			return $(this).children('*').rdf();
+		} else if ($(this).length > 0) {
+			triples = $(this).map(function(i, elem) {
+				return $.map($.rdf.gleaners, function(gleaner) {
+					return gleaner.call($(elem));
+				});
+			});
+			return $.rdf({
+				triples : triples,
+				namespaces : $(this).xmlns()
+			});
+		} else {
+			return $.rdf();
+		}
+	};
+
+	$
+			.extend(
+					$.expr[':'],
+					{
+
+						about : function(a, i, m) {
+							var j = $(a), resource = m[3] ? j.safeCurie(m[3])
+									: null, isAbout = false;
+							$.each($.rdf.gleaners, function(i, gleaner) {
+								isAbout = gleaner.call(j, {
+									about : resource
+								});
+								if (isAbout) {
+									return null;
+								}
+							});
+							return isAbout;
+						},
+
+						type : function(a, i, m) {
+							var j = $(a), type = m[3] ? j.curie(m[3]) : null, isType = false;
+							$.each($.rdf.gleaners, function(i, gleaner) {
+								if (gleaner.call(j, {
+									type : type
+								})) {
+									isType = true;
+									return null;
+								}
+							});
+							return isType;
+						}
+
+					});
+
+	/**
+	 * <p>
+	 * Creates a new jQuery.rdf.databank object. This should be invoked as a
+	 * method rather than constructed using new; indeed you will not usually
+	 * want to generate these objects directly, but manipulate them through a
+	 * {@link jQuery.rdf} object.
+	 * </p>
+	 * 
+	 * @class Represents a triplestore, holding a bunch of
+	 *        {@link jQuery.rdf.triple}s.
+	 * @param {(String|jQuery.rdf.triple)[]}
+	 *            [triples=[]] An array of triples to store in the databank.
+	 * @param {Object}
+	 *            [options] Initialisation of the databank.
+	 * @param {Object}
+	 *            [options.namespaces] An object representing a set of namespace
+	 *            bindings used when interpreting the CURIEs in strings
+	 *            representing triples. Rather than passing this in when you
+	 *            construct the {@link jQuery.rdf.databank} instance, you will
+	 *            usually want to use the {@link jQuery.rdf.databank#prefix}
+	 *            method.
+	 * @param {String|jQuery.uri}
+	 *            [options.base] The base URI used to interpret any relative
+	 *            URIs used within the strings representing triples.
+	 * @returns {jQuery.rdf.databank} The newly-created databank.
+	 * @see jQuery.rdf
+	 */
+	$.rdf.databank = function(triples, options) {
+		return new $.rdf.databank.fn.init(triples, options);
+	};
+
+	$.rdf.databank.fn = $.rdf.databank.prototype = {
+		init : function(triples, options) {
+			var i;
+			triples = triples || [];
+			options = options || {};
+			this.id = databankID();
+			if (options.union === undefined) {
+				this.queries = {};
+				this.tripleStore = {};
+				this.objectStore = {};
+				this.baseURI = options.base || $.uri.base();
+				this.namespaces = $.extend({}, options.namespaces || {});
+				for (i = 0; i < triples.length; i += 1) {
+					this.add(triples[i]);
+				}
+			} else {
+				this.union = options.union;
+			}
+			return this;
+		},
+
+		/**
+		 * Sets or returns the base URI of the {@link jQuery.rdf.databank}.
+		 * 
+		 * @param {String|jQuery.uri}
+		 *            [base]
+		 * @returns A {@link jQuery.uri} if no base URI is specified, otherwise
+		 *          returns this {@link jQuery.rdf.databank} object.
+		 * @see jQuery.rdf#base
+		 */
+		base : function(base) {
+			if (this.union === undefined) {
+				if (base === undefined) {
+					return this.baseURI;
+				} else {
+					this.baseURI = base;
+					return this;
+				}
+			} else if (base === undefined) {
+				return this.union[0].base();
+			} else {
+				$.each(this.union, function(i, databank) {
+					databank.base(base);
+				});
+				return this;
+			}
+		},
+
+		/**
+		 * Sets or returns a namespace binding on the
+		 * {@link jQuery.rdf.databank}.
+		 * 
+		 * @param {String}
+		 *            [prefix]
+		 * @param {String}
+		 *            [namespace]
+		 * @returns {Object|jQuery.uri|jQuery.rdf} If no prefix or namespace is
+		 *          specified, returns an object providing all namespace
+		 *          bindings on the {@link jQuery.rdf#databank}. If a prefix is
+		 *          specified without a namespace, returns the
+		 *          {@link jQuery.uri} associated with that prefix. Otherwise
+		 *          returns this {@link jQuery.rdf} object after setting the
+		 *          namespace binding.
+		 * @see jQuery.rdf#prefix
+		 */
+		prefix : function(prefix, uri) {
+			var namespaces = {};
+			if (this.union === undefined) {
+				if (prefix === undefined) {
+					return this.namespaces;
+				} else if (uri === undefined) {
+					return this.namespaces[prefix];
+				} else {
+					this.namespaces[prefix] = uri;
+					return this;
+				}
+			} else if (uri === undefined) {
+				$.each(this.union, function(i, databank) {
+					$.extend(namespaces, databank.prefix());
+				});
+				if (prefix === undefined) {
+					return namespaces;
+				} else {
+					return namespaces[prefix];
+				}
+			} else {
+				$.each(this.union, function(i, databank) {
+					databank.prefix(prefix, uri);
+				});
+				return this;
+			}
+		},
+
+		/**
+		 * Adds a triple to the {@link jQuery.rdf.databank} or another
+		 * {@link jQuery.rdf.databank} object to create a union.
+		 * 
+		 * @param {String|jQuery.rdf.triple|jQuery.rdf.databank}
+		 *            triple The triple or {@link jQuery.rdf.databank} object to
+		 *            be added to this one. If the triple is a
+		 *            {@link jQuery.rdf.databank} object, the two databanks are
+		 *            unioned together. If the triple is a string, it's parsed
+		 *            as a {@link jQuery.rdf.triple}.
+		 * @param {Object}
+		 *            [options]
+		 * @param {Object}
+		 *            [options.namespaces] An object representing a set of
+		 *            namespace bindings used to interpret CURIEs within the
+		 *            triple. Defaults to the namespace bindings defined on the
+		 *            {@link jQuery.rdf.databank}.
+		 * @param {String|jQuery.uri}
+		 *            [options.base] The base URI used to interpret any relative
+		 *            URIs used within the triple. Defaults to the base URI
+		 *            defined on the {@link jQuery.rdf.databank}.
+		 * @returns {jQuery.rdf.databank} This {@link jQuery.rdf.databank}
+		 *          object.
+		 * @see jQuery.rdf#add
+		 */
+		add : function(triple, options) {
+			var base = (options && options.base) || this.base(), namespaces = $
+					.extend({}, this.prefix(), (options && options.namespaces)
+							|| {}), databank;
+			if (triple === this) {
+				return this;
+			} else if (triple.tripleStore !== undefined) {
+				// merging two databanks
+				if (this.union === undefined) {
+					databank = $.rdf.databank(undefined, {
+						union : [ this, triple ]
+					});
+					return databank;
+				} else {
+					this.union.push(triple);
+					return this;
+				}
+			} else {
+				if (typeof triple === 'string') {
+					triple = $.rdf.triple(triple, {
+						namespaces : namespaces,
+						base : base,
+						source : triple
+					});
+				}
+				if (this.union === undefined) {
+					if (this.tripleStore[triple.subject] === undefined) {
+						this.tripleStore[triple.subject] = [];
+					}
+					if ($.inArray(triple, this.tripleStore[triple.subject]) === -1) {
+						this.tripleStore[triple.subject].push(triple);
+						if (triple.object.type === 'uri'
+								|| triple.object.type === 'bnode') {
+							if (this.objectStore[triple.object] === undefined) {
+								this.objectStore[triple.object] = [];
+							}
+							this.objectStore[triple.object].push(triple);
+						}
+						addToDatabankQueries(this, triple);
+					}
+				} else {
+					$.each(this.union, function(i, databank) {
+						databank.add(triple);
+					});
+				}
+				return this;
+			}
+		},
+
+		/**
+		 * Removes a triple from the {@link jQuery.rdf.databank}.
+		 * 
+		 * @param {String|jQuery.rdf.triple}
+		 *            triple The triple to be removed.
+		 * @param {Object}
+		 *            [options]
+		 * @param {Object}
+		 *            [options.namespaces] An object representing a set of
+		 *            namespace bindings used to interpret any CURIEs within the
+		 *            triple. Defaults to the namespace bindings defined on the
+		 *            {@link jQuery.rdf.databank}.
+		 * @param {String|jQuery.uri}
+		 *            [options.base] The base URI used to interpret any relative
+		 *            URIs used within the triple. Defaults to the base URI
+		 *            defined on the {@link jQuery.rdf.databank}.
+		 * @returns {jQuery.rdf.databank} The {@link jQuery.rdf.databank} object
+		 *          itself.
+		 * @see jQuery.rdf#remove
+		 */
+		remove : function(triple, options) {
+			var base = (options && options.base) || this.base(), namespaces = $
+					.extend({}, this.prefix(), (options && options.namespaces)
+							|| {}), striples, otriples, databank;
+			if (typeof triple === 'string') {
+				triple = $.rdf.triple(triple, {
+					namespaces : namespaces,
+					base : base,
+					source : triple
+				});
+			}
+			striples = this.tripleStore[triple.subject];
+			if (striples !== undefined) {
+				striples.splice($.inArray(triple, striples), 1);
+			}
+			if (triple.object.type === 'uri' || triple.object.type === 'bnode') {
+				otriples = this.objectStore[triple.object];
+				if (otriples !== undefined) {
+					otriples.splice($.inArray(triple, otriples), 1);
+				}
+			}
+			removeFromDatabankQueries(this, triple);
+			return this;
+		},
+
+		/**
+		 * Creates a new databank containing all the triples in this
+		 * {@link jQuery.rdf.databank} except those in the
+		 * {@link jQuery.rdf.databank} passed as the argument.
+		 * 
+		 * @param {jQuery.rdf.databank}
+		 *            data The other {@link jQuery.rdf.databank}
+		 * @returns {jQuery.rdf.databank} A new {@link jQuery.rdf.databank}
+		 *          containing the triples in this {@link jQuery.rdf.databank}
+		 *          except for those in the data parameter.
+		 * @example var old = $('html').rdf().databank; ...some processing
+		 *          occurs... var new = $('html').rdf().databank; var added =
+		 *          new.except(old); var removed = old.except(new);
+		 */
+		except : function(data) {
+			var store = data.tripleStore, diff = [];
+			$.each(this.tripleStore, function(s, ts) {
+				var ots = store[s];
+				if (ots === undefined) {
+					diff = diff.concat(ts);
+				} else {
+					$.each(ts, function(i, t) {
+						if ($.inArray(t, ots) === -1) {
+							diff.push(t);
+						}
+					});
+				}
+			});
+			return $.rdf.databank(diff);
+		},
+
+		/**
+		 * Provides a {@link jQuery} object containing the triples held in this
+		 * {@link jQuery.rdf.databank}.
+		 * 
+		 * @returns {jQuery} A {@link jQuery} object containing
+		 *          {@link jQuery.rdf.triple} objects.
+		 */
+		triples : function() {
+			var triples = [];
+			if (this.union === undefined) {
+				$.each(this.tripleStore, function(s, t) {
+					triples = triples.concat(t);
+				});
+			} else {
+				$.each(this.union, function(i, databank) {
+					triples = triples.concat(databank.triples().get());
+				});
+				triples = $.unique(triples);
+			}
+			return $(triples);
+		},
+
+		/**
+		 * Tells you how many triples the databank contains.
+		 * 
+		 * @returns {Integer} The number of triples in the
+		 *          {@link jQuery.rdf.databank}.
+		 * @example $('html').rdf().databank.size();
+		 */
+		size : function() {
+			return this.triples().length;
+		},
+
+		/**
+		 * Provides <a
+		 * href="http://n2.talis.com/wiki/Bounded_Descriptions_in_RDF#Simple_Concise_Bounded_Description">simple
+		 * concise bounded descriptions</a> of the resources that are passed in
+		 * the argument. This mirrors the <a
+		 * href="http://www.w3.org/TR/rdf-sparql-query/#describe">DESCRIBE</a>
+		 * form in SPARQL.
+		 * 
+		 * @param {(String|jQuery.rdf.resource)[]}
+		 *            resources An array that can contain strings,
+		 *            {@link jQuery.rdf.resource}s or a mixture of the two.
+		 * @returns {jQuery} A {@link jQuery} object holding the
+		 *          {@link jQuery.rdf.triple}s that describe the listed
+		 *          resources.
+		 * @see jQuery.rdf#describe
+		 */
+		describe : function(resources) {
+			var i, r, t, rhash = {}, triples = [];
+			while (resources.length > 0) {
+				r = resources.pop();
+				if (rhash[r] === undefined) {
+					if (r.value === undefined) {
+						r = $.rdf.resource(r);
+					}
+					if (this.tripleStore[r] !== undefined) {
+						for (i = 0; i < this.tripleStore[r].length; i += 1) {
+							t = this.tripleStore[r][i];
+							triples.push(t);
+							if (t.object.type === 'bnode') {
+								resources.push(t.object);
+							}
+						}
+					}
+					if (this.objectStore[r] !== undefined) {
+						for (i = 0; i < this.objectStore[r].length; i += 1) {
+							t = this.objectStore[r][i];
+							triples.push(t);
+							if (t.subject.type === 'bnode') {
+								resources.push(t.subject);
+							}
+						}
+					}
+					rhash[r] = true;
+				}
+			}
+			return $.unique(triples);
+		},
+
+		/**
+		 * Dumps the triples in the databank into a format that can be shown to
+		 * the user or sent to a server.
+		 * 
+		 * @param {Object}
+		 *            [options] Options that control the formatting of the
+		 *            triples. See {@link jQuery.rdf.dump} for details.
+		 * @returns {Object|Node|String}
+		 * @see jQuery.rdf.dump
+		 */
+		dump : function(options) {
+			options = $.extend({
+				namespaces : this.namespaces,
+				base : this.base
+			}, options || {});
+			return $.rdf.dump(this.triples(), options);
+		},
+
+		/**
+		 * Loads some data into the databank.
+		 * 
+		 * @param {Node|Object}
+		 *            data If the data is a node, it's interpreted to be an <a
+		 *            href="http://www.w3.org/TR/rdf-syntax-grammar/">RDF/XML
+		 *            syntax</a> document and will be parsed as such.
+		 *            Otherwise, it's taken to be a <a
+		 *            href="http://n2.talis.com/wiki/RDF_JSON_Specification">RDF/JSON</a>
+		 *            object. The data cannot be a string; it must be parsed
+		 *            before it is passed to this function.
+		 * @returns {jQuery.rdf.databank} The {@link jQuery.rdf.databank}
+		 *          itself.
+		 * @see jQuery.rdf#load
+		 */
+		load : function(data) {
+			var i, triples;
+			if (data.ownerDocument !== undefined) {
+				triples = parseRdfXml(data);
+			} else {
+				triples = parseJson(data);
+			}
+			for (i = 0; i < triples.length; i += 1) {
+				this.add(triples[i]);
+			}
+			return this;
+		},
+
+		/**
+		 * Provides a string representation of the databank which simply
+		 * specifies how many triples it contains.
+		 * 
+		 * @returns {String}
+		 */
+		toString : function() {
+			return '[Databank with ' + this.size() + ' triples]';
+		}
+	};
+
+	$.rdf.databank.fn.init.prototype = $.rdf.databank.fn;
+
+	/**
+	 * <p>
+	 * Creates a new jQuery.rdf.pattern object. This should be invoked as a
+	 * method rather than constructed using new; indeed you will not usually
+	 * want to generate these objects directly, since they are automatically
+	 * created from strings where necessary, such as by {@link jQuery.rdf#where}.
+	 * </p>
+	 * 
+	 * @class Represents a pattern that may or may not match a given
+	 *        {@link jQuery.rdf.triple}.
+	 * @param {String|jQuery.rdf.resource|jQuery.rdf.blank}
+	 *            subject The subject pattern, or a single string that defines
+	 *            the entire pattern. If the subject is specified as a string,
+	 *            it can be a fixed resource (<code>&lt;<var>uri</var>&gt;</code>
+	 *            or <code><var>curie</var></code>), a blank node (<code>_:<var>id</var></code>)
+	 *            or a variable placeholder (<code>?<var>name</var></code>).
+	 * @param {String|jQuery.rdf.resource}
+	 *            [property] The property pattern. If the property is specified
+	 *            as a string, it can be a fixed resource (<code>&lt;<var>uri</var>&gt;</code>
+	 *            or <code><var>curie</var></code>) or a variable
+	 *            placeholder (<code>?<var>name</var></code>).
+	 * @param {String|jQuery.rdf.resource|jQuery.rdf.blank|jQuery.rdf.literal}
+	 *            [value] The value pattern. If the property is specified as a
+	 *            string, it can be a fixed resource (<code>&lt;<var>uri</var>&gt;</code>
+	 *            or <code><var>curie</var></code>), a blank node (<code>_:<var>id</var></code>),
+	 *            a literal (<code>"<var>value</var>"</code>) or a
+	 *            variable placeholder (<code>?<var>name</var></code>).
+	 * @param {Object}
+	 *            [options] Initialisation of the pattern.
+	 * @param {Object}
+	 *            [options.namespaces] An object representing a set of namespace
+	 *            bindings used when interpreting the CURIEs in the subject,
+	 *            property and object.
+	 * @param {String|jQuery.uri}
+	 *            [options.base] The base URI used to interpret any relative
+	 *            URIs used within the subject, property and object.
+	 * @param {boolean}
+	 *            [options.optional]
+	 * @returns {jQuery.rdf.pattern} The newly-created pattern.
+	 * @throws {String}
+	 *             Errors if any of the strings are not in a recognised format.
+	 * @example pattern = $.rdf.pattern('?person', $.rdf.type, 'foaf:Person', {
+	 *          namespaces: { foaf: "http://xmlns.com/foaf/0.1/" }});
+	 * @example pattern = $.rdf.pattern('?person a foaf:Person', { namespaces: {
+	 *          foaf: "http://xmlns.com/foaf/0.1/" }, optional: true });
+	 * @see jQuery.rdf#where
+	 * @see jQuery.rdf.resource
+	 * @see jQuery.rdf.blank
+	 * @see jQuery.rdf.literal
+	 */
+	$.rdf.pattern = function(subject, property, object, options) {
+		var pattern, m, optional;
+		// using a two-argument version; first argument is a Turtle statement
+		// string
+		if (object === undefined) {
+			options = property || {};
+			m = $.trim(subject).match(tripleRegex);
+			if (m.length === 3 || (m.length === 4 && m[3] === '.')) {
+				subject = m[0];
+				property = m[1];
+				object = m[2];
+			} else {
+				throw "Bad Pattern: Couldn't parse string " + subject;
+			}
+			optional = (options.optional === undefined) ? $.rdf.pattern.defaults.optional
+					: options.optional;
+		}
+		if (memPattern[subject] && memPattern[subject][property]
+				&& memPattern[subject][property][object]
+				&& memPattern[subject][property][object][optional]) {
+			return memPattern[subject][property][object][optional];
+		}
+		pattern = new $.rdf.pattern.fn.init(subject, property, object, options);
+		if (memPattern[pattern.subject]
+				&& memPattern[pattern.subject][pattern.property]
+				&& memPattern[pattern.subject][pattern.property][pattern.object]
+				&& memPattern[pattern.subject][pattern.property][pattern.object][pattern.optional]) {
+			return memPattern[pattern.subject][pattern.property][pattern.object][pattern.optional];
+		} else {
+			if (memPattern[pattern.subject] === undefined) {
+				memPattern[pattern.subject] = {};
+			}
+			if (memPattern[pattern.subject][pattern.property] === undefined) {
+				memPattern[pattern.subject][pattern.property] = {};
+			}
+			if (memPattern[pattern.subject][pattern.property][pattern.object] === undefined) {
+				memPattern[pattern.subject][pattern.property][pattern.object] = {};
+			}
+			memPattern[pattern.subject][pattern.property][pattern.object][pattern.optional] = pattern;
+			return pattern;
+		}
+	};
+
+	$.rdf.pattern.fn = $.rdf.pattern.prototype = {
+		init : function(s, p, o, options) {
+			var opts = $.extend({}, $.rdf.pattern.defaults, options);
+			/**
+			 * The placeholder for the subject of triples matching against this
+			 * pattern.
+			 * 
+			 * @type String|jQuery.rdf.resource|jQuery.rdf.blank
+			 */
+			this.subject = s.toString().substring(0, 1) === '?' ? s : subject(
+					s, opts);
+			/**
+			 * The placeholder for the property of triples matching against this
+			 * pattern.
+			 * 
+			 * @type String|jQuery.rdf.resource
+			 */
+			this.property = p.toString().substring(0, 1) === '?' ? p
+					: property(p, opts);
+			/**
+			 * The placeholder for the object of triples matching against this
+			 * pattern.
+			 * 
+			 * @type String|jQuery.rdf.resource|jQuery.rdf.blank|jQuery.rdf.literal
+			 */
+			this.object = o.toString().substring(0, 1) === '?' ? o : object(o,
+					opts);
+			/**
+			 * Whether the pattern should only optionally match against the
+			 * triple
+			 * 
+			 * @type boolean
+			 */
+			this.optional = opts.optional;
+			return this;
+		},
+
+		/**
+		 * Creates a new {@link jQuery.rdf.pattern} with any variable
+		 * placeholders within this one's subject, property or object filled in
+		 * with values from the bindings passed as the argument.
+		 * 
+		 * @param {Object}
+		 *            bindings An object holding the variable bindings to be
+		 *            used to replace any placeholders in the pattern. These
+		 *            bindings are of the type held by the {@link jQuery.rdf}
+		 *            object.
+		 * @returns {jQuery.rdf.pattern} A new {@link jQuery.rdf.pattern}
+		 *          object.
+		 * @example pattern = $.rdf.pattern('?thing a ?class'); // pattern2
+		 *          matches all triples that indicate the classes of this page.
+		 *          pattern2 = pattern.fill({ thing: $.rdf.resource('<>') });
+		 */
+		fill : function(bindings) {
+			var s = this.subject, p = this.property, o = this.object;
+			if (typeof s === 'string' && bindings[s.substring(1)]) {
+				s = bindings[s.substring(1)];
+			}
+			if (typeof p === 'string' && bindings[p.substring(1)]) {
+				p = bindings[p.substring(1)];
+			}
+			if (typeof o === 'string' && bindings[o.substring(1)]) {
+				o = bindings[o.substring(1)];
+			}
+			return $.rdf.pattern(s, p, o, {
+				optional : this.optional
+			});
+		},
+
+		/**
+		 * Creates a new Object holding variable bindings by matching the passed
+		 * triple against this pattern.
+		 * 
+		 * @param {jQuery.rdf.triple}
+		 *            triple A {@link jQuery.rdf.triple} for this pattern to
+		 *            match against.
+		 * @returns {null|Object} An object containing the bindings of variables
+		 *          (as specified in this pattern) to values (as specified in
+		 *          the triple), or <code>null</code> if the triple doesn't
+		 *          match the pattern. pattern = $.rdf.pattern('?thing a
+		 *          ?class'); bindings = pattern.exec($.rdf.triple('<> a
+		 *          foaf:Person', { namespaces: ns })); thing = bindings.thing; //
+		 *          the resource for this page class = bindings.class; // a
+		 *          resource for foaf:Person
+		 */
+		exec : function(triple) {
+			var binding = {};
+			binding = testResource(triple.subject, this.subject, binding);
+			if (binding === null) {
+				return null;
+			}
+			binding = testResource(triple.property, this.property, binding);
+			if (binding === null) {
+				return null;
+			}
+			binding = testResource(triple.object, this.object, binding);
+			return binding;
+		},
+
+		/**
+		 * Tests whether this pattern has any variable placeholders in it or
+		 * not.
+		 * 
+		 * @returns {boolean} True if the pattern doesn't contain any variable
+		 *          placeholders.
+		 * @example $.rdf.pattern('?thing a ?class').isFixed(); // false
+		 *          $.rdf.pattern('<> a foaf:Person', { namespaces: ns
+		 *          }).isFixed(); // true
+		 */
+		isFixed : function() {
+			return typeof this.subject !== 'string'
+					&& typeof this.property !== 'string'
+					&& typeof this.object !== 'string';
+		},
+
+		/**
+		 * Creates a new triple based on the bindings passed to the pattern, if
+		 * possible.
+		 * 
+		 * @param {Object}
+		 *            bindings An object holding the variable bindings to be
+		 *            used to replace any placeholders in the pattern. These
+		 *            bindings are of the type held by the {@link jQuery.rdf}
+		 *            object.
+		 * @returns {null|jQuery.rdf.triple} A new {@link jQuery.rdf.triple}
+		 *          object, or null if not all the variable placeholders in the
+		 *          pattern are specified in the bindings. The
+		 *          {@link jQuery.rdf.triple#source} of the generated triple is
+		 *          set to the string value of this pattern.
+		 * @example pattern = $.rdf.pattern('?thing a ?class'); // triple is a
+		 *          new triple '<> a foaf:Person' triple = pattern.triple({
+		 *          thing: $.rdf.resource('<>'), class:
+		 *          $.rdf.resource('foaf:Person', { namespaces: ns }) });
+		 */
+		triple : function(bindings) {
+			var t = this;
+			if (!this.isFixed()) {
+				t = this.fill(bindings);
+			}
+			if (t.isFixed()) {
+				return $.rdf.triple(t.subject, t.property, t.object, {
+					source : this.toString()
+				});
+			} else {
+				return null;
+			}
+		},
+
+		/**
+		 * Returns a string representation of the pattern by concatenating the
+		 * subject, property and object.
+		 * 
+		 * @returns {String}
+		 */
+		toString : function() {
+			return this.subject + ' ' + this.property + ' ' + this.object;
+		}
+	};
+
+	$.rdf.pattern.fn.init.prototype = $.rdf.pattern.fn;
+
+	$.rdf.pattern.defaults = {
+		base : $.uri.base(),
+		namespaces : {},
+		optional : false
+	};
+
+	/**
+	 * <p>
+	 * Creates a new jQuery.rdf.triple object. This should be invoked as a
+	 * method rather than constructed using new; indeed you will not usually
+	 * want to generate these objects directly, since they are automatically
+	 * created from strings where necessary, such as by {@link jQuery.rdf#add}.
+	 * </p>
+	 * 
+	 * @class Represents an RDF triple.
+	 * @param {String|jQuery.rdf.resource|jQuery.rdf.blank}
+	 *            subject The subject of the triple, or a single string that
+	 *            defines the entire triple. If the subject is specified as a
+	 *            string, it can be a fixed resource (<code>&lt;<var>uri</var>&gt;</code>
+	 *            or <code><var>curie</var></code>) or a blank node (<code>_:<var>id</var></code>).
+	 * @param {String|jQuery.rdf.resource}
+	 *            [property] The property pattern. If the property is specified
+	 *            as a string, it must be a fixed resource (<code>&lt;<var>uri</var>&gt;</code>
+	 *            or <code><var>curie</var></code>).
+	 * @param {String|jQuery.rdf.resource|jQuery.rdf.blank|jQuery.rdf.literal}
+	 *            [value] The value pattern. If the property is specified as a
+	 *            string, it can be a fixed resource (<code>&lt;<var>uri</var>&gt;</code>
+	 *            or <code><var>curie</var></code>), a blank node (<code>_:<var>id</var></code>),
+	 *            or a literal (<code>"<var>value</var>"</code>).
+	 * @param {Object}
+	 *            [options] Initialisation of the triple.
+	 * @param {Object}
+	 *            [options.namespaces] An object representing a set of namespace
+	 *            bindings used when interpreting the CURIEs in the subject,
+	 *            property and object.
+	 * @param {String|jQuery.uri}
+	 *            [options.base] The base URI used to interpret any relative
+	 *            URIs used within the subject, property and object.
+	 * @returns {jQuery.rdf.triple} The newly-created triple.
+	 * @throws {String}
+	 *             Errors if any of the strings are not in a recognised format.
+	 * @example pattern = $.rdf.triple('<>', $.rdf.type, 'foaf:Person', {
+	 *          namespaces: { foaf: "http://xmlns.com/foaf/0.1/" }});
+	 * @example pattern = $.rdf.triple('<> a foaf:Person', { namespaces: {
+	 *          foaf: "http://xmlns.com/foaf/0.1/" } });
+	 * @see jQuery.rdf#add
+	 * @see jQuery.rdf.resource
+	 * @see jQuery.rdf.blank
+	 * @see jQuery.rdf.literal
+	 */
+	$.rdf.triple = function(subject, property, object, options) {
+		var triple, graph, m;
+		// using a two-argument version; first argument is a Turtle statement
+		// string
+		if (object === undefined) {
+			options = property;
+			m = $.trim(subject).match(tripleRegex);
+			if (m.length === 3 || (m.length === 4 && m[3] === '.')) {
+				subject = m[0];
+				property = m[1];
+				object = m[2];
+			} else {
+				throw "Bad Triple: Couldn't parse string " + subject;
+			}
+		}
+		graph = (options && options.graph) || '';
+		if (memTriple[graph] && memTriple[graph][subject]
+				&& memTriple[graph][subject][property]
+				&& memTriple[graph][subject][property][object]) {
+			return memTriple[graph][subject][property][object];
+		}
+		triple = new $.rdf.triple.fn.init(subject, property, object, options);
+		graph = triple.graph || '';
+		if (memTriple[graph]
+				&& memTriple[graph][triple.subject]
+				&& memTriple[graph][triple.subject][triple.property]
+				&& memTriple[graph][triple.subject][triple.property][triple.object]) {
+			return memTriple[graph][triple.subject][triple.property][triple.object];
+		} else {
+			if (memTriple[graph] === undefined) {
+				memTriple[graph] = {};
+			}
+			if (memTriple[graph][triple.subject] === undefined) {
+				memTriple[graph][triple.subject] = {};
+			}
+			if (memTriple[graph][triple.subject][triple.property] === undefined) {
+				memTriple[graph][triple.subject][triple.property] = {};
+			}
+			memTriple[graph][triple.subject][triple.property][triple.object] = triple;
+			return triple;
+		}
+	};
+
+	$.rdf.triple.fn = $.rdf.triple.prototype = {
+		init : function(s, p, o, options) {
+			var opts;
+			opts = $.extend({}, $.rdf.triple.defaults, options);
+			/**
+			 * The subject of the triple.
+			 * 
+			 * @type jQuery.rdf.resource|jQuery.rdf.blank
+			 */
+			this.subject = subject(s, opts);
+			/**
+			 * The property of the triple.
+			 * 
+			 * @type jQuery.rdf.resource
+			 */
+			this.property = property(p, opts);
+			/**
+			 * The object of the triple.
+			 * 
+			 * @type jQuery.rdf.resource|jQuery.rdf.blank|jQuery.rdf.literal
+			 */
+			this.object = object(o, opts);
+			/**
+			 * (Experimental) The named graph the triple belongs to.
+			 * 
+			 * @type jQuery.rdf.resource|jQuery.rdf.blank
+			 */
+			this.graph = opts.graph === undefined ? undefined : subject(
+					opts.graph, opts);
+			/**
+			 * The source of the triple, which might be a node within the page
+			 * (if the RDF is generated from the page) or a string holding the
+			 * pattern that generated the triple.
+			 */
+			this.source = opts.source;
+			return this;
+		},
+
+		/**
+		 * Always returns true for triples.
+		 * 
+		 * @see jQuery.rdf.pattern#isFixed
+		 */
+		isFixed : function() {
+			return true;
+		},
+
+		/**
+		 * Always returns this triple.
+		 * 
+		 * @see jQuery.rdf.pattern#triple
+		 */
+		triple : function(bindings) {
+			return this;
+		},
+
+		/**
+		 * Returns a <a
+		 * href="http://n2.talis.com/wiki/RDF_JSON_Specification">RDF/JSON</a>
+		 * representation of this triple.
+		 * 
+		 * @returns {Object}
+		 */
+		dump : function() {
+			var e = {}, s = this.subject.value.toString(), p = this.property.value
+					.toString();
+			e[s] = {};
+			e[s][p] = this.object.dump();
+			return e;
+		},
+
+		/**
+		 * Returns a string representing this triple in Turtle format.
+		 * 
+		 * @returns {String}
+		 */
+		toString : function() {
+			return this.subject + ' ' + this.property + ' ' + this.object
+					+ ' .';
+		}
+	};
+
+	$.rdf.triple.fn.init.prototype = $.rdf.triple.fn;
+
+	$.rdf.triple.defaults = {
+		base : $.uri.base(),
+		source : [ document ],
+		namespaces : {}
+	};
+
+	/**
+	 * <p>
+	 * Creates a new jQuery.rdf.resource object. This should be invoked as a
+	 * method rather than constructed using new; indeed you will not usually
+	 * want to generate these objects directly, since they are automatically
+	 * created from strings where necessary, such as by {@link jQuery.rdf#add}.
+	 * </p>
+	 * 
+	 * @class Represents an RDF resource.
+	 * @param {String|jQuery.uri}
+	 *            value The value of the resource. If it's a string it must be
+	 *            in the format <code>&lt;<var>uri</var>&gt;</code> or
+	 *            <code><var>curie</var></code>.
+	 * @param {Object}
+	 *            [options] Initialisation of the resource.
+	 * @param {Object}
+	 *            [options.namespaces] An object representing a set of namespace
+	 *            bindings used when interpreting the CURIE specifying the
+	 *            resource.
+	 * @param {String|jQuery.uri}
+	 *            [options.base] The base URI used to interpret any relative
+	 *            URIs used within the URI specifying the resource.
+	 * @returns {jQuery.rdf.resource} The newly-created resource.
+	 * @throws {String}
+	 *             Errors if the string is not in a recognised format.
+	 * @example thisPage = $.rdf.resource('<>');
+	 * @example foaf.Person = $.rdf.resource('foaf:Person', { namespaces: ns });
+	 * @see jQuery.rdf.pattern
+	 * @see jQuery.rdf.triple
+	 * @see jQuery.rdf.blank
+	 * @see jQuery.rdf.literal
+	 */
+	$.rdf.resource = function(value, options) {
+		var resource;
+		if (memResource[value]) {
+			return memResource[value];
+		}
+		resource = new $.rdf.resource.fn.init(value, options);
+		if (memResource[resource]) {
+			return memResource[resource];
+		} else {
+			memResource[resource] = resource;
+			return resource;
+		}
+	};
+
+	$.rdf.resource.fn = $.rdf.resource.prototype = {
+		/**
+		 * Always fixed to 'uri' for resources.
+		 * 
+		 * @type String
+		 */
+		type : 'uri',
+		/**
+		 * The URI for the resource.
+		 * 
+		 * @type jQuery.rdf.uri
+		 */
+		value : undefined,
+
+		init : function(value, options) {
+			var m, prefix, uri, opts;
+			if (typeof value === 'string') {
+				m = uriRegex.exec(value);
+				opts = $.extend({}, $.rdf.resource.defaults, options);
+				if (m !== null) {
+					this.value = $.uri.resolve(m[1].replace(/\\>/g, '>'),
+							opts.base);
+				} else if (value.substring(0, 1) === ':') {
+					uri = opts.namespaces[''];
+					if (uri === undefined) {
+						throw "Malformed Resource: No namespace binding for default namespace in "
+								+ value;
+					} else {
+						this.value = $.uri.resolve(uri + value.substring(1));
+					}
+				} else if (value.substring(value.length - 1) === ':') {
+					prefix = value.substring(0, value.length - 1);
+					uri = opts.namespaces[prefix];
+					if (uri === undefined) {
+						throw "Malformed Resource: No namespace binding for prefix "
+								+ prefix + " in " + value;
+					} else {
+						this.value = $.uri.resolve(uri);
+					}
+				} else {
+					try {
+						this.value = $.curie(value, {
+							namespaces : opts.namespaces
+						});
+					} catch (e) {
+						throw "Malformed Resource: Bad format for resource "
+								+ e;
+					}
+				}
+			} else {
+				this.value = value;
+			}
+			return this;
+		}, // end init
+
+		/**
+		 * Returns a <a
+		 * href="http://n2.talis.com/wiki/RDF_JSON_Specification">RDF/JSON</a>
+		 * representation of this triple.
+		 * 
+		 * @returns {Object}
+		 */
+		dump : function() {
+			return {
+				type : 'uri',
+				value : this.value.toString()
+			};
+		},
+
+		/**
+		 * Returns a string representing this resource in Turtle format.
+		 * 
+		 * @returns {String}
+		 */
+		toString : function() {
+			return '<' + this.value + '>';
+		}
+	};
+
+	$.rdf.resource.fn.init.prototype = $.rdf.resource.fn;
+
+	$.rdf.resource.defaults = {
+		base : $.uri.base(),
+		namespaces : {}
+	};
+
+	/**
+	 * A {@link jQuery.rdf.resource} for rdf:type
+	 * 
+	 * @constant
+	 * @type jQuery.rdf.resource
+	 */
+	$.rdf.type = $.rdf.resource('<' + rdfNs + 'type>');
+	/**
+	 * A {@link jQuery.rdf.resource} for rdfs:label
+	 * 
+	 * @constant
+	 * @type jQuery.rdf.resource
+	 */
+	$.rdf.label = $.rdf.resource('<' + rdfsNs + 'label>');
+	/**
+	 * A {@link jQuery.rdf.resource} for rdf:first
+	 * 
+	 * @constant
+	 * @type jQuery.rdf.resource
+	 */
+	$.rdf.first = $.rdf.resource('<' + rdfNs + 'first>');
+	/**
+	 * A {@link jQuery.rdf.resource} for rdf:rest
+	 * 
+	 * @constant
+	 * @type jQuery.rdf.resource
+	 */
+	$.rdf.rest = $.rdf.resource('<' + rdfNs + 'rest>');
+	/**
+	 * A {@link jQuery.rdf.resource} for rdf:nil
+	 * 
+	 * @constant
+	 * @type jQuery.rdf.resource
+	 */
+	$.rdf.nil = $.rdf.resource('<' + rdfNs + 'nil>');
+	/**
+	 * A {@link jQuery.rdf.resource} for rdf:subject
+	 * 
+	 * @constant
+	 * @type jQuery.rdf.resource
+	 */
+	$.rdf.subject = $.rdf.resource('<' + rdfNs + 'subject>');
+	/**
+	 * A {@link jQuery.rdf.resource} for rdf:property
+	 * 
+	 * @constant
+	 * @type jQuery.rdf.resource
+	 */
+	$.rdf.property = $.rdf.resource('<' + rdfNs + 'property>');
+	/**
+	 * A {@link jQuery.rdf.resource} for rdf:object
+	 * 
+	 * @constant
+	 * @type jQuery.rdf.resource
+	 */
+	$.rdf.object = $.rdf.resource('<' + rdfNs + 'object>');
+
+	/**
+	 * <p>
+	 * Creates a new jQuery.rdf.blank object. This should be invoked as a method
+	 * rather than constructed using new; indeed you will not usually want to
+	 * generate these objects directly, since they are automatically created
+	 * from strings where necessary, such as by {@link jQuery.rdf#add}.
+	 * </p>
+	 * 
+	 * @class Represents an RDF blank node.
+	 * @param {String}
+	 *            value A representation of the blank node in the format
+	 *            <code>_:<var>id</var></code> or <code>[]</code> (which
+	 *            automatically creates a new blank node with a unique ID).
+	 * @returns {jQuery.rdf.blank} The newly-created blank node.
+	 * @throws {String}
+	 *             Errors if the string is not in a recognised format.
+	 * @example newBlank = $.rdf.blank('[]');
+	 * @example identifiedBlank = $.rdf.blank('_:fred');
+	 * @see jQuery.rdf.pattern
+	 * @see jQuery.rdf.triple
+	 * @see jQuery.rdf.resource
+	 * @see jQuery.rdf.literal
+	 */
+	$.rdf.blank = function(value) {
+		var blank;
+		if (memBlank[value]) {
+			return memBlank[value];
+		}
+		blank = new $.rdf.blank.fn.init(value);
+		if (memBlank[blank]) {
+			return memBlank[blank];
+		} else {
+			memBlank[blank] = blank;
+			return blank;
+		}
+	};
+
+	$.rdf.blank.fn = $.rdf.blank.prototype = {
+		/**
+		 * Always fixed to 'bnode' for blank nodes.
+		 * 
+		 * @type String
+		 */
+		type : 'bnode',
+		/**
+		 * The value of the blank node in the format
+		 * <code>_:<var>id</var></code>
+		 * 
+		 * @type String
+		 */
+		value : undefined,
+		/**
+		 * The id of the blank node.
+		 * 
+		 * @type String
+		 */
+		id : undefined,
+
+		init : function(value) {
+			if (value === '[]') {
+				this.id = blankNodeID();
+				this.value = '_:' + this.id;
+			} else if (value.substring(0, 2) === '_:') {
+				this.id = value.substring(2);
+				this.value = value;
+			} else {
+				throw "Malformed Blank Node: " + value
+						+ " is not a legal format for a blank node";
+			}
+			return this;
+		},
+
+		/**
+		 * Returns a <a
+		 * href="http://n2.talis.com/wiki/RDF_JSON_Specification">RDF/JSON</a>
+		 * representation of this blank node.
+		 * 
+		 * @returns {Object}
+		 */
+		dump : function() {
+			return {
+				type : 'bnode',
+				value : this.value
+			};
+		},
+
+		/**
+		 * Returns the value this blank node.
+		 * 
+		 * @returns {String}
+		 */
+		toString : function() {
+			return this.value;
+		}
+	};
+
+	$.rdf.blank.fn.init.prototype = $.rdf.blank.fn;
+
+	/**
+	 * <p>
+	 * Creates a new jQuery.rdf.literal object. This should be invoked as a
+	 * method rather than constructed using new; indeed you will not usually
+	 * want to generate these objects directly, since they are automatically
+	 * created from strings where necessary, such as by {@link jQuery.rdf#add}.
+	 * </p>
+	 * 
+	 * @class Represents an RDF literal.
+	 * @param {String|boolean|Number}
+	 *            value Either the value of the literal or a string
+	 *            representation of it. If the datatype or lang options are
+	 *            specified, the value is taken as given. Otherwise, if it's a
+	 *            Javascript boolean or numeric value, it is interpreted as a
+	 *            value with a xsd:boolean or xsd:double datatype. In all other
+	 *            cases it's interpreted as a literal as defined in <a
+	 *            href="http://www.w3.org/TeamSubmission/turtle/#literal">Turtle
+	 *            syntax</a>.
+	 * @param {Object}
+	 *            [options] Initialisation options for the literal.
+	 * @param {String}
+	 *            [options.datatype] The datatype for the literal. This should
+	 *            be a safe CURIE; in other words, it can be in the format
+	 *            <code><var>uri</var></code> or
+	 *            <code>[<var>curie</var>]</code>. Must not be specified if
+	 *            options.lang is also specified.
+	 * @param {String}
+	 *            [options.lang] The language for the literal. Must not be
+	 *            specified if options.datatype is also specified.
+	 * @param {Object}
+	 *            [options.namespaces] An object representing a set of namespace
+	 *            bindings used when interpreting a CURIE in the datatype.
+	 * @param {String|jQuery.uri}
+	 *            [options.base] The base URI used to interpret a relative URI
+	 *            in the datatype.
+	 * @returns {jQuery.rdf.literal} The newly-created literal.
+	 * @throws {String}
+	 *             Errors if the string is not in a recognised format or if both
+	 *             options.datatype and options.lang are specified.
+	 * @example trueLiteral = $.rdf.literal(true);
+	 * @example numericLiteral = $.rdf.literal(5);
+	 * @example dateLiteral = $.rdf.literal('"2009-07-13"^^xsd:date', {
+	 *          namespaces: ns });
+	 * @see jQuery.rdf.pattern
+	 * @see jQuery.rdf.triple
+	 * @see jQuery.rdf.resource
+	 * @see jQuery.rdf.blank
+	 */
+	$.rdf.literal = function(value, options) {
+		var literal;
+		if (memLiteral[value]) {
+			return memLiteral[value];
+		}
+		literal = new $.rdf.literal.fn.init(value, options);
+		if (memLiteral[literal]) {
+			return memLiteral[literal];
+		} else {
+			memLiteral[literal] = literal;
+			return literal;
+		}
+	};
+
+	$.rdf.literal.fn = $.rdf.literal.prototype = {
+		/**
+		 * Always fixed to 'literal' for literals.
+		 * 
+		 * @type String
+		 */
+		type : 'literal',
+		/**
+		 * The value of the literal as a string.
+		 * 
+		 * @type String
+		 */
+		value : undefined,
+		/**
+		 * The language of the literal, if it has one; otherwise undefined.
+		 * 
+		 * @type String
+		 */
+		lang : undefined,
+		/**
+		 * The datatype of the literal, if it has one; otherwise undefined.
+		 * 
+		 * @type jQuery.uri
+		 */
+		datatype : undefined,
+
+		init : function(value, options) {
+			var m, datatype, opts = $.extend({}, $.rdf.literal.defaults,
+					options);
+			if (opts.lang !== undefined && opts.datatype !== undefined) {
+				throw "Malformed Literal: Cannot define both a language and a datatype for a literal ("
+						+ value + ")";
+			}
+			if (opts.datatype !== undefined) {
+				datatype = $.safeCurie(opts.datatype, {
+					namespaces : opts.namespaces
+				});
+				$.extend(this, $.typedValue(value.toString(), datatype));
+			} else if (opts.lang !== undefined) {
+				this.value = value.toString();
+				this.lang = opts.lang;
+			} else if (typeof value === 'boolean') {
+				$.extend(this, $
+						.typedValue(value.toString(), xsdNs + 'boolean'));
+			} else if (typeof value === 'number') {
+				$
+						.extend(this, $.typedValue(value.toString(), xsdNs
+								+ 'double'));
+			} else if (value === 'true' || value === 'false') {
+				$.extend(this, $.typedValue(value, xsdNs + 'boolean'));
+			} else if ($.typedValue.valid(value, xsdNs + 'integer')) {
+				$.extend(this, $.typedValue(value, xsdNs + 'integer'));
+			} else if ($.typedValue.valid(value, xsdNs + 'decimal')) {
+				$.extend(this, $.typedValue(value, xsdNs + 'decimal'));
+			} else if ($.typedValue.valid(value, xsdNs + 'double')
+					&& !/^\s*([\-\+]?INF|NaN)\s*$/.test(value)) { // INF, -INF
+																	// and
+				// NaN aren't
+				// valid
+				// literals in
+				// Turtle
+				$.extend(this, $.typedValue(value, xsdNs + 'double'));
+			} else {
+				m = literalRegex.exec(value);
+				if (m !== null) {
+					this.value = (m[2] || m[4]).replace(/\\"/g, '"');
+					if (m[9]) {
+						datatype = $.rdf.resource(m[9], opts);
+						$
+								.extend(this, $.typedValue(this.value,
+										datatype.value));
+					} else if (m[7]) {
+						this.lang = m[7];
+					}
+				} else {
+					throw "Malformed Literal: Couldn't recognise the value "
+							+ value;
+				}
+			}
+			return this;
+		}, // end init
+
+		/**
+		 * Returns a <a
+		 * href="http://n2.talis.com/wiki/RDF_JSON_Specification">RDF/JSON</a>
+		 * representation of this blank node.
+		 * 
+		 * @returns {Object}
+		 */
+		dump : function() {
+			var e = {
+				type : 'literal',
+				value : this.value.toString()
+			};
+			if (this.lang !== undefined) {
+				e.lang = this.lang;
+			} else if (this.datatype !== undefined) {
+				e.datatype = this.datatype.toString();
+			}
+			return e;
+		},
+
+		/**
+		 * Returns a string representing this resource in <a
+		 * href="http://www.w3.org/TeamSubmission/turtle/#literal">Turtle format</a>.
+		 * 
+		 * @returns {String}
+		 */
+		toString : function() {
+			var val = '"' + this.value + '"';
+			if (this.lang !== undefined) {
+				val += '@' + this.lang;
+			} else if (this.datatype !== undefined) {
+				val += '^^<' + this.datatype + '>';
+			}
+			return val;
+		}
+	};
+
+	$.rdf.literal.fn.init.prototype = $.rdf.literal.fn;
+
+	$.rdf.literal.defaults = {
+		base : $.uri.base(),
+		namespaces : {},
+		datatype : undefined,
+		lang : undefined
+	};
+
+})(jQuery);
+/*
+ * jQuery RDFa
+ * 
+ * @VERSION
+ * 
+ * Copyright (c) 2008,2009 Jeni Tennison Licensed under the MIT
+ * (MIT-LICENSE.txt)
+ * 
+ * Depends: jquery.uri.js jquery.xmlns.js jquery.curie.js jquery.datatype.js
+ * jquery.rdf.js
+ */
+/**
+ * @fileOverview jQuery RDFa processing
+ * @author <a href="mailto:jeni@jenitennison.com">Jeni Tennison</a>
+ * @copyright (c) 2008,2009 Jeni Tennison
+ * @license MIT license (MIT-LICENSE.txt)
+ * @version 1.0
+ * @requires jquery.uri.js
+ * @requires jquery.xmlns.js
+ * @requires jquery.curie.js
+ * @requires jquery.datatype.js
+ * @requires jquery.rdf.js
+ */
+(function($) {
+
+	var ns = {
+		rdf : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+		xsd : "http://www.w3.org/2001/XMLSchema#"
+	},
+
+	rdfXMLLiteral = ns.rdf + 'XMLLiteral',
+
+	rdfaCurieDefaults = $.fn.curie.defaults,
+
+	attRegex = /\s([^ =]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^ >]+))/g,
+
+	docResource = $.rdf.resource('<>'),
+
+	parseEntities = function(string) {
+		var result = "", m, entity;
+		if (!/&/.test(string)) {
+			return string;
+		}
+		while (string.length > 0) {
+			m = /([^&]*)(&([^;]+);)(.*)/g.exec(string);
+			if (m === null) {
+				result += string;
+				break;
+			}
+			result += m[1];
+			entity = m[3];
+			string = m[4];
+			if (entity.charAt(0) === '#') {
+				if (entity.charAt(1) === 'x') {
+					result += String.fromCharCode(parseInt(entity.substring(2),
+							16));
+				} else {
+					result += String.fromCharCode(parseInt(entity.substring(1),
+							10));
+				}
+			} else {
+				switch (entity) {
+				case 'amp':
+					result += '&';
+					break;
+				case 'nbsp':
+					result += String.fromCharCode(160);
+					break;
+				case 'quot':
+					result += '"';
+					break;
+				case 'apos':
+					result += "'";
+					break;
+				default:
+					result += '&' + entity + ';';
+				}
+			}
+		}
+		return result;
+	},
+
+	getAttributes = function(elem) {
+		var i, e, a, tag, name, value, attMap, prefix, ns = {}, atts = {};
+		e = elem[0];
+		ns[':length'] = 0;
+		if (e.attributes && e.attributes.getNamedItemNS) {
+			attMap = e.attributes;
+			for (i = 0; i < attMap.length; i += 1) {
+				a = attMap[i];
+				if (/^xmlns(:(.+))?$/.test(a.nodeName) && a.nodeValue !== '') {
+					prefix = /^xmlns(:(.+))?$/.exec(a.nodeName)[2] || '';
+					ns[prefix] = $.uri(a.nodeValue);
+					ns[':length'] += 1;
+				} else if (/rel|rev|lang|xml:lang/.test(a.nodeName)) {
+					atts[a.nodeName] = a.nodeValue === '' ? undefined
+							: a.nodeValue;
+				} else if (/about|href|src|resource|property|typeof|content|datatype/
+						.test(a.nodeName)) {
+					atts[a.nodeName] = a.nodeValue === null ? undefined
+							: a.nodeValue;
+				}
+			}
+		} else {
+			tag = /<[^>]+>/.exec(e.outerHTML);
+			a = attRegex.exec(tag);
+			while (a !== null) {
+				name = a[1];
+				value = a[2] || a[3] || a[4];
+				if (/^xmlns/.test(name) && name !== 'xmlns:' && value !== '') {
+					prefix = /^xmlns(:(.+))?$/.exec(name)[2] || '';
+					ns[prefix] = $.uri(value);
+					ns[':length'] += 1;
+				} else if (/about|href|src|resource|property|typeof|content|datatype|rel|rev|lang|xml:lang/
+						.test(name)) {
+					atts[name] = parseEntities(value);
+				}
+				a = attRegex.exec(tag);
+			}
+			attRegex.lastIndex = 0;
+		}
+		return {
+			atts : atts,
+			namespaces : ns
+		};
+	},
+
+	getAttribute = function(elem, attr) {
+		var val = elem[0].getAttribute(attr);
+		if (attr === 'rev' || attr === 'rel' || attr === 'lang'
+				|| attr === 'xml:lang') {
+			val = val === '' ? undefined : val;
+		}
+		return val === null ? undefined : val;
+	},
+
+	resourceFromUri = function(uri) {
+		return $.rdf.resource(uri);
+	},
+
+	resourceFromCurie = function(curie, elem, options) {
+		if (curie.substring(0, 2) === '_:') {
+			return $.rdf.blank(curie);
+		} else {
+			try {
+				return resourceFromUri($.curie(curie, options));
+			} catch (e) {
+				return undefined;
+			}
+		}
+	},
+
+	resourceFromSafeCurie = function(safeCurie, elem, options) {
+		var m = /^\[([^\]]+)\]$/.exec(safeCurie), base = options.base
+				|| elem.base();
+		return m ? resourceFromCurie(m[1], elem, options) : resourceFromUri($
+				.uri(safeCurie, base));
+	},
+
+	resourcesFromCuries = function(curies, elem, options) {
+		var i, resource, resources = [];
+		curies = curies && curies.split ? curies.split(/[ \t\n\r\x0C]+/g) : [];
+		for (i = 0; i < curies.length; i += 1) {
+			if (curies[i] !== '') {
+				resource = resourceFromCurie(curies[i], elem, options);
+				if (resource !== undefined) {
+					resources.push(resource);
+				}
+			}
+		}
+		return resources;
+	},
+
+	removeCurie = function(curies, resource, options) {
+		var i, r, newCuries = [];
+		resource = resource.type === 'uri' ? resource : $.rdf.resource(
+				resource, options);
+		curies = curies && curies.split ? curies.split(/\s+/) : [];
+		for (i = 0; i < curies.length; i += 1) {
+			if (curies[i] !== '') {
+				r = resourceFromCurie(curies[i], null, options);
+				if (r !== resource) {
+					newCuries.push(curies[i]);
+				}
+			}
+		}
+		return newCuries.reverse().join(' ');
+	},
+
+	getObjectResource = function(elem, context, relation) {
+		var r, resource, atts, curieOptions;
+		context = context || {};
+		atts = context.atts || getAttributes(elem).atts;
+		r = relation === undefined ? atts.rel !== undefined
+				|| atts.rev !== undefined : relation;
+		resource = atts.resource;
+		resource = resource === undefined ? atts.href : resource;
+		if (resource === undefined) {
+			resource = r ? $.rdf.blank('[]') : resource;
+		} else {
+			curieOptions = context.curieOptions
+					|| $.extend({}, rdfaCurieDefaults, {
+						namespaces : elem.xmlns()
+					});
+			resource = resourceFromSafeCurie(resource, elem, curieOptions);
+		}
+		return resource;
+	},
+
+	getSubject = function(elem, context, relation) {
+		var r, atts, curieOptions, subject, skip = false;
+		context = context || {};
+		atts = context.atts || getAttributes(elem).atts;
+		curieOptions = context.curieOptions
+				|| $.extend({}, rdfaCurieDefaults, {
+					namespaces : elem.xmlns(),
+					base : elem.base()
+				});
+		r = relation === undefined ? atts.rel !== undefined
+				|| atts.rev !== undefined : relation;
+		if (atts.about !== undefined) {
+			subject = resourceFromSafeCurie(atts.about, elem, curieOptions);
+		}
+		if (subject === undefined && atts.src !== undefined) {
+			subject = resourceFromSafeCurie(atts.src, elem, curieOptions);
+		}
+		if (!r && subject === undefined && atts.resource !== undefined) {
+			subject = resourceFromSafeCurie(atts.resource, elem, curieOptions);
+		}
+		if (!r && subject === undefined && atts.href !== undefined) {
+			subject = resourceFromSafeCurie(atts.href, elem, curieOptions);
+		}
+		if (subject === undefined) {
+			if (/head|body/i.test(elem[0].nodeName)) {
+				subject = docResource;
+			} else if (atts['typeof'] !== undefined) {
+				subject = $.rdf.blank('[]');
+			} else if (elem[0].parentNode.nodeType === 1) {
+				subject = context.object || getObjectResource(elem.parent())
+						|| getSubject(elem.parent()).subject;
+				skip = !r && atts.property === undefined;
+			} else {
+				subject = docResource;
+			}
+		}
+		return {
+			subject : subject,
+			skip : skip
+		};
+	},
+
+	getLang = function(elem, context) {
+		var lang;
+		context = context || {};
+		if (context.atts) {
+			lang = context.atts.lang;
+			lang = lang || context.atts['xml:lang'];
+		} else {
+			lang = elem[0].getAttribute('lang');
+			lang = (lang === null || lang === '') ? elem[0]
+					.getAttribute('xml:lang') : lang;
+			lang = (lang === null || lang === '') ? undefined : lang;
+		}
+		if (lang === undefined) {
+			if (context.lang) {
+				lang = context.lang;
+			} else {
+				if (elem[0].parentNode.nodeType === 1) {
+					lang = getLang(elem.parent());
+				}
+			}
+		}
+		return lang;
+	},
+
+	entity = function(c) {
+		switch (c) {
+		case '<':
+			return '&lt;';
+		case '"':
+			return '&quot;';
+		case '&':
+			return '&amp;';
+		}
+	},
+
+	serialize = function(elem, ignoreNs) {
+		var i, string = '', atts, a, name, ns, tag;
+		elem.contents().each(function() {
+			var j = $(this), e = j[0];
+			if (e.nodeType === 1) { // tests whether the node is an element
+				name = e.nodeName.toLowerCase();
+				string += '<' + name;
+				if (e.outerHTML) {
+					tag = /<[^>]+>/.exec(e.outerHTML);
+					a = attRegex.exec(tag);
+					while (a !== null) {
+						if (!/^jQuery/.test(a[1])) {
+							string += ' ' + a[1] + '=';
+							string += a[2] ? a[3] : '"' + a[1] + '"';
+						}
+						a = attRegex.exec(tag);
+					}
+					attRegex.lastIndex = 0;
+				} else {
+					atts = e.attributes;
+					for (i = 0; i < atts.length; i += 1) {
+						a = atts.item(i);
+						string += ' ' + a.nodeName + '="';
+						string += a.nodeValue.replace(/[<"&]/g, entity);
+						string += '"';
+					}
+				}
+				if (!ignoreNs) {
+					ns = j.xmlns('');
+					if (ns !== undefined && j.attr('xmlns') === undefined) {
+						string += ' xmlns="' + ns + '"';
+					}
+				}
+				string += '>';
+				string += serialize(j, true);
+				string += '</' + name + '>';
+			} else if (e.nodeType === 8) { // tests whether the node is a
+											// comment
+				string += '<!--';
+				string += e.nodeValue;
+				string += '-->';
+			} else {
+				string += e.nodeValue;
+			}
+		});
+		return string;
+	},
+
+	rdfa = function(context) {
+		var i, subject, resource, lang, datatype, content, types, object, triple, parent, properties, rels, revs, forward, backward, triples = [], attsAndNs, atts, namespaces, ns, children = this
+				.children();
+		context = context || {};
+		forward = context.forward || [];
+		backward = context.backward || [];
+		attsAndNs = getAttributes(this);
+		atts = attsAndNs.atts;
+		context.atts = atts;
+		namespaces = context.namespaces || this.xmlns();
+		if (attsAndNs.namespaces[':length'] > 0) {
+			namespaces = $.extend({}, namespaces);
+			for (ns in attsAndNs.namespaces) {
+				if (ns !== ':length') {
+					namespaces[ns] = attsAndNs.namespaces[ns];
+				}
+			}
+		}
+		context.curieOptions = $.extend({}, rdfaCurieDefaults, {
+			namespaces : namespaces,
+			base : this.base()
+		});
+		subject = getSubject(this, context);
+		lang = getLang(this, context);
+		if (subject.skip) {
+			rels = context.forward;
+			revs = context.backward;
+			subject = context.subject;
+			resource = context.object;
+		} else {
+			subject = subject.subject;
+			if (forward.length > 0 || backward.length > 0) {
+				parent = context.subject || getSubject(this.parent()).subject;
+				for (i = 0; i < forward.length; i += 1) {
+					triple = $.rdf.triple(parent, forward[i], subject, {
+						source : this[0]
+					});
+					triples.push(triple);
+				}
+				for (i = 0; i < backward.length; i += 1) {
+					triple = $.rdf.triple(subject, backward[i], parent, {
+						source : this[0]
+					});
+					triples.push(triple);
+				}
+			}
+			resource = getObjectResource(this, context);
+			types = resourcesFromCuries(atts['typeof'], this,
+					context.curieOptions);
+			for (i = 0; i < types.length; i += 1) {
+				triple = $.rdf.triple(subject, $.rdf.type, types[i], {
+					source : this[0]
+				});
+				triples.push(triple);
+			}
+			properties = resourcesFromCuries(atts.property, this,
+					context.curieOptions);
+			if (properties.length > 0) {
+				datatype = atts.datatype;
+				content = atts.content;
+				if (datatype !== undefined && datatype !== '') {
+					datatype = $.curie(datatype, context.curieOptions);
+					if (datatype === rdfXMLLiteral) {
+						object = $.rdf.literal(serialize(this), {
+							datatype : rdfXMLLiteral
+						});
+					} else if (content !== undefined) {
+						object = $.rdf.literal(content, {
+							datatype : datatype
+						});
+					} else {
+						object = $.rdf.literal(this.text(), {
+							datatype : datatype
+						});
+					}
+				} else if (content !== undefined) {
+					if (lang === undefined) {
+						object = $.rdf.literal('"' + content + '"');
+					} else {
+						object = $.rdf.literal(content, {
+							lang : lang
+						});
+					}
+				} else if (children.length === 0 || datatype === '') {
+					lang = getLang(this, context);
+					if (lang === undefined) {
+						object = $.rdf.literal('"' + this.text() + '"');
+					} else {
+						object = $.rdf.literal(this.text(), {
+							lang : lang
+						});
+					}
+				} else {
+					object = $.rdf.literal(serialize(this), {
+						datatype : rdfXMLLiteral
+					});
+				}
+				for (i = 0; i < properties.length; i += 1) {
+					triple = $.rdf.triple(subject, properties[i], object, {
+						source : this[0]
+					});
+					triples.push(triple);
+				}
+			}
+			rels = resourcesFromCuries(atts.rel, this, context.curieOptions);
+			revs = resourcesFromCuries(atts.rev, this, context.curieOptions);
+			if (atts.resource !== undefined || atts.href !== undefined) {
+				// make the triples immediately
+				if (rels !== undefined) {
+					for (i = 0; i < rels.length; i += 1) {
+						triple = $.rdf.triple(subject, rels[i], resource, {
+							source : this[0]
+						});
+						triples.push(triple);
+					}
+				}
+				rels = [];
+				if (revs !== undefined) {
+					for (i = 0; i < revs.length; i += 1) {
+						triple = $.rdf.triple(resource, revs[i], subject, {
+							source : this[0]
+						});
+						triples.push(triple);
+					}
+				}
+				revs = [];
+			}
+		}
+		children.each(function() {
+			triples = triples.concat(rdfa.call($(this), {
+				forward : rels,
+				backward : revs,
+				subject : subject,
+				object : resource || subject,
+				lang : lang,
+				namespaces : namespaces
+			}));
+		});
+		return triples;
+	},
+
+	gleaner = function(options) {
+		var type, atts;
+		if (options && options.about !== undefined) {
+			atts = getAttributes(this).atts;
+			if (options.about === null) {
+				return atts.property !== undefined || atts.rel !== undefined
+						|| atts.rev !== undefined
+						|| atts['typeof'] !== undefined;
+			} else {
+				return getSubject(this, {
+					atts : atts
+				}).subject.value === options.about;
+			}
+		} else if (options && options.type !== undefined) {
+			type = getAttribute(this, 'typeof');
+			if (type !== undefined) {
+				return options.type === null ? true
+						: this.curie(type) === options.type;
+			}
+			return false;
+		} else {
+			return rdfa.call(this);
+		}
+	},
+
+	nsCounter = 1,
+
+	createCurieAttr = function(elem, attr, uri) {
+		var m, curie, value;
+		try {
+			curie = elem.createCurie(uri);
+		} catch (e) {
+			if (uri.toString() === rdfXMLLiteral) {
+				elem.attr('xmlns:rdf', ns.rdf);
+				curie = 'rdf:XMLLiteral';
+			} else {
+				m = /^(.+[\/#])([^#]+)$/.exec(uri);
+				elem.attr('xmlns:ns' + nsCounter, m[1]);
+				curie = 'ns' + nsCounter + ':' + m[2];
+				nsCounter += 1;
+			}
+		}
+		value = getAttribute(elem, attr);
+		if (value !== undefined) {
+			if ($.inArray(curie, value.split(/\s+/)) === -1) {
+				elem.attr(attr, value + ' ' + curie);
+			}
+		} else {
+			elem.attr(attr, curie);
+		}
+	},
+
+	createResourceAttr = function(elem, attr, resource) {
+		var ref;
+		if (resource.type === 'bnode') {
+			ref = '[_:' + resource.id + ']';
+		} else {
+			ref = $(elem).base().relative(resource.value);
+		}
+		elem.attr(attr, ref);
+	},
+
+	createSubjectAttr = function(elem, subject) {
+		var s = getSubject(elem).subject;
+		if (subject !== s) {
+			createResourceAttr(elem, 'about', subject);
+		}
+		elem.removeData('rdfa.subject');
+	},
+
+	createObjectAttr = function(elem, object) {
+		var o = getObjectResource(elem);
+		if (object !== o) {
+			createResourceAttr(elem, 'resource', object);
+		}
+		elem.removeData('rdfa.objectResource');
+	},
+
+	resetLang = function(elem, lang) {
+		elem.wrapInner('<span></span>').children('span').attr('lang', lang);
+		return elem;
+	},
+
+	addRDFa = function(triple) {
+		var hasContent, hasRelation, hasRDFa, overridableObject, span, subject, sameSubject, object, sameObject, lang, content, i, atts, ns = this
+				.xmlns();
+		span = this;
+		atts = getAttributes(this).atts;
+		if (typeof triple === 'string') {
+			triple = $.rdf.triple(triple, {
+				namespaces : ns,
+				base : this.base()
+			});
+		} else if (triple.rdfquery) {
+			addRDFa.call(this, triple.sources().get(0));
+			return this;
+		} else if (triple.length) {
+			for (i = 0; i < triple.length; i += 1) {
+				addRDFa.call(this, triple[i]);
+			}
+			return this;
+		}
+		hasRelation = atts.rel !== undefined || atts.rev !== undefined;
+		hasRDFa = hasRelation || atts.property !== undefined
+				|| atts['typeof'] !== undefined;
+		if (triple.object.type !== 'literal') {
+			subject = getSubject(this, {
+				atts : atts
+			}, true).subject;
+			object = getObjectResource(this, {
+				atts : atts
+			}, true);
+			overridableObject = !hasRDFa && atts.resource === undefined;
+			sameSubject = subject === triple.subject;
+			sameObject = object === triple.object;
+			if (triple.property === $.rdf.type) {
+				if (sameSubject) {
+					createCurieAttr(this, 'typeof', triple.object.value);
+				} else if (hasRDFa) {
+					span = this.wrapInner('<span />').children('span');
+					createCurieAttr(span, 'typeof', triple.object.value);
+					if (object !== triple.subject) {
+						createSubjectAttr(span, triple.subject);
+					}
+				} else {
+					createCurieAttr(this, 'typeof', triple.object.value);
+					createSubjectAttr(this, triple.subject);
+				}
+			} else if (sameSubject) {
+				// use a rel
+				if (sameObject) {
+					createCurieAttr(this, 'rel', triple.property.value);
+				} else if (overridableObject || !hasRDFa) {
+					createCurieAttr(this, 'rel', triple.property.value);
+					createObjectAttr(this, triple.object);
+				} else {
+					span = this.wrap('<span />').parent();
+					createCurieAttr(span, 'rev', triple.property.value);
+					createSubjectAttr(span, triple.object);
+				}
+			} else if (subject === triple.object) {
+				if (object === triple.subject) {
+					// use a rev
+					createCurieAttr(this, 'rev', triple.property.value);
+				} else if (overridableObject || !hasRDFa) {
+					createCurieAttr(this, 'rev', triple.property.value);
+					createObjectAttr(this, triple.subject);
+				} else {
+					// wrap in a span with a rel
+					span = this.wrap('<span />').parent();
+					createCurieAttr(span, 'rel', triple.property.value);
+					createSubjectAttr(span, triple.subject);
+				}
+			} else if (sameObject) {
+				if (hasRDFa) {
+					// use a rev on a nested span
+					span = this.wrapInner('<span />').children('span');
+					createCurieAttr(span, 'rev', triple.property.value);
+					createObjectAttr(span, triple.subject);
+					span = span.wrapInner('<span />').children('span');
+					createSubjectAttr(span, triple.object);
+					span = this;
+				} else {
+					createSubjectAttr(this, triple.subject);
+					createCurieAttr(this, 'rel', triple.property.value);
+				}
+			} else if (object === triple.subject) {
+				if (hasRDFa) {
+					// wrap the contents in a span and use a rel
+					span = this.wrapInner('<span />').children('span');
+					createCurieAttr(span, 'rel', this.property.value);
+					createObjectAttr(span, triple.object);
+					span = span.wrapInner('<span />').children('span');
+					createSubjectAttr(span, object);
+					span = this;
+				} else {
+					// use a rev on this element
+					createSubjectAttr(this, triple.object);
+					createCurieAttr(this, 'rev', triple.property.value);
+				}
+			} else if (hasRDFa) {
+				span = this.wrapInner('<span />').children('span');
+				createCurieAttr(span, 'rel', triple.property.value);
+				createSubjectAttr(span, triple.subject);
+				createObjectAttr(span, triple.object);
+				if (span.children('*').length > 0) {
+					span = this.wrapInner('<span />').children('span');
+					createSubjectAttr(span, subject);
+				}
+				span = this;
+			} else {
+				createCurieAttr(span, 'rel', triple.property.value);
+				createSubjectAttr(this, triple.subject);
+				createObjectAttr(this, triple.object);
+				if (this.children('*').length > 0) {
+					span = this.wrapInner('<span />').children('span');
+					createSubjectAttr(span, subject);
+					span = this;
+				}
+			}
+		} else {
+			subject = getSubject(this, {
+				atts : atts
+			}).subject;
+			object = getObjectResource(this, {
+				atts : atts
+			});
+			sameSubject = subject === triple.subject;
+			hasContent = this.text() !== triple.object.value;
+			if (atts.property !== undefined) {
+				content = atts.content;
+				sameObject = content !== undefined ? content === triple.object.value
+						: !hasContent;
+				if (sameSubject && sameObject) {
+					createCurieAttr(this, 'property', triple.property.value);
+				} else {
+					span = this.wrapInner('<span />').children('span');
+					return addRDFa.call(span, triple);
+				}
+			} else {
+				if (object === triple.subject) {
+					span = this.wrapInner('<span />').children('span');
+					return addRDFa.call(span, triple);
+				}
+				createCurieAttr(this, 'property', triple.property.value);
+				createSubjectAttr(this, triple.subject);
+				if (hasContent) {
+					if (triple.object.datatype
+							&& triple.object.datatype.toString() === rdfXMLLiteral) {
+						this.html(triple.object.value);
+					} else {
+						this.attr('content', triple.object.value);
+					}
+				}
+				lang = getLang(this);
+				if (triple.object.lang) {
+					if (lang !== triple.object.lang) {
+						this.attr('lang', triple.object.lang);
+						if (hasContent) {
+							resetLang(this, lang);
+						}
+					}
+				} else if (triple.object.datatype) {
+					createCurieAttr(this, 'datatype', triple.object.datatype);
+				} else {
+					// the empty datatype ensures that any child elements that
+					// might be
+					// added won't mess up this triple
+					if (!hasContent) {
+						this.attr('datatype', '');
+					}
+					// the empty lang ensures that a language won't be assigned
+					// to the
+					// literal
+					if (lang !== undefined) {
+						this.attr('lang', '');
+						if (hasContent) {
+							resetLang(this, lang);
+						}
+					}
+				}
+			}
+		}
+		this.parents().andSelf().trigger("rdfChange");
+		return span;
+	},
+
+	removeRDFa = function(what) {
+		var span, atts, property, rel, rev, type, ns = this.xmlns();
+		atts = getAttributes(this).atts;
+		if (what.length) {
+			for (i = 0; i < what.length; i += 1) {
+				removeRDFa.call(this, what[i]);
+			}
+			return this;
+		}
+		hasRelation = atts.rel !== undefined || atts.rev !== undefined;
+		hasRDFa = hasRelation || atts.property !== undefined
+				|| atts['typeof'] !== undefined;
+		if (hasRDFa) {
+			if (what.property !== undefined) {
+				if (atts.property !== undefined) {
+					property = removeCurie(atts.property, what.property, {
+						namespaces : ns
+					});
+					if (property === '') {
+						this.removeAttr('property');
+					} else {
+						this.attr('property', property);
+					}
+				}
+				if (atts.rel !== undefined) {
+					rel = removeCurie(atts.rel, what.property, {
+						namespaces : ns
+					});
+					if (rel === '') {
+						this.removeAttr('rel');
+					} else {
+						this.attr('rel', rel);
+					}
+				}
+				if (atts.rev !== undefined) {
+					rev = removeCurie(atts.rev, what.property, {
+						namespaces : ns
+					});
+					if (rev === '') {
+						this.removeAttr('rev');
+					} else {
+						this.attr('rev', rev);
+					}
+				}
+			}
+			if (what.type !== undefined) {
+				if (atts['typeof'] !== undefined) {
+					type = removeCurie(atts['typeof'], what.type, {
+						namespaces : ns
+					});
+					if (type === '') {
+						this.removeAttr('typeof');
+					} else {
+						this.attr('typeof', type);
+					}
+				}
+			}
+			if (atts.property === this.attr('property')
+					&& atts.rel === this.attr('rel')
+					&& atts.rev === this.attr('rev')
+					&& atts['typeof'] === this.attr('typeof')) {
+				return removeRDFa.call(this.parent(), what);
+			}
+		}
+		this.parents().andSelf().trigger("rdfChange");
+		return this;
+	};
+
+	/**
+	 * Creates a {@link jQuery.rdf} object containing the RDF triples parsed
+	 * from the RDFa found in the current jQuery selection or adds the specified
+	 * triple as RDFa markup on each member of the current jQuery selection. To
+	 * create an {@link jQuery.rdf} object, you will usually want to use
+	 * {@link jQuery#rdf} instead, as this may perform other useful processing
+	 * (such as of microformats used within the page).
+	 * 
+	 * @methodOf jQuery#
+	 * @name jQuery#rdfa
+	 * @param {jQuery.rdf.triple}
+	 *            [triple] The RDF triple to be added to each item in the jQuery
+	 *            selection.
+	 * @returns {jQuery.rdf}
+	 * @example // Extract RDFa markup from all span elements contained inside
+	 *          #main rdf = $('#main > span').rdfa();
+	 * @example // Add RDFa markup to a particular element var span = $('#main >
+	 *          p > span'); span.rdfa('&lt;> dc:date "2008-10-19"^^xsd:date .');
+	 */
+	$.fn.rdfa = function(triple) {
+		if (triple === undefined) {
+			var triples = $.map($(this), function(elem) {
+				return rdfa.call($(elem));
+			});
+			return $.rdf({
+				triples : triples
+			});
+		} else {
+			$(this).each(function() {
+				addRDFa.call($(this), triple);
+			});
+			return this;
+		}
+	};
+
+	/**
+	 * Removes the specified RDFa markup from each of the items in the current
+	 * jQuery selection. The input parameter can be either an object or an array
+	 * of objects. The objects can either have a <code>type</code> property,
+	 * in which case the specified type is removed from the RDFa provided on the
+	 * selected elements, or a <code>property</code> property, in which case
+	 * the specified property is removed from the RDFa provided on the selected
+	 * elements.
+	 * 
+	 * @methodOf jQuery#
+	 * @name jQuery#removeRdfa
+	 * @param {Object|Object[]}
+	 *            triple The RDFa markup items to be removed from the items in
+	 *            the jQuery selection.
+	 * @returns {jQuery} The original jQuery object.
+	 * @example // To remove a property resource or relation from an element
+	 *          $('#main > p > a').removeRdfa({ property: "dc:creator" });
+	 * @example // To remove a type from an element $('#main >p >
+	 *          a').removeRdfa({ type: "foaf:Person" });
+	 * @example // To remove multiple triples from an element $('#main > p >
+	 *          a').removeRdfa([{ property: "foaf:depicts" }, { property:
+	 *          "dc:creator" }]);
+	 */
+	$.fn.removeRdfa = function(triple) {
+		$(this).each(function() {
+			removeRDFa.call($(this), triple);
+		});
+		return this;
+	};
+
+	$.rdf.gleaners.push(gleaner);
+
+})(jQuery);
