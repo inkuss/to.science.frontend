@@ -968,70 +968,70 @@ function _edoweb_entity_table_headers_defaults() {
 }
 
 function _edoweb_entity_table_headers($init_sort = null) {
-  return array(
-    'field_edoweb_title' => array(
-      'data' => 'Titel',
-      'type' => 'field',
-      'specifier' => array(
-        'field' => 'field_edoweb_title',
-        'column' => 'value',
-      ),
-      'format' => '_full_title',
-    ),
-    'field_edoweb_identifier_ht' => array(
-      'data' => t('ID'),
-      'type' => 'field',
-      'specifier' => array(
-        'field' => 'field_edoweb_identifier_ht',
-        'column' => 'value',
-      ),
-      'format' => '_get_external_url',
-    ),
-    '_edoweb_compact_view' => array(
-      'data' => t('Kurzansicht'),
-      'type' => 'generated',
-      'format' => '_edoweb_compact_view',  
-    ),
-    'field_edoweb_issued' => array(
-      'data' => t('Issued'),
-      'type' => 'field',
-      'specifier' => array(
-        'field' => 'field_edoweb_issued',
-        'column' => 'value',
-      ),
-    ),
-    'objectTimestamp' => array(
-      'data' => t('Updated'),
-      'type' => 'property',
-      'specifier' => 'objectTimestamp',
-      'format' => '_edoweb_format_date',
-      'sort' => $init_sort ? 'desc' : null,
-    ),
-    '_edoweb_format_access_icons' => array(
-      'data' => t('Zugriff'),
-      'type' => 'generated',
-      'format' => '_edoweb_format_access_icons',
-    ),
-    '_edoweb_link_lastmodified' => array(
-      'data' => t('Zuletzt hinzugefügtes Label'),
-      'type' => 'generated',
-      'format' => '_edoweb_link_lastmodified',
-    ),
-    'bundle_type' => array(
-      'data' => t('Objektart'),
-      'type' => 'property',
-      'specifier' => 'bundle_type',
-      'format' => '_edoweb_format_bundle_name',
-    ),
-    'type' => array(
-      'data' => t('Typ'),
-      'type' => 'field',
-      'specifier' => array(
-        'field' => 'field_edoweb_type',
-        'column' => 'value',
-      ),
-    ),
-  );
+	return array (
+			'field_edoweb_title' => array (
+					'data' => 'Titel',
+					'type' => 'field',
+					'specifier' => array (
+							'field' => 'field_edoweb_title',
+							'column' => 'value' 
+					),
+					'format' => '_full_title' 
+			),
+			'field_edoweb_identifier_ht' => array (
+					'data' => t ( 'ID' ),
+					'type' => 'field',
+					'specifier' => array (
+							'field' => 'field_edoweb_identifier_ht',
+							'column' => 'value' 
+					),
+					'format' => '_get_link' 
+			),
+			'_edoweb_compact_view' => array (
+					'data' => t ( 'Kurzansicht' ),
+					'type' => 'generated',
+					'format' => '_edoweb_compact_view' 
+			),
+			'field_edoweb_issued' => array (
+					'data' => t ( 'Issued' ),
+					'type' => 'field',
+					'specifier' => array (
+							'field' => 'field_edoweb_issued',
+							'column' => 'value' 
+					) 
+			),
+			'objectTimestamp' => array (
+					'data' => t ( 'Updated' ),
+					'type' => 'property',
+					'specifier' => 'objectTimestamp',
+					'format' => '_edoweb_format_date',
+					'sort' => $init_sort ? 'desc' : null 
+			),
+			'_edoweb_format_access_icons' => array (
+					'data' => t ( 'Zugriff' ),
+					'type' => 'generated',
+					'format' => '_edoweb_format_access_icons' 
+			),
+			'_edoweb_link_lastmodified' => array (
+					'data' => t ( 'Zuletzt hinzugefügtes Label' ),
+					'type' => 'generated',
+					'format' => '_edoweb_link_lastmodified' 
+			),
+			'bundle_type' => array (
+					'data' => t ( 'Objektart' ),
+					'type' => 'property',
+					'specifier' => 'bundle_type',
+					'format' => '_edoweb_format_bundle_name' 
+			),
+			'type' => array (
+					'data' => t ( 'Typ' ),
+					'type' => 'field',
+					'specifier' => array (
+							'field' => 'field_edoweb_type',
+							'column' => 'value' 
+					) 
+			) 
+	);
 }
 
 function _edoweb_authority_table_headers_defaults() {
@@ -3069,6 +3069,16 @@ function _get_external_url($label, $entity, $attributes = array()) {
   );
 }
 
+function _get_link($label, $entity, $attributes = array()) {
+	$wrapper = entity_metadata_wrapper ( 'edoweb_basic', $entity );
+	$curie = $entity->remote_id;
+	$value = $entity->field_edoweb_ht_with_link ['und'] [0] ['value'];
+	$attributes ['target'] = '_blank';
+	return l ( $label ? $label : $curie, $value, array (
+			'attributes' => $attributes
+	) );
+}
+
 function _edoweb_format_bundle_name($bundle) {
   return sprintf(
     '<span class="entity-label-%s">%s</span>',
@@ -4395,4 +4405,55 @@ function edoweb_update_7168() {
   _update_rdf_mapping();
 
 }
+
+/**
+ * Update complete drupal data schema
+ */
+function edoweb_update_7171() {
+	_update_edoweb_installed_fields ();
+	_update_edoweb_installed_instances ();
+	_update_rdf_mapping ();
+}
+/**
+ * Update definition of possible children of a node
+ */
+function edoweb_update_7172() {
+	$updated_instances = array (
+			'volume' => array (
+					'field_edoweb_struct_child' 
+			),
+			'issue' => array(
+					'field_edoweb_struct_child',
+			),
+			'article' => array(
+					'field_edoweb_struct_child',
+			),
+			'version' => array(
+					'field_edoweb_struct_child',
+			),
+			'part' => array(
+					'field_edoweb_struct_child',
+			),
+			'webpage' => array(
+					'field_edoweb_struct_child',
+			),
+			'monograph' => array(
+					'field_edoweb_struct_child',
+			),
+			'journal' => array(
+					'field_edoweb_struct_child',
+			),
+			'generic' => array(
+					'field_edoweb_struct_child',
+			),
+			'file' => array(
+					'field_edoweb_struct_child',
+			),
+	);
+
+	_update_edoweb_installed_instances($updated_instances);
+	_update_rdf_mapping();
+
+}
+
 
