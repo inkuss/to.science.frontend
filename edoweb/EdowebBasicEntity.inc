@@ -129,8 +129,9 @@ class EdowebBasicEntity extends Entity {
           $render = field_view_value(
             EDOWEB_ENTITY_TYPE, $this, $label_field, array('value' => $title_value)
           );
-          $values[] = drupal_render($render);
+          $values[] = html_entity_decode(drupal_render($render));
         }
+  
         if ($title_value) $title_values[] = implode(' ' . variable_get('sub_title_field_value_separator') . ' ', $values);
       } catch (EntityMetadataWrapperException $e) {
         // Field not available, ignore
