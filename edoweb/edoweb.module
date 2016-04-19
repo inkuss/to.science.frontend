@@ -810,6 +810,11 @@ function edoweb_basic_search_entities_form($form, &$form_state, $advanced, $sear
     ),
   );
 
+  $form['query'][$search_count]['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Search'),
+  );
+
   if (isset($query['target_bundles']) && isset($query['endpoint'])) {
     $options = array();
     $bundle_infos = field_info_bundles(EDOWEB_ENTITY_TYPE);
@@ -855,10 +860,6 @@ function edoweb_basic_search_entities_form($form, &$form_state, $advanced, $sear
     }
   }
 
-  $form['query'][$search_count]['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Search'),
-  );
 
   return $form;
 }
