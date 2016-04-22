@@ -618,7 +618,7 @@ function edoweb_repository_configuration_form() {
       'contentType' => t('Objektart'),
       'subject.@id' => t('Sacherschließung'),
       'issued' => t('Erscheinungsjahr'),
-      'type.@id' => t('Typ'),
+      'rdftype.@id' => t('Typ'),
       'medium.@id' => t('Medium'),
       'institution.@id' => t('Institution'),
     ),
@@ -1318,7 +1318,6 @@ function edoweb_basic_entity_table($header, $entities, $operations = array(), $t
  *
  */
 function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array(), $search_count = 0, $active_facets = null, $sortable = TRUE, $view_mode = 'default') {
-
   global $user;
 
   // Prepare query: header for table sort
@@ -1399,7 +1398,7 @@ function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array()
         ),
         '#title' => l(_edoweb_map_string($jsonld_property), 'browse/' . $jsonld_property),
       );
-      $is_ref = in_array($jsonld_property, array('creator', 'subject', 'institution', 'medium', 'type'));
+      $is_ref = in_array($jsonld_property, array('creator', 'subject', 'institution', 'medium', 'rdftype'));
       $is_user = ('createdBy' == $jsonld_property
           || 'lastModifiedBy' == $jsonld_property);
       foreach ($facet->terms as $term) {
@@ -1541,7 +1540,7 @@ function _edoweb_map_string($string) {
       return t('remote');
     case 'institution':
       return t('institution');
-    case 'type':
+    case 'rdftype':
       return t('type');
     case 'medium':
       return t('medium');
@@ -2434,7 +2433,7 @@ function edoweb_basic_browse($jsonld_property) {
     return drupal_not_found();
   }
 
-  $is_ref = in_array($jsonld_property, array('creator', 'subject', 'institution', 'type', 'medium'));
+  $is_ref = in_array($jsonld_property, array('creator', 'subject', 'institution', 'rdftype', 'medium'));
   $is_user = ('createdBy' == $jsonld_property
       || 'lastModifiedBy' == $jsonld_property);
   $items = array();
@@ -2524,7 +2523,7 @@ function edoweb_rdf_mapping() {
       'type' => EDOWEB_ENTITY_TYPE,
       'bundle' => $bundle_type,
       'mapping' => array(
-        'rdftype' => $rdf_types[$bundle_type],
+        'type' => $rdf_types[$bundle_type],
       ),
     );
     foreach ($field_instances as $field_name => $field_instance) {
@@ -3225,7 +3224,7 @@ function _update_rdf_mapping($updated_mappings = null) {
   }
 
   // Add RDF type
-  $updated_mappings[] = 'rdftype';
+  $updated_mappings[] = 'type';
 
   $rdf_mappings = edoweb_rdf_mapping();
   foreach ($rdf_mappings as $rdf_mapping) {
@@ -4456,5 +4455,7 @@ function edoweb_update_7172() {
 	_update_rdf_mapping();
 
 }
-
+function edoweb_update_7173(){
+	_update_rdf_mapping();
+}
 
