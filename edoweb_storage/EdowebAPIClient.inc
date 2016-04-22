@@ -402,7 +402,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
 
       foreach ($types as $type) {
         $bundle_info = $bundle_infos[$type];
-        foreach ($bundle_info['rdf_mapping']['rdftype'] as $rdf_type) {
+        foreach ($bundle_info['rdf_mapping']['type'] as $rdf_type) {
           $rdf_types[] = _edoweb_expand_curie($rdf_type);
         }
       }

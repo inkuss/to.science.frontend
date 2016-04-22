@@ -624,7 +624,7 @@ function _edoweb_storage_entity_deserialize_rdf($entity, $rdf_model) {
   );
 
   // Skip first element, these are the rdf:type definitions
-  unset($rdf_mapping['rdftype']);
+  unset($rdf_mapping['type']);
   $wrapper = entity_metadata_wrapper(EDOWEB_ENTITY_TYPE, $entity);
   foreach ($rdf_mapping as $field_name => $mapping) {
     $entity->{$field_name} = null;
