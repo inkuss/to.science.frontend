@@ -1128,7 +1128,6 @@ function _edoweb_authority_table_headers() {
 function edoweb_basic_table_header($bundle_type = 'generic', $init_sort = false) {
 
   $columns = array();
-  
   if (user_access('edit any edoweb_basic entity')) {
     $entity_table_headers = variable_get('editor_entity_table_headers', _edoweb_entity_table_headers_defaults());
     $authority_table_headers = variable_get('editor_authority_table_headers', _edoweb_authority_table_headers_defaults());
@@ -3007,6 +3006,19 @@ function _edoweb_available_languages() {
 function _full_title($label, $entity, $attributes = array()) {
   return '<h1 class="title">' . _get_edoweb_url($entity->label(), $entity, $attributes) . '</h1>'
            . ($entity->subLabel() ? '<h2 class="title-suffix">' . $entity->subLabel() . '</h2>' : '');
+}
+
+function _compact_title($label, $entity, $attributes = array()) {
+ 	if('file' == $entity->bundle()){
+		return '<div class="' .$entity->remote_id.'">'
+				.'<h1 class="fileTitle" >' . _get_edoweb_url($entity->label(), $entity, $attributes) . '</h1>'
+				.'<div class="fileMimetype">'. $entity->getField(array('field_edoweb_filetype')) .'</div>'
+				.'<div class="fileSize">'. $entity->getField(array('field_edoweb_filesize')).'</div>'
+				.'<a class="downloadUrl" target="blank" href="'.$entity->url().'/data">'. $entity->url().'/data</div>'
+				.'<div class="accessRights">'.$entity->access_data.'</div>'
+				.'</div>';
+	}	
+	return '<h1 class="title">' . _get_edoweb_url($entity->label(), $entity, $attributes) . '</h1>';
 }
 
 function _get_edoweb_url($label, $entity, $attributes = array()) {
