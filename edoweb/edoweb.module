@@ -4465,6 +4465,5 @@ function edoweb_update_7174(){
     _update_edoweb_installed_fields();
 	_update_edoweb_installed_instances();
 	_update_rdf_mapping();
-	
 }
 
