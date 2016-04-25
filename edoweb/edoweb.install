@@ -82,6 +82,14 @@ function edoweb_install() {
 function _edoweb_installed_fields() {
   $t = get_t();
   return array(
+  		'field_mab_710' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('lv:subjectLabel'),
+  				),
+  		),
   	  'field_edoweb_ht_with_link' => array(
   	  'cardinality' => FIELD_CARDINALITY_UNLIMITED,
       'type'        => 'edoweb_ld_reference',
@@ -1413,8 +1421,6 @@ function _edoweb_installed_instances() {
      * Field instances in monograph bundle
      */
     'monograph' => array(
-      'field_edoweb_ht_with_link' => array(),
-      'field_edoweb_identifier_ht' => array(),
       'field_edoweb_title' => array(),
       'field_edoweb_title_other' => array(),
       'field_edoweb_title_alternative' => array(),
@@ -1464,6 +1470,7 @@ function _edoweb_installed_instances() {
       'field_edoweb_subject' => array(),
       'field_edoweb_subject_chain' => array(),
       'field_edoweb_tag' => array(),
+      'field_mab_710' => array(),
       'field_edoweb_abstract' => array(),
       'field_edoweb_parallel' => array(
         'settings'    => array(
@@ -1517,18 +1524,18 @@ function _edoweb_installed_instances() {
           ),
         ),
       ),
+      'field_edoweb_thesis_information' => array(),
       'field_edoweb_type' => array(),
       'field_edoweb_medium' => array(),
+      'field_edoweb_ht_with_link' => array(),
+      'field_edoweb_identifier_ht' => array(),
       'field_edoweb_institution' => array(),
-      'field_edoweb_thesis_information' => array(),
     ),
 
     /*
      * Field instances in journal bundle
      */
     'journal' => array(
-      'field_edoweb_ht_with_link' => array(),
-      'field_edoweb_identifier_ht' => array(),
       'field_edoweb_identifier_zdb' => array(),
       'field_edoweb_title' => array(),
       'field_edoweb_title_other' => array(),
@@ -1581,6 +1588,7 @@ function _edoweb_installed_instances() {
       'field_edoweb_subject' => array(),
       'field_edoweb_subject_chain' => array(),
       'field_edoweb_tag' => array(),
+      'field_mab_710' => array(),
       'field_edoweb_parallel' => array(
         'settings'    => array(
           'target_type' => 'edoweb_basic',
@@ -1636,8 +1644,11 @@ function _edoweb_installed_instances() {
           ),
         ),
       ),
+      'field_edoweb_thesis_information' => array(),
       'field_edoweb_type' => array(),
       'field_edoweb_medium' => array(),
+      'field_edoweb_ht_with_link' => array(),
+      'field_edoweb_identifier_ht' => array(),
       'field_edoweb_institution' => array(),
     ),
 
@@ -1645,8 +1656,6 @@ function _edoweb_installed_instances() {
      * Field instances in volume bundle
      */
     'volume' => array(
-      'field_edoweb_ht_with_link' => array(),
-      'field_edoweb_identifier_ht' => array(),
       'field_edoweb_title' => array(),
       'field_edoweb_volume' => array(),
       'field_edoweb_issued' => array(),
@@ -1656,6 +1665,7 @@ function _edoweb_installed_instances() {
       'field_edoweb_issn' => array(),
       'field_edoweb_doi' => array(),
       'field_edoweb_description' => array(),
+      'field_mab_710' => array(),
       'field_edoweb_struct_child' => array(
         'settings'    => array(
           'target_type' => 'edoweb_basic',
@@ -1679,21 +1689,26 @@ function _edoweb_installed_instances() {
             ),
           ),
         ),
-      ),
+      ), 
+      'field_edoweb_thesis_information' => array(),
+      'field_edoweb_type' => array(),
+      'field_edoweb_medium' => array(),
+      'field_edoweb_ht_with_link' => array(),
+      'field_edoweb_identifier_ht' => array(),
+      'field_edoweb_institution' => array(),	
     ),
 
     /*
      * Field instances in issue bundle
      */
     'issue' => array(
-      'field_edoweb_ht_with_link' => array(),      
-      'field_edoweb_identifier_ht' => array(),
       'field_edoweb_title' => array(),
       'field_edoweb_issued' => array(),
       'field_edoweb_urn' => array(),
       'field_edoweb_doi' => array(),
       'field_edoweb_extent' => array(),
       'field_edoweb_description' => array(),
+      'field_mab_710' => array(),
       'field_edoweb_struct_child' => array(
         'settings'    => array(
           'target_type' => 'edoweb_basic',
@@ -1717,15 +1732,19 @@ function _edoweb_installed_instances() {
             ),
           ),
         ),
-      ),
+      ), 
+      'field_edoweb_thesis_information' => array(),
+      'field_edoweb_type' => array(),
+      'field_edoweb_medium' => array(),
+      'field_edoweb_ht_with_link' => array(),
+      'field_edoweb_identifier_ht' => array(),
+      'field_edoweb_institution' => array(),
     ),
 
     /*
      * Field instances in article bundle
      */
     'article' => array(
-      'field_edoweb_ht_with_link' => array(),
-      'field_edoweb_identifier_ht' => array(),
       'field_edoweb_title' => array(),
       'field_edoweb_creator' => array(),
       'field_edoweb_creator_label' => array(),
@@ -1741,6 +1760,7 @@ function _edoweb_installed_instances() {
       'field_edoweb_subject' => array(),
       'field_edoweb_subject_chain' => array(),
       'field_edoweb_tag' => array(),
+      'field_mab_710' => array(),
       'field_edoweb_abstract' => array(),
       'field_edoweb_struct_child' => array(
         'settings'    => array(
@@ -1765,20 +1785,26 @@ function _edoweb_installed_instances() {
             ),
           ),
         ),
-      ),
+      ), 
+      'field_edoweb_thesis_information' => array(),
+      'field_edoweb_type' => array(),
+      'field_edoweb_medium' => array(),
+      'field_edoweb_ht_with_link' => array(),
+      'field_edoweb_identifier_ht' => array(),
+      'field_edoweb_institution' => array(),
     ),
 
     /*
      * Field instances in file bundle
      */
     'file' => array(
-      'field_edoweb_ht_with_link' => array(),
       'field_edoweb_title' => array(),
       'field_edoweb_label' => array(),
       'field_edoweb_filesize' => array(),
       'field_edoweb_filetype' => array(),
       'field_edoweb_urn' => array(),
       'field_edoweb_doi' => array(),
+      'field_mab_710' => array(),
       'field_edoweb_datastream' => array('required' => TRUE),
       'field_edoweb_struct_parent' => array(
         'settings'    => array(
@@ -1795,15 +1821,19 @@ function _edoweb_installed_instances() {
             ),
           ),
         ),
-      ),
+      ), 
+      'field_edoweb_thesis_information' => array(),
+      'field_edoweb_type' => array(),
+      'field_edoweb_medium' => array(),
+      'field_edoweb_ht_with_link' => array(),
+      'field_edoweb_identifier_ht' => array(),
+      'field_edoweb_institution' => array(),
     ),
 
     /*
      * Field instances in webpage bundle
      */
     'webpage' => array(
-      'field_edoweb_ht_with_link' => array(),
-      'field_edoweb_identifier_ht' => array(),
       'field_edoweb_title' => array(),
       'field_edoweb_title_other' => array(),
       'field_edoweb_title_alternative' => array(),
@@ -1852,6 +1882,7 @@ function _edoweb_installed_instances() {
       'field_edoweb_description' => array(),
       'field_edoweb_subject' => array(),
       'field_edoweb_subject_chain' => array(),
+      'field_mab_710' => array(),
       'field_edoweb_tag' => array(),
       'field_edoweb_abstract' => array(),
       'field_edoweb_parallel' => array(
@@ -1905,21 +1936,26 @@ function _edoweb_installed_instances() {
             ),
           ),
         ),
-      ),
+      ), 
+      'field_edoweb_thesis_information' => array(),
+      'field_edoweb_type' => array(),
+      'field_edoweb_medium' => array(),
+      'field_edoweb_ht_with_link' => array(),
+      'field_edoweb_identifier_ht' => array(),
+      'field_edoweb_institution' => array(),
     ),
 
     /*
      * Field instances in version bundle
      */
     'version' => array(
-      'field_edoweb_ht_with_link' => array(),
-      'field_edoweb_identifier_ht' => array(),
       'field_edoweb_title' => array(),
       'field_edoweb_label' => array(),
       'field_edoweb_filesize' => array(),
       'field_edoweb_filetype' => array(),
       'field_edoweb_urn' => array(),
       'field_edoweb_doi' => array(),
+      'field_mab_710' => array(),
       'field_edoweb_datastream' => array('required' => TRUE),
       'field_edoweb_struct_parent' => array(
         'settings'    => array(
@@ -1930,7 +1966,13 @@ function _edoweb_installed_instances() {
             ),
           ),
         ),
-      ),
+      ), 
+      'field_edoweb_thesis_information' => array(),
+      'field_edoweb_type' => array(),
+      'field_edoweb_medium' => array(),
+      'field_edoweb_ht_with_link' => array(),
+      'field_edoweb_identifier_ht' => array(),
+      'field_edoweb_institution' => array(),
     ),
 
     /*
@@ -2024,8 +2066,6 @@ function _edoweb_installed_instances() {
      * Field instances in generic bibliographic resource bundle
      */
     'generic' => array(
-      'field_edoweb_ht_with_link' => array(),
-      'field_edoweb_identifier_ht' => array(),
       'field_edoweb_title' => array(),
       'field_edoweb_title_other' => array(),
       'field_edoweb_title_alternative' => array(),
@@ -2075,6 +2115,7 @@ function _edoweb_installed_instances() {
       'field_edoweb_subject' => array(),
       'field_edoweb_subject_chain' => array(),
       'field_edoweb_tag' => array(),
+      'field_mab_710' => array(),
       'field_edoweb_abstract' => array(),
       'field_edoweb_parallel' => array(
         'settings'    => array(
@@ -2127,16 +2168,20 @@ function _edoweb_installed_instances() {
           ),
         ),
       ),
+      'field_edoweb_thesis_information' => array(),
       'field_edoweb_type' => array(),
       'field_edoweb_medium' => array(),
+      'field_edoweb_ht_with_link' => array(),
+      'field_edoweb_identifier_ht' => array(),
+      'field_edoweb_institution' => array(),
     ),
 
     /*
      * Field instances in part bundle
      */
     'part' => array(
-      'field_edoweb_identifier_ht' => array(),
       'field_edoweb_title' => array(),
+      'field_mab_710' => array(),
       'field_edoweb_struct_child' => array(
         'settings'    => array(
           'target_type' => 'edoweb_basic',
@@ -2150,7 +2195,6 @@ function _edoweb_installed_instances() {
             ),
           ),
         ),
-      ),
       'field_edoweb_struct_parent' => array(
         'settings'    => array(
           'target_type' => 'edoweb_basic',
@@ -2165,7 +2209,14 @@ function _edoweb_installed_instances() {
             ),
           ),
         ),
-      ),
+      ), 
+      'field_edoweb_thesis_information' => array(),
+      'field_edoweb_type' => array(),
+      'field_edoweb_medium' => array(),
+      'field_edoweb_ht_with_link' => array(),
+      'field_edoweb_identifier_ht' => array(),
+      'field_edoweb_institution' => array(),
+      )
     ),
   );
 }
@@ -2173,6 +2224,8 @@ function _edoweb_installed_instances() {
 function _edoweb_field_instance_defaults($field_name) {
   $t = get_t();
   $defaults = array(
+  		'field_mab_710' => array('label' => $t('Schlagworte'),
+  	),
     'field_edoweb_ht_with_link' => array(
       'label' => $t('Verbund-Id'),
     ),
