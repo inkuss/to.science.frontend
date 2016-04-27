@@ -61,7 +61,7 @@ function edoweb_init() {
       'fields' => $instances,
       'namespaces' => rdf_get_namespaces(),
       'primary_bundles' => array(
-        'monograph', 'journal', 'volume', 'issue', 'article'
+        'monograph', 'journal', 'volume', 'issue', 'article','proceeding'
       ),
       'site_frontpage' => variable_get('site_frontpage', '/'),
       'deepzoomServiceUrl' => variable_get('edoweb_deepzoom_url') ,
@@ -270,6 +270,13 @@ function edoweb_entity_info() {
           'access arguments' => array('administer edoweb_basic entities'),
         ),
       ),
+    'proceeding' => array(
+    				'label' => t('Konferenzband'),
+    				'admin' => array(
+    						'path' => 'admin/structure/edoweb_basic/proceeding/manage',
+    						'access arguments' => array('administer edoweb_basic entities'),
+    				),
+    		),
     ),
     'view modes' => array(
       'compact' => array(
@@ -676,7 +683,7 @@ function edoweb_info_page() {
   $query->addTag('elasticsearch');
   $query->entityCondition('entity_type', 'edoweb_basic');
   $query->entityCondition('bundle', array(
-    'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'webpage', 'version', 'part'
+    'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'webpage', 'version', 'part', 'proceeding'
   ));
   $content['resource_list'] = edoweb_basic_search_entities(
     $query, TRUE, array(), TRUE, user_access('edit any edoweb_basic entity'), TRUE, 'compact', TRUE
@@ -832,6 +839,7 @@ function edoweb_basic_search_entities_form($form, &$form_state, $advanced, $sear
   } else if (isset($query['endpoint']) && 'resource' == $query['endpoint']) {
     $options = array(
       'generic' => t('Any'),
+      'proceeding'=>t('Konferenzband'),
       'monograph' => t('Monograph'),
       'journal' => t('Journal'),
       'webpage' => t('Webpage'),
@@ -942,7 +950,7 @@ function edoweb_basic_search_entities(
 
   if (! (@$childlevel = $query['childlevel'])) {
     //FIXME: this overwrites person etc bundles!!!
-    $efq->entityCondition('bundle', array('monograph', 'journal', 'webpage'));
+    $efq->entityCondition('bundle', array('monograph', 'journal', 'webpage','proceeding'));
   }
 
   if (@$fulltext = $query['fulltext']) {
@@ -1147,6 +1155,7 @@ function edoweb_basic_table_header($bundle_type = 'generic', $init_sort = false)
     case 'webpage':
     case 'version':
     case 'generic':
+    case 'proceeding':	
     case 'part':
       foreach (_edoweb_entity_table_headers($init_sort) as $field => $column) {
         if (isset($entity_table_headers[$field]) && $entity_table_headers[$field]) {
@@ -1572,7 +1581,8 @@ function edoweb_basic_bundle_name($bundle) {
 function edoweb_basic_view($entity, $view_mode = 'default') {
   global $base_url;
   $page_url = $base_url . '/' . current_path();
-
+//   _update_edoweb_installed_instances();
+//   _update_rdf_mapping();
   // Our entity type, for convenience.
   $entity_type = 'edoweb_basic';
 
@@ -1642,7 +1652,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
       }
       if ($has_inverse) {
         $inverse_query->entityCondition('bundle', array(
-          'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'part'
+          'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'part','proceeding'
         ));
         $entity->content['related'] = edoweb_basic_search_entities(
           $inverse_query
@@ -1893,6 +1903,7 @@ function edoweb_field_extra_fields() {
   $extra_fields['edoweb_basic']['monograph']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['journal']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['volume']['display'] = $display_elements;
+  $extra_fields['edoweb_basic']['proceeding']['display'] = $display_elements;
 
   return $extra_fields;
 }
@@ -2564,6 +2575,7 @@ function edoweb_rdf_types($bundle = null) {
     //FIXME: dummy RDF type for version
     'version' => array('lv:ArchivedWebPageVersion'),
     'generic' => array('dc:BibliographicResource'),
+  	'proceeding' => array('bibo:Proceedings'),
     //FIXME: do we need an RDF type mapping for the 'part' bundle?
     'part' => array('dc:BibliographicResource'),
     'authority_resource' => array('gnd:AuthorityResource'),
@@ -2695,7 +2707,7 @@ function edoweb_block_view($delta = '') {
         );
         $top_level_parent = _edoweb_find_top_level_parent($entity);
         if (_edoweb_is_editable_entity($top_level_parent) &&
-            in_array($top_level_parent->bundle_type, array('monograph', 'journal'))) {
+            in_array($top_level_parent->bundle_type, array('monograph', 'journal','proceeding'))) {
           $api = new EdowebAPIClient();
           $subtree = _edoweb_build_tree($api->getTree($top_level_parent));
           $block['content'] = theme_item_list(array(
@@ -4476,6 +4488,14 @@ function edoweb_update_7173(){
  */
 function edoweb_update_7174(){
     _update_edoweb_installed_fields();
+	_update_edoweb_installed_instances();
+	_update_rdf_mapping();
+}
+
+/**
+ * Update all
+ */
+function edoweb_update_7175(){
 	_update_edoweb_installed_instances();
 	_update_rdf_mapping();
 }

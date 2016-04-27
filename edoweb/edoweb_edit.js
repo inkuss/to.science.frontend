@@ -142,8 +142,7 @@
           submit_button.after(template_button);
         }
 
-        if (bundle == 'journal' || bundle == 'monograph' || bundle == 'webpage') {
-          var import_button = $('<button style="display: block; margin-bottom: 1em;" class="edoweb edit action">Import einer Resource aus dem Katalog</button>').bind('click', function() {
+          var import_button = $('<button style="display: block; margin-bottom: 1em;" class="edoweb edit action">Titeldaten importieren</button>').bind('click', function() {
             instance = {'bundle': '', 'field_name': ''}
             modal_overlay.html('<div />');
             refreshTable(modal_overlay, null, null, null, null, null, instance, function(uri) {
@@ -175,7 +174,7 @@
             return false;
           });
           additional_fields.before(import_button);
-        }
+        
 
         activateFields(entity.find('.field'), bundle, context);
 
@@ -210,7 +209,7 @@
           // and a real redirect is triggered.
           if (subject.type == 'bnode') {
             entity_load_json('edoweb_basic', resource_uri).onload = function() {
-              if (bundle == 'monograph' || bundle == 'journal') {
+              if (bundle == 'monograph' || bundle == 'journal' || bundle=='proceeding') {
                 window.location = href;
               } else {
                 localStorage.setItem('cut_entity', this.responseText);
