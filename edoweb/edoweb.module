@@ -1128,7 +1128,6 @@ function _edoweb_authority_table_headers() {
 function edoweb_basic_table_header($bundle_type = 'generic', $init_sort = false) {
 
   $columns = array();
-  
   if (user_access('edit any edoweb_basic entity')) {
     $entity_table_headers = variable_get('editor_entity_table_headers', _edoweb_entity_table_headers_defaults());
     $authority_table_headers = variable_get('editor_authority_table_headers', _edoweb_authority_table_headers_defaults());
@@ -3009,6 +3008,20 @@ function _full_title($label, $entity, $attributes = array()) {
            . ($entity->subLabel() ? '<h2 class="title-suffix">' . $entity->subLabel() . '</h2>' : '');
 }
 
+function _compact_title($label, $entity, $attributes = array()) {
+ 	if('file' == $entity->bundle()){
+ 		$downloadImage =_edoweb_download_image($entity->getField(array('field_edoweb_filetype')));
+		return '<div class="' .$entity->remote_id. ' fileInfo">'
+				.'<h1 class="fileTitle" >' . _get_edoweb_url($entity->label(), $entity, $attributes) . '</h1>'
+				.'<div class="fileMimetype">'. $entity->getField(array('field_edoweb_filetype')) .'</div>'
+				.'<div class="fileSize">'. $entity->getField(array('field_edoweb_filesize')).'</div>'
+				.'<a class="downloadUrl" target="blank" href="'.$entity->url().'/data"><img class="edoweb-mimetype" src="'.$downloadImage.'"/></a>'
+				.'<div class="accessRights">'.$entity->access_data.'</div>'
+				.'</div>';
+	}	
+	return '<h1 class="title">' . _get_edoweb_url($entity->label(), $entity, $attributes) . '</h1>';
+}
+
 function _get_edoweb_url($label, $entity, $attributes = array()) {
   if (is_object($entity)) {
     $wrapper = entity_metadata_wrapper('edoweb_basic', $entity);
@@ -4456,6 +4469,14 @@ function edoweb_update_7172() {
 
 }
 function edoweb_update_7173(){
+	_update_rdf_mapping();
+}
+/**
+ * Update all
+ */
+function edoweb_update_7174(){
+    _update_edoweb_installed_fields();
+	_update_edoweb_installed_instances();
 	_update_rdf_mapping();
 }
 

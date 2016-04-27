@@ -104,7 +104,9 @@ class EdowebBasicEntity extends Entity {
     }
     return implode(' ' . variable_get('sub_title_field_separator') . ' ', $this->stringifyFields($label_fields));
   }
-
+  public function getField($fieldName){
+    return implode($this->stringifyFields($fieldName));
+  }
   private function stringifyFields($field_names) {
     $wrapper = entity_metadata_wrapper('edoweb_basic', $this);
     $title_values = array();

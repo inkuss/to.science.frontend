@@ -69,6 +69,13 @@ function edoweb_field_menu() {
     'access arguments' => array(1, 'read'),
     'type' => MENU_CALLBACK,
   );
+  $items['edoweb_entity_list_detail'] = array(
+  		'page callback' => 'edoweb_entity_list_detail',
+  		'page arguments' => array(1, 2),
+  		'access callback' => 'entity_js_access',
+  		'access arguments' => array(1, 'read'),
+  		'type' => MENU_CALLBACK,
+  );
   $items['edoweb_options_list'] = array(
     'page callback' => 'edoweb_options_list',
     'page arguments' => array(1),
@@ -120,6 +127,32 @@ function edoweb_entity_list($entity_type, $view_mode) {
   die(drupal_render($output));
 }
 
+		/**
+		 * List entities function for JavaScript callbacks.
+		 */
+		function edoweb_entity_list_detail($entity_type, $view_mode) {
+			$ids = isset($_GET['ids']) && !empty($_GET['ids']) ? $_GET['ids'] : array();
+			$columns = isset($_GET['columns']) ? $_GET['columns'] : 'generic';
+			$entities = edoweb_basic_load_multiple($ids);
+			
+			if (empty($entities)) {
+				header("HTTP/1.0 404 Not Found");
+				exit();
+			}
+			$header = array (
+				'field_edoweb_title' => array (
+				'data' => 'Titel',
+				'type' => 'field',
+				'specifier' => array (
+						'field' => 'field_edoweb_title',
+						'column' => 'value'
+				),
+				'format' => '_compact_title'
+		)
+		);
+			$output = edoweb_basic_entity_table($header, $entities, array(), null, $view_mode);
+			die(drupal_render($output));
+		}
 /**
  * List allowed values for an options_select field.
  */
@@ -373,18 +406,24 @@ function edoweb_field_field_formatter_view($entity_type, $entity, $field, $insta
 }
 
 function _edoweb_download_link($mime_type, $uri) {
-  //$extension = next(explode('/', $mime_type));
+  $icon_url = _edoweb_download_image($mime_type);
   $extension = str_replace('/', '-', $mime_type);
-  if (!file_exists(__DIR__ . "/mimetypes/$extension.svg")) {
-    $extension = 'unknown';
-  }
-  $icon_url = file_create_url(
-    drupal_get_path('module', 'edoweb_field') .  "/mimetypes/$extension.svg"
-  );
   $curie = _edoweb_compact_uri($uri);
   $link = base_path() . 'resource/' . $uri;
   $title = t('Download @extension', array('@extension' => strtoupper($extension)));
   return "<a class=\"edoweb download\" data-curie=\"$curie\" title=\"$title\" href=\"$link\" target=\"_blank\"><img class=\"edoweb-mimetype\" src=\"$icon_url\" /></a>";
+}
+
+function _edoweb_download_image($mime_type) {
+	//$extension = next(explode('/', $mime_type));
+	$extension = str_replace('/', '-', $mime_type);
+	if (!file_exists(__DIR__ . "/mimetypes/$extension.svg")) {
+		$extension = 'unknown';
+	}
+	$icon_url = file_create_url(
+			drupal_get_path('module', 'edoweb_field') .  "/mimetypes/$extension.svg"
+			);
+	return $icon_url;
 }
 
 /**

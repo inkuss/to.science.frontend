@@ -182,6 +182,70 @@
         }
       });
     },
+    
+    /**
+     * Function loads a tabular view for a list of linked entities
+     */
+    entity_table_detail: function(field_items, operations, view_mode) {
+      view_mode =  'default';
+      field_items.each(function() {
+
+        var container = $(this);
+        var curies = [];
+        container.find('a[data-curie]').each(function() {
+          curies.push(this.getAttribute('data-curie'));
+        });
+        var columns = container.find('a[data-target-bundle]')
+          .attr('data-target-bundle')
+          .split(' ')[0];
+  	  
+        if (columns && curies.length > 0) {
+          container.siblings('table').remove();
+          var throbber = $('<div class="ajax-progress"><div class="throbber">&nbsp;</div></div>')
+          container.before(throbber);
+          Drupal.edoweb.entity_list_detail('edoweb_basic', curies, columns, view_mode).onload = function () {
+            if (this.status == 200) {
+               result_table = $(this.responseText).find('table');
+              result_table.find('a[data-curie]').not('.resolved').not('.edoweb.download').each(function() {
+                Drupal.edoweb.entity_label($(this));
+              });
+              result_table.removeClass('sticky-enabled');
+              var updated_column = result_table.find('th[specifier="updated"]').index();
+              if (updated_column > -1) {
+                result_table.tablesorter({sortList: [[updated_column,1]]});
+              }
+              
+              //TODO: check interference with tree navigation block
+              //Drupal.attachBehaviors(result_table);
+              container.find('div.field-item>a[data-curie]').each(function() {
+                if (! result_table.find('tr[data-curie="' + $(this).attr('data-curie') + '"]').length) {
+                  var missing_entry = $(this).clone();
+                  var row = $('<tr />');
+                  result_table.find('thead').find('tr>th').each(function() {
+                    row.append($('<td />'));
+                  });
+                  missing_entry.removeAttr('data-target-bundle');
+                  row.find('td:eq(0)').append(missing_entry);
+                  row.find('td:eq(1)').append(missing_entry.attr('data-curie'));
+                  //FIXME: how to deal with this with configurable columns?
+                  result_table.append(row);
+                }
+              });
+              container.hide();
+              container.after(result_table);
+
+              for (label in operations) {
+                operations[label](result_table);
+              }
+              Drupal.edoweb.last_modified_label(result_table);
+              Drupal.edoweb.hideEmptyTableColumns(result_table);
+              Drupal.edoweb.hideTableHeaders(result_table);
+            }
+            throbber.remove();
+          };
+        }
+      });
+    },
 
     /**
      * Function returns an entities label.
@@ -207,8 +271,22 @@
      * Function returns a list of entities.
      */
     entity_list: function(entity_type, entity_curies, columns, view_mode) {
+ 
       return $.get(Drupal.settings.basePath
         + 'edoweb_entity_list/'
+        + entity_type
+        + '/' + view_mode
+        + '?' + $.param({'ids': entity_curies, 'columns': columns})
+      );
+    },
+    
+    /**
+     * Function returns a list of entities.
+     */
+    entity_list_detail: function(entity_type, entity_curies, columns, view_mode) {
+ 
+      return $.get(Drupal.settings.basePath
+        + 'edoweb_entity_list_detail/'
         + entity_type
         + '/' + view_mode
         + '?' + $.param({'ids': entity_curies, 'columns': columns})
