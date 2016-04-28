@@ -1327,6 +1327,9 @@ function edoweb_basic_entity_table($header, $entities, $operations = array(), $t
  */
 function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array(), $search_count = 0, $active_facets = null, $sortable = TRUE, $view_mode = 'default') {
   global $user;
+//   _update_edoweb_installed_fields();
+//   _update_edoweb_installed_instances();
+//   _update_rdf_mapping();
 
   // Prepare query: header for table sort
   // TODO: decide which table header to use if multiple target bundles
@@ -1338,9 +1341,9 @@ function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array()
   if ($sortable) {
     $efq->tableSort($header);
   }
-
+  
   $content = array();
-
+  
   // Prepare query: apply active facets
   $content['filters'] = array(
     '#type' => 'fieldset',
@@ -1600,7 +1603,8 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
       '#prefix' => "<div class=\"edoweb entity $view_mode\" $attr_bundle $attr_rdf_resource $attr_rdf_typeof>",
       '#suffix' => "<span about=\"$page_url\" rel=\"foaf:primaryTopic\" $attr_rdf_resource /></div>",
     );
-  } else {
+  } 
+  else {
     $entity->content = array(
       '#prefix' => "<div class=\"edoweb entity $view_mode\" $attr_bundle $attr_rdf_resource $attr_rdf_typeof>"
                  . '<div class="compact-header">' . _full_title($entity->label(), $entity) . '</div>',
@@ -4495,7 +4499,8 @@ function edoweb_update_7174(){
 /**
  * Update all
  */
-function edoweb_update_7175(){
+function edoweb_update_7176(){
+	_update_edoweb_installed_fields();
 	_update_edoweb_installed_instances();
 	_update_rdf_mapping();
 }

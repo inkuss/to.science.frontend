@@ -82,6 +82,70 @@ function edoweb_install() {
 function _edoweb_installed_fields() {
   $t = get_t();
   return array(
+  		'field_congress_title' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:congressTitle'),
+  				),
+  		),
+  		'field_congress_location' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:congressLocation'),
+  				),
+  		),
+  		'field_congress_duration' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:congressDuration'),
+  				),
+  		),
+  		'field_embargo_time' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:embargoTime'),
+  				),
+  		),
+  		'field_year_of_copyright' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:yearOfCopyright'),
+  				),
+  		),
+  		'field_license' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:license'),
+  				),
+  		),
+  		'field_professional_group' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:professionalGroup'),
+  				),
+  		),
+  		'field_related_resource' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:relatedResource'),
+  				),
+  		),
   		'field_mab_710' => array(
   				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
   				'type'        => 'text',
@@ -2248,13 +2312,13 @@ function _edoweb_installed_instances() {
      * Field instances proceeding resource bundle
      */
     'proceeding' => array(
-      'field_edoweb_title' => array(),
+      'field_edoweb_title' => array('required' => TRUE),
       'field_edoweb_title_other' => array(),
-      'field_edoweb_title_alternative' => array(),
+      'field_edoweb_title_alternative' => array('required' => TRUE),
       'field_edoweb_title_short' => array(),
-      'field_edoweb_creator' => array(),
+      'field_edoweb_creator' => array('required' => TRUE),
       'field_edoweb_creator_label' => array(),
-      'field_edoweb_contributor' => array(),
+      'field_edoweb_contributor' => array('required' => TRUE),
       'field_edoweb_contributor_label' => array(),
       'field_edoweb_editor' => array(),
       'field_edoweb_edt' => array(),
@@ -2284,17 +2348,17 @@ function _edoweb_installed_instances() {
       'field_edoweb_dte' => array(),
       'field_edoweb_red' => array(),
       'field_edoweb_edition' => array(),
-      'field_edoweb_publication_place' => array(),
-      'field_edoweb_publisher' => array(),
-      'field_edoweb_issued' => array(),
-      'field_edoweb_language' => array(),
-      'field_edoweb_extent' => array(),
-      'field_edoweb_description' => array(),
+      'field_edoweb_publication_place' => array('required' => TRUE),
+      'field_edoweb_publisher' => array('required' => TRUE),
+      'field_edoweb_issued' => array('required' => TRUE),
+      'field_edoweb_language' =>  array('required' => TRUE),
+      'field_edoweb_extent' => array('required' => TRUE),
+      'field_edoweb_description' =>  array('required' => TRUE),
       'field_edoweb_subject' => array(),
       'field_edoweb_subject_chain' => array(),
-      'field_edoweb_tag' => array(),
+      'field_edoweb_tag' =>  array('required' => TRUE),
       'field_mab_710' => array(),
-      'field_edoweb_abstract' => array(),
+      'field_edoweb_abstract' =>  array('required' => TRUE),
      'field_edoweb_parallel' => array(
         'settings'    => array(
           'target_type' => 'edoweb_basic',
@@ -2352,12 +2416,20 @@ function _edoweb_installed_instances() {
       'field_edoweb_medium' => array(),
       'field_edoweb_urn' => array(),
       'field_edoweb_issn' => array(),
-      'field_edoweb_isbn10' => array(),
-      'field_edoweb_isbn13' => array(),
+      'field_edoweb_isbn10' => array('required' => TRUE),
+      'field_edoweb_isbn13' => array('required' => TRUE),
       'field_edoweb_doi' => array(),
       'field_edoweb_ht_with_link' => array(),
       'field_edoweb_identifier_ht' => array(),
       'field_edoweb_institution' => array(),
+      'field_congress_title' => array('required' => TRUE),
+      'field_congress_location' =>  array('required' => TRUE),
+      'field_congress_duration' =>  array('required' => TRUE),
+      'field_year_of_copyright' =>  array('required' => TRUE),
+      'field_embargo_time' =>  array('required' => TRUE),
+      'field_license' => array('required' => TRUE),
+      'field_professional_group' =>  array('required' => TRUE),
+      'field_related_resource' =>  array('required' => TRUE),
     ),
   );
 }
@@ -2620,10 +2692,10 @@ function _edoweb_field_instance_defaults($field_name) {
       'display' => array('compact' => array()),
     ),
     'field_edoweb_struct_parent' => array(
-      'label' => $t('Parent'),
+      'label' => $t('Überordnung'),
     ),
     'field_edoweb_struct_child' => array(
-      'label' => $t('Child'),
+      'label' => $t('Unterordnung'),
     ),
     'field_gnd_name' => array(
       'label' => $t('Name'),
@@ -2673,6 +2745,30 @@ function _edoweb_field_instance_defaults($field_name) {
     ),
     'field_edoweb_thesis_information' => array(
       'label' => $t('Hochschulschriftenvermerk'),
+    ),
+  	'field_congress_title' => array(
+      'label' => $t('Medium'),
+    ),
+  	'field_congress_location' =>  array(
+      'label' => $t('Veranstaltungsort'),
+    ),
+  	'field_congress_duration' =>  array(
+      'label' => $t('Zeitraum'),
+    ),
+  	'field_year_of_copyright' =>  array(
+      'label' => $t('Copyright Jahr'),
+    ),
+  	'field_embargo_time' =>  array(
+      'label' => $t('Embargo'),
+    ),
+  	'field_license' => array(
+      'label' => $t('Lizenz'),
+    ),
+  	'field_professional_group' =>  array(
+      'label' => $t('Fachgruppe'),
+    ),
+  	'field_related_resource' =>  array(
+      'label' => $t('Links'),
     ),
   );
   return $defaults[$field_name];
