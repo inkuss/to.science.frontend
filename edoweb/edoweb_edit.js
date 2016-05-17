@@ -95,7 +95,8 @@
           var existing_items = entity.find('.' + field_class);
           if (! existing_items.length && (instance['required'] || instance['settings']['default'])) {
             var field = createField(instance);
-            entity.find('.content').prepend(field);
+         
+            entity.find('.content').append(field);
           } else if (! existing_items.length &&
                      ! instance['settings']['read_only'] &&
                      instance['settings']['metadata_type'] == 'descriptive')
