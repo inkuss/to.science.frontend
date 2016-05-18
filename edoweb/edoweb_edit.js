@@ -95,7 +95,6 @@
           var existing_items = entity.find('.' + field_class);
           if (! existing_items.length && (instance['required'] || instance['settings']['default'])) {
             var field = createField(instance);
-         
             entity.find('.content').append(field);
           } else if (! existing_items.length &&
                      ! instance['settings']['read_only'] &&
@@ -255,9 +254,15 @@
         enableTextInput(input, instance);
         target.append(input);
       }
+      
+      function createDisabledTextInput(instance, target) {
+          var input = $('<div class="field-item" />')
+            .attr('property', instance['settings']['predicates'].join(' '));
+          disableTextInput(input, instance);
+          target.append(input);
+        }
 
       function enableTextInput(field, instance) {
-
         field.attr('contenteditable', true)
           .css('border', '1px solid grey')
           .css('margin-top', '0.3em')
@@ -278,7 +283,6 @@
               return false;
             }
           });
-
         // Source: http://stackoverflow.com/a/4238971
         function placeCaretAtEnd(el) {
           el.focus();
@@ -297,10 +301,19 @@
             textRange.select();
           }
         }
-
+    }
+      function disableTextInput(field, instance) {
+          field.attr('contenteditable', false)
+            .css('border', '1px solid grey')
+            .css('margin-top', '0.3em')
+            .css('padding', '0.1em')
+            .css('min-height', '1.5em');
+         field.append("Please click on link symbol to add linked data.");
       }
 
+       
 
+      
       function createLinkInput(instance, target) {
         modal_overlay.html('<div />');
         refreshTable(modal_overlay, null, null, null, null, null, instance, function(uri) {
@@ -362,14 +375,17 @@
           if (!Drupal.settings.edoweb.fields[bundle].hasOwnProperty(field_name)) return true;
 
           var instance = Drupal.settings.edoweb.fields[bundle][field_name]['instance'];
+          console.log(instance['widget']['type']);
+
+         
           switch (instance['widget']['type']) {
             case 'text_textarea':
+            	
             case 'text_textfield':
               if ('file' == bundle && 'field_edoweb_title' == field_name) {
                 var struct_parent = $(context)
                   .find('.field-name-field-edoweb-struct-parent>.field-items>.field-item>a')
                   .attr('resource');
-
                 if (struct_parent) {
                   var copy_button = $('<a href="#" title="Titelübernahme vom Parent"><span class="octicon octicon-repo-pull" /></a>')
                     .bind('click', function() {
@@ -417,6 +433,7 @@
               });
               break;
             case 'edoweb_autocomplete_widget':
+              createDisabledTextInput(instance, $(this));
               field.find('.field-items').each(function() {
                 if (! instance['settings']['read_only']
                     && instance['settings']['metadata_type'] == 'descriptive'
