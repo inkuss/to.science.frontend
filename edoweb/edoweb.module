@@ -61,7 +61,7 @@ function edoweb_init() {
       'fields' => $instances,
       'namespaces' => rdf_get_namespaces(),
       'primary_bundles' => array(
-        'monograph', 'journal', 'volume', 'issue', 'article','proceeding'
+        'monograph', 'journal', 'volume', 'issue', 'article','proceeding','researchData',
       ),
       'site_frontpage' => variable_get('site_frontpage', '/'),
       'deepzoomServiceUrl' => variable_get('edoweb_deepzoom_url') ,
@@ -270,6 +270,13 @@ function edoweb_entity_info() {
           'access arguments' => array('administer edoweb_basic entities'),
         ),
       ),
+      'researchData' => array(
+    				'label' => t('Forschungsdaten'),
+    				'admin' => array(
+    						'path' => 'admin/structure/edoweb_basic/researchData/manage',
+    						'access arguments' => array('administer edoweb_basic entities'),
+    				),
+    ),
     'proceeding' => array(
     				'label' => t('Konferenzband'),
     				'admin' => array(
@@ -683,7 +690,7 @@ function edoweb_info_page() {
   $query->addTag('elasticsearch');
   $query->entityCondition('entity_type', 'edoweb_basic');
   $query->entityCondition('bundle', array(
-    'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'webpage', 'version', 'part', 'proceeding'
+    'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'webpage', 'version', 'part', 'proceeding','researchData'
   ));
   $content['resource_list'] = edoweb_basic_search_entities(
     $query, TRUE, array(), TRUE, user_access('edit any edoweb_basic entity'), TRUE, 'compact', TRUE
@@ -839,6 +846,7 @@ function edoweb_basic_search_entities_form($form, &$form_state, $advanced, $sear
   } else if (isset($query['endpoint']) && 'resource' == $query['endpoint']) {
     $options = array(
       'generic' => t('Any'),
+      'researchData'=>t('Forschungsdaten'),
       'proceeding'=>t('Konferenzband'),
       'monograph' => t('Monograph'),
       'journal' => t('Journal'),
@@ -950,7 +958,7 @@ function edoweb_basic_search_entities(
 
   if (! (@$childlevel = $query['childlevel'])) {
     //FIXME: this overwrites person etc bundles!!!
-    $efq->entityCondition('bundle', array('monograph', 'journal', 'webpage','proceeding'));
+    $efq->entityCondition('bundle', array('monograph', 'journal', 'webpage','proceeding','researchData'));
   }
 
   if (@$fulltext = $query['fulltext']) {
@@ -1156,6 +1164,7 @@ function edoweb_basic_table_header($bundle_type = 'generic', $init_sort = false)
     case 'version':
     case 'generic':
     case 'proceeding':	
+   	case 'researchData':
     case 'part':
       foreach (_edoweb_entity_table_headers($init_sort) as $field => $column) {
         if (isset($entity_table_headers[$field]) && $entity_table_headers[$field]) {
@@ -1327,10 +1336,6 @@ function edoweb_basic_entity_table($header, $entities, $operations = array(), $t
  */
 function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array(), $search_count = 0, $active_facets = null, $sortable = TRUE, $view_mode = 'default') {
   global $user;
-//   _update_edoweb_installed_fields();
-//   _update_edoweb_installed_instances();
-//   _update_rdf_mapping();
-
   // Prepare query: header for table sort
   // TODO: decide which table header to use if multiple target bundles
   // are set.
@@ -1584,13 +1589,8 @@ function edoweb_basic_bundle_name($bundle) {
 function edoweb_basic_view($entity, $view_mode = 'default') {
   global $base_url;
   $page_url = $base_url . '/' . current_path();
-//   _update_edoweb_installed_instances();
-//   _update_rdf_mapping();
- // edoweb_update_medium();
-  // Our entity type, for convenience.
-  //edoweb_update_7178();
   $entity_type = 'edoweb_basic';
-
+//edoweb_update_7181();
   $wrapper = entity_metadata_wrapper('edoweb_basic', $entity);
   $attr_bundle = 'data-entity-bundle="' .  $entity->bundle_type . '"';
   $attr_rdf_typeof = 'typeof="' . implode(' ', edoweb_rdf_types($entity->bundle_type)) . '"';
@@ -1658,7 +1658,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
       }
       if ($has_inverse) {
         $inverse_query->entityCondition('bundle', array(
-          'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'part','proceeding'
+          'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'part','proceeding','researchData'
         ));
         $entity->content['related'] = edoweb_basic_search_entities(
           $inverse_query
@@ -1910,6 +1910,7 @@ function edoweb_field_extra_fields() {
   $extra_fields['edoweb_basic']['journal']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['volume']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['proceeding']['display'] = $display_elements;
+  $extra_fields['edoweb_basic']['researchData']['display'] = $display_elements;
 
   return $extra_fields;
 }
@@ -2582,6 +2583,7 @@ function edoweb_rdf_types($bundle = null) {
     'version' => array('lv:ArchivedWebPageVersion'),
     'generic' => array('dc:BibliographicResource'),
   	'proceeding' => array('bibo:Proceedings'),
+  	'researchData' => array('regal:ResearchData'),
     //FIXME: do we need an RDF type mapping for the 'part' bundle?
     'part' => array('dc:BibliographicResource'),
     'authority_resource' => array('gnd:AuthorityResource'),
@@ -2713,7 +2715,7 @@ function edoweb_block_view($delta = '') {
         );
         $top_level_parent = _edoweb_find_top_level_parent($entity);
         if (_edoweb_is_editable_entity($top_level_parent) &&
-            in_array($top_level_parent->bundle_type, array('monograph', 'journal','proceeding'))) {
+            in_array($top_level_parent->bundle_type, array('monograph', 'journal','proceeding','researchData'))) {
           $api = new EdowebAPIClient();
           $subtree = _edoweb_build_tree($api->getTree($top_level_parent));
           $block['content'] = theme_item_list(array(
@@ -3025,6 +3027,12 @@ function _edoweb_available_medium() {
 	return array(
 			'http://rdvocab.info/termList/RDAproductionMethod/1010' =>t("Print"),
 			'http://rdvocab.info/termList/RDACarrierType/1018' =>t("Online"),
+			'http://purl.org/ontology/bibo/AudioDocument' =>t("Audio"),
+			'http://rdvocab.info/termList/RDACarrierType/1050' =>t("Video"),
+			'http://purl.org/ontology/bibo/Image' =>t("Bild"),
+			'http://pbcore.org/vocabularies/instantiationMediaType#text ' =>t("Text"),
+			'http://pbcore.org/vocabularies/instantiationMediaType#software' =>t("Software"),
+			'http://purl.org/lobid/lv%23Miscellaneous' =>t("Andere"),
 	);
 	
 }
@@ -3052,7 +3060,33 @@ function _edoweb_available_professionalGroup() {
 	);
 
 }
-
+function _edoweb_available_data_origin(){
+	return array(
+			'http://hbz-nrw.de/regal#Interview' =>t("Interview"),
+			'http://hbz-nrw.de/regal#Umfrage' =>t("Umfrage"),
+			'http://hbz-nrw.de/regal#Anamnese' =>t("Anamnese"),
+			'http://hbz-nrw.de/regal#Exploration' =>t("Exploration"),
+			'http://hbz-nrw.de/regal#Probe' =>t("Probe"),
+			'http://hbz-nrw.de/regal#Gewebeprobe' =>t("Gewebeprobe"),
+			'http://hbz-nrw.de/regal#Flaechenmischprobe' =>t("Flächenmischprobe"),
+			'http://hbz-nrw.de/regal#Bodenbohrung' =>t("Bodenbohrung"),
+			'http://hbz-nrw.de/regal#apparativeUntersuchung' =>t("apparative Untersuchung"),
+			'http://hbz-nrw.de/regal#koerperlicheUntersuchung' =>t("körperliche Untersuchung"),
+			'http://hbz-nrw.de/regal#Feldbeobachtung' =>t("Feldbeobachtung"),
+			'http://hbz-nrw.de/regal#Laborbeobachtung' =>t("Laborbeobachtung"),
+			'http://hbz-nrw.de/regal#Analyse' =>t("Analyse"),
+			'http://hbz-nrw.de/regal#Genomsequenzierung' =>t("Genomsequenzierung"),
+			'http://hbz-nrw.de/regal#Messung' =>t("Messung"),
+			'http://hbz-nrw.de/regal#Berechnung' =>t("Berechnung"),
+			'http://hbz-nrw.de/regal#Evaluation' =>t("Evaluation"),
+			'http://hbz-nrw.de/regal#Querschnittstudie' =>t("Querschnittstudie"),
+			'http://hbz-nrw.de/regal#Langzeitstudie' =>t("Langzeitstudie"),
+			'http://hbz-nrw.de/regal#Interventionsstudie' =>t("Interventionsstudie"),
+			'http://hbz-nrw.de/regal#Kohortenstudie' =>t("Kohortenstudie"),
+			'http://hbz-nrw.de/regal#Simulation' =>t("Simulation"),
+			'http://hbz-nrw.de/regal#Andere' =>t("Andere"),
+	);
+}
 function _full_title($label, $entity, $attributes = array()) {
   return '<h1 class="title">' . _get_edoweb_url($entity->label(), $entity, $attributes) . '</h1>'
            . ($entity->subLabel() ? '<h2 class="title-suffix">' . $entity->subLabel() . '</h2>' : '');
@@ -3341,11 +3375,15 @@ function edoweb_update_7179(){
 /**
  * Update all
  */
-function edoweb_update_7180(){
+function edoweb_update_7181(){
 	_update_edoweb_installed_fields();
 	_update_edoweb_installed_instances();
 	_update_rdf_mapping();
 	entity_info_cache_clear();
+	cache_clear_all('*', 'cache_field', TRUE);
+	db_truncate('edoweb_basic')->execute();
+	drupal_set_message('Entity caches cleared');
+	variable_set('menu_rebuild_needed', TRUE);
 }
 
 

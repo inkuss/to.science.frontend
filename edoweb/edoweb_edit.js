@@ -209,7 +209,7 @@
           // and a real redirect is triggered.
           if (subject.type == 'bnode') {
             entity_load_json('edoweb_basic', resource_uri).onload = function() {
-              if (bundle == 'monograph' || bundle == 'journal' || bundle=='proceeding') {
+              if (bundle == 'monograph' || bundle == 'journal' || bundle=='proceeding'|| bundle=='researchData') {
                 window.location = href;
               } else {
                 localStorage.setItem('cut_entity', this.responseText);
