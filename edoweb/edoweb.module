@@ -1586,7 +1586,9 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
   $page_url = $base_url . '/' . current_path();
 //   _update_edoweb_installed_instances();
 //   _update_rdf_mapping();
+ // edoweb_update_medium();
   // Our entity type, for convenience.
+  //edoweb_update_7178();
   $entity_type = 'edoweb_basic';
 
   $wrapper = entity_metadata_wrapper('edoweb_basic', $entity);
@@ -3017,6 +3019,38 @@ function _edoweb_is_webpage_entity($entity, $permissions = null) {
 function _edoweb_available_languages() {
   $languages = include drupal_realpath(file_default_scheme() . '://') .  '/available_languages.inc';
   return $languages;
+}
+
+function _edoweb_available_medium() {
+	return array(
+			'http://rdvocab.info/termList/RDAproductionMethod/1010' =>t("Print"),
+			'http://rdvocab.info/termList/RDACarrierType/1018' =>t("Online"),
+	);
+	
+}
+
+function _edoweb_available_license() {
+	return array(
+			'https://creativecommons.org/licenses/by/4.0' =>t("CC BY 4.0"),
+			'https://creativecommons.org/licenses/by-nd/4.0' =>t("CC BY-ND 4.0"),
+			'https://creativecommons.org/licenses/by-nc-sa/4.0' =>t("CC BY-NC-SA  4.0"),
+			'https://creativecommons.org/licenses/by-sa/4.0' =>t("CC BY-SA  4.0"),
+			'https://creativecommons.org/licenses/by-nc/4.0' =>t("CC BY-NC  4.0"),
+			'https://creativecommons.org/licenses/by-nc-nd/4.0' =>t("CC BY-NC-ND  4.0"),
+	);
+
+}
+
+function _edoweb_available_professionalGroup() {
+	return array(
+			'http://d-nb.info/gnd/4038243-6' =>t("Medizin"),
+			'http://d-nb.info/gnd/4020775-4' =>t("Gesundheitswesen"),
+			'http://d-nb.info/gnd/4152829-3' =>t("Ernährungswissenschaften"),
+			'http://d-nb.info/gnd/4068473-8' =>t("Agrarwissenschaften"),
+			'http://d-nb.info/gnd/4137364-9' =>t("Umweltwissenschaften"),
+			'http://d-nb.info/gnd/4006851-1' =>t("Biologie"),
+	);
+
 }
 
 function _full_title($label, $entity, $attributes = array()) {
@@ -4499,18 +4533,27 @@ function edoweb_update_7174(){
 /**
  * Update all
  */
-function edoweb_update_7176(){
+function edoweb_update_7178(){
 	_update_edoweb_installed_fields();
 	_update_edoweb_installed_instances();
 	_update_rdf_mapping();
 }
 
-/**
- * Update all
- */
-function edoweb_update_7177(){
-	_update_edoweb_installed_fields();
-	_update_edoweb_installed_instances();
+
+function edoweb_update_medium() {
+	$added_fields = array(
+			'field_professional_group',
+			'field_edoweb_medium',
+			'field_license'
+	);
+	$added_instances = array(
+			'proceeding' => array(
+					'field_professional_group',
+					'field_edoweb_medium',
+					'field_license'
+			),
+	);
+	_update_edoweb_installed_fields($added_fields);
+	_update_edoweb_installed_instances($added_instances);
 	_update_rdf_mapping();
 }
-

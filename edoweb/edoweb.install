@@ -123,19 +123,23 @@ function _edoweb_installed_fields() {
   				),
   		),
   		'field_license' => array(
-  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-  				'type'        => 'text',
-  				'settings'    => array(
-  						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:license'),
-  				),
+  				'cardinality' => 1,
+      			'default_widget' => 'options_select',
+      			'type'        => 'list_text',
+      			'settings' => array(
+        			'metadata_type' => 'descriptive',
+        			'allowed_values_function' => '_edoweb_available_license',
+        			'predicates' => array('regal:license'),
+      			),
   		),
   		'field_professional_group' => array(
-  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-  				'type'        => 'text',
-  				'settings'    => array(
-  						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:professionalGroup'),
+  				'cardinality' => 1,
+      			'default_widget' => 'options_select',
+      			'type'        => 'list_text',
+      			'settings' => array(
+        			'metadata_type' => 'descriptive',
+        			'allowed_values_function' => '_edoweb_available_professionalGroup',
+        			'predicates' => array('regal:professionalGroup'),
   				),
   		),
   		'field_related_resource' => array(
@@ -1440,10 +1444,11 @@ function _edoweb_installed_fields() {
     ),
     'field_edoweb_medium' => array(
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-      'type'        => 'edoweb_ld_reference',
-      'settings'    => array(
+      'default_widget' => 'options_select',
+      'type'        => 'list_text',
+      'settings' => array(
         'metadata_type' => 'descriptive',
-        'read_only' => TRUE,
+        'allowed_values_function' => '_edoweb_available_medium',
         'predicates' => array('dc:medium'),
       ),
     ),

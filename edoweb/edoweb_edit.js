@@ -123,7 +123,7 @@
               Drupal.attachBehaviors(entity_content);
               activateFields(entity_content.find('.field'), bundle, context);
               entity.find('.content').replaceWith(entity_content);
-              $('#page-title', context).text(page_title);
+             $('#page-title', context).text(page_title);
             };
           });
           $.get(Drupal.settings.basePath + 'edoweb/templates/' + bundle,
@@ -348,35 +348,46 @@
         target.append(input);
       }
 
-      function createOptionsInput(instance, target) {
+      function createNewOptionsInput(instance, target, label) {
         var input = $.get(
           Drupal.settings.basePath + 'edoweb_options_list/' + instance['field_name'],
           function(data) {
             var select = $(data);
-            select.prepend('<option selected="selected">Sprache auswählen</option>');
+            select.prepend('<option selected="selected">Bitte '+label+' w&auml;hlen</option>');
             select.change(function() {
               var input = $('<div class="field-item" />')
                 .attr('rel', instance['settings']['predicates'].join(' '))
                 .attr('resource', $(this).find('option:selected').val())
                 .text($(this).find('option:selected').text());
               target.append(input);
-              $(this).remove();
+            //  $(this).remove();
             });
             target.append(select);
           }
         );
       }
 
+      function getSortedByWeight(obj) {
+    	    var keys = []; 
+    	    for(var key in obj['widget']['weight']) {
+    	    	keys.push(key);
+    	    }
+    	    return keys.sort(function(a,b){return obj[a]-obj[b]});
+      }
+      
       function activateFields(fields, bundle, context) {
+    	  console.log("Field");
+     	 console.log(fields);
         $.each(fields, function() {
+        	
           var field = $(this);
           var field_name = getFieldName(field);
           if (!field_name) return true;
           if (!Drupal.settings.edoweb.fields[bundle].hasOwnProperty(field_name)) return true;
 
           var instance = Drupal.settings.edoweb.fields[bundle][field_name]['instance'];
-          console.log(instance['widget']['type']);
-
+          console.log(instance['label']+" is of type "+instance['widget']['type']+" with weight "+instance['widget']['weight']);
+          console.log(instance);
          
           switch (instance['widget']['type']) {
             case 'text_textarea':
@@ -428,7 +439,7 @@
                       return false;
                     }).css('float', 'right').css('margin-right', '0.3em');
                   field.find('.field-label').append(add_button);
-                  field.find('.field-label').append(remove_button);
+                  //field.find('.field-label').append(remove_button);
                 }
               });
               break;
@@ -457,7 +468,7 @@
                       return false;
                     }).css('float', 'right').css('margin-right', '0.3em');
                   field.find('.field-label').append(add_button);
-                  field.find('.field-label').append(remove_button);
+                  //field.find('.field-label').append(remove_button);
                   // Load entities into table with remove ops
                   if ($(this).find('div.field-item').length) {
                     Drupal.edoweb.entity_table($(this), ops);
@@ -481,7 +492,8 @@
               field.find('.field-items').each(function() {
                 if ((instance['settings']['cardinality'] == -1)
                     || ($(this).find('.field-item').length < instance['settings']['cardinality'])) {
-                  createOptionsInput(instance, $(this));
+                	
+                  createNewOptionsInput(instance, $(this),instance['label']);  
                 }
               });
               break;
