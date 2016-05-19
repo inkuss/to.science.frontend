@@ -1187,7 +1187,7 @@ function _edoweb_installed_fields() {
     ),
     'field_edoweb_description' => array(
       'cardinality' => 1,
-      'type'        => 'edoweb_ld_reference',
+      'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
