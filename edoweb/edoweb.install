@@ -82,6 +82,83 @@ function edoweb_install() {
 function _edoweb_installed_fields() {
   $t = get_t();
   return array(
+  		'field_edoweb_data_origin'=> array('cardinality' => 1,
+      			'default_widget' => 'options_select',
+      			'type'        => 'list_text',
+      			'settings' => array(
+        			'metadata_type' => 'descriptive',
+        			'allowed_values_function' => '_edoweb_available_data_origin',
+        			'predicates' => array('regal:dataOrigin'),
+      			),
+  		),
+  		'field_edoweb_congress_title' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:congressTitle'),
+  				),
+  		),
+  		'field_edoweb_congress_location' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:congressLocation'),
+  				),
+  		),
+  		'field_edoweb_congress_duration' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:congressDuration'),
+  				),
+  		),
+  		'field_edoweb_embargo_time' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:embargoTime'),
+  				),
+  		),
+  		'field_edoweb_year_of_copyright' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:yearOfCopyright'),
+  				),
+  		),
+  		'field_edoweb_license' => array(
+  				'cardinality' => 1,
+      			'default_widget' => 'options_select',
+      			'type'        => 'list_text',
+      			'settings' => array(
+        			'metadata_type' => 'descriptive',
+        			'allowed_values_function' => '_edoweb_available_license',
+        			'predicates' => array('regal:license'),
+      			),
+  		),
+  		'field_edoweb_professional_group' => array(
+  				'cardinality' => 1,
+      			'default_widget' => 'options_select',
+      			'type'        => 'list_text',
+      			'settings' => array(
+        			'metadata_type' => 'descriptive',
+        			'allowed_values_function' => '_edoweb_available_professionalGroup',
+        			'predicates' => array('regal:professionalGroup'),
+  				),
+  		),
+  		'field_edoweb_related_resource' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('regal:relatedResource'),
+  				),
+  		),
   		'field_mab_710' => array(
   				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
   				'type'        => 'text',
@@ -1119,13 +1196,22 @@ function _edoweb_installed_fields() {
     ),
     'field_edoweb_description' => array(
       'cardinality' => 1,
-      'type'        => 'edoweb_ld_reference',
+      'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'read_only' => TRUE,
         'predicates' => array('dc:description'),
       ),
     ),
+  	'field_edoweb_rpb_subject' => array(
+  				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'edoweb_ld_reference',
+  				'settings'    => array(
+  						'metadata_type' => 'descriptive',
+  						'predicates' => array('lv:rpbSubject'),
+  						'parameter' => 'name',
+  						'endpoint' => 'resource',
+  				),
+  	),
     'field_edoweb_subject' => array(
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
       'type'        => 'edoweb_ld_reference',
@@ -1376,10 +1462,11 @@ function _edoweb_installed_fields() {
     ),
     'field_edoweb_medium' => array(
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-      'type'        => 'edoweb_ld_reference',
-      'settings'    => array(
+      'default_widget' => 'options_select',
+      'type'        => 'list_text',
+      'settings' => array(
         'metadata_type' => 'descriptive',
-        'read_only' => TRUE,
+        'allowed_values_function' => '_edoweb_available_medium',
         'predicates' => array('dc:medium'),
       ),
     ),
@@ -1463,6 +1550,7 @@ function _edoweb_installed_instances() {
       'field_edoweb_language' => array(),
       'field_edoweb_extent' => array(),
       'field_edoweb_description' => array(),
+      'field_edoweb_rpb_subject' => array(),
       'field_edoweb_subject' => array(),
       'field_edoweb_subject_chain' => array(),
       'field_edoweb_tag' => array(),
@@ -1580,6 +1668,7 @@ function _edoweb_installed_instances() {
       'field_edoweb_language' => array(),
       'field_edoweb_extent' => array(),
       'field_edoweb_description' => array(),
+      'field_edoweb_rpb_subject' => array(),
       'field_edoweb_subject' => array(),
       'field_edoweb_subject_chain' => array(),
       'field_edoweb_tag' => array(),
@@ -1766,6 +1855,7 @@ function _edoweb_installed_instances() {
       'field_edoweb_language' => array(),
       'field_edoweb_extent' => array(),
       'field_edoweb_description' => array(),
+      'field_edoweb_rpb_subject' => array(),
       'field_edoweb_subject' => array(),
       'field_edoweb_subject_chain' => array(),
       'field_edoweb_tag' => array(),
@@ -1893,6 +1983,7 @@ function _edoweb_installed_instances() {
       'field_edoweb_language' => array(),
       'field_edoweb_extent' => array(),
       'field_edoweb_description' => array(),
+      'field_edoweb_rpb_subject' => array(),
       'field_edoweb_subject' => array(),
       'field_edoweb_subject_chain' => array(),
       'field_mab_710' => array(),
@@ -2129,6 +2220,7 @@ function _edoweb_installed_instances() {
       'field_edoweb_language' => array(),
       'field_edoweb_extent' => array(),
       'field_edoweb_description' => array(),
+      'field_edoweb_rpb_subject' => array(),
       'field_edoweb_subject' => array(),
       'field_edoweb_subject_chain' => array(),
       'field_edoweb_tag' => array(),
@@ -2244,7 +2336,253 @@ function _edoweb_installed_instances() {
       'field_edoweb_identifier_ht' => array(),
       'field_edoweb_institution' => array(),
       )
+    ), 
+    /*
+     * Field instances proceeding resource bundle
+     */
+    'proceeding' => array(
+      'field_edoweb_title' => array('required' => TRUE),
+      'field_edoweb_title_other' => array(),
+      'field_edoweb_title_alternative' => array('required' => TRUE),
+      'field_edoweb_title_short' => array(),
+      'field_edoweb_creator' => array('required' => TRUE),
+      'field_edoweb_creator_label' => array(),
+      'field_edoweb_contributor' => array('required' => TRUE),
+      'field_edoweb_contributor_label' => array(),
+      'field_edoweb_editor' => array('required' => TRUE),
+      'field_edoweb_edt' => array(),
+      'field_edoweb_translator' => array(),
+      'field_edoweb_ill' => array(),
+      'field_edoweb_act' => array(),
+      'field_edoweb_drt' => array(),
+      'field_edoweb_clb' => array(),
+      'field_edoweb_pht' => array(),
+      'field_edoweb_cnd' => array(),
+      'field_edoweb_cmp' => array(),
+      'field_edoweb_aui' => array(),
+      'field_edoweb_aus' => array(),
+      'field_edoweb_col' => array(),
+      'field_edoweb_ctb' => array(),
+      'field_edoweb_prf' => array(),
+      'field_edoweb_cng' => array(),
+      'field_edoweb_ant' => array(),
+      'field_edoweb_voc' => array(),
+      'field_edoweb_ivr' => array(),
+      'field_edoweb_ive' => array(),
+      'field_edoweb_ctg' => array(),
+      'field_edoweb_mus' => array(),
+      'field_edoweb_aft' => array(),
+      'field_edoweb_pro' => array(),
+      'field_edoweb_egr' => array(),
+      'field_edoweb_dte' => array(),
+      'field_edoweb_red' => array('required' => TRUE),
+      'field_edoweb_edition' => array(),
+      'field_edoweb_publication_place' => array('required' => TRUE),
+      'field_edoweb_publisher' => array('required' => TRUE),
+      'field_edoweb_issued' => array('required' => TRUE),
+      'field_edoweb_language' =>  array('required' => TRUE),
+      'field_edoweb_extent' => array('required' => TRUE),
+      'field_edoweb_description' =>  array('required' => TRUE),
+      'field_edoweb_rpb_subject' => array(),
+      'field_edoweb_subject' => array('required' => TRUE),
+      'field_edoweb_subject_chain' => array(),
+      'field_edoweb_tag' =>  array(),
+      'field_mab_710' => array('required' => TRUE),
+      'field_edoweb_abstract' =>  array('required' => TRUE),
+     'field_edoweb_parallel' => array(
+        'settings'    => array(
+          'target_type' => 'edoweb_basic',
+          'handler_settings' => array(
+            'target_bundles' => array(
+              'proceeding' => 'proceeding',
+            ),
+          ),
+        ),
+      ),
+      'field_edoweb_source' => array(
+        'settings'    => array(
+          'target_type' => 'edoweb_basic',
+          'handler_settings' => array(
+            'target_bundles' => array(
+              'proceeding' => 'proceeding',
+            ),
+          ),
+        ),
+      ),
+      'field_edoweb_volume' => array(),
+      'field_edoweb_struct_child' => array(
+        'settings'    => array(
+          'target_type' => 'edoweb_basic',
+          'handler_settings' => array(
+            'target_bundles' => array(
+              'part' => 'part',
+              'file' => 'file',
+            ),
+          ),
+        ),
+      ),
+      'field_edoweb_parent' => array(
+        'settings'    => array(
+          'target_type' => 'edoweb_basic',
+          'handler_settings' => array(
+            'target_bundles' => array(
+              'collection' => 'collection',
+            ),
+          ),
+        ),
+      ),
+      'field_edoweb_collected_by' => array(
+        'settings'    => array(
+          'target_type' => 'edoweb_basic',
+          'handler_settings' => array(
+            'target_bundles' => array(
+              'collection' => 'collection',
+            ),
+          ),
+        ),
+      ),
+      'field_edoweb_thesis_information' => array(),
+      'field_edoweb_type' => array(),
+      'field_edoweb_medium' => array('required' => TRUE),
+      'field_edoweb_urn' => array(),
+      'field_edoweb_issn' => array(),
+      'field_edoweb_isbn10' => array('required' => TRUE),
+      'field_edoweb_isbn13' => array('required' => TRUE),
+      'field_edoweb_doi' => array(),
+      'field_edoweb_ht_with_link' => array(),
+      'field_edoweb_identifier_ht' => array(),
+      'field_edoweb_institution' => array('required' => TRUE),
+      'field_edoweb_congress_title' => array('required' => TRUE),
+      'field_edoweb_congress_location' =>  array('required' => TRUE),
+      'field_edoweb_congress_duration' =>  array('required' => TRUE),
+      'field_edoweb_year_of_copyright' =>  array('required' => TRUE),
+      'field_edoweb_embargo_time' =>  array('required' => TRUE),
+      'field_edoweb_license' => array('required' => TRUE),
+      'field_edoweb_professional_group' =>  array('required' => TRUE),
+      'field_edoweb_related_resource' =>  array('required' => TRUE),
     ),
+  		/*
+  		 * Field instances researchData resource bundle
+  		 */
+  		'researchData' => array(
+  				'field_edoweb_title' => array('required' => TRUE),
+  				'field_edoweb_title_other' => array(),
+  				'field_edoweb_title_alternative' => array(),
+  				'field_edoweb_title_short' => array(),
+  				'field_edoweb_creator' => array('required' => TRUE),
+  				'field_edoweb_creator_label' => array(),
+  				'field_edoweb_contributor' => array('required' => TRUE),
+  				'field_edoweb_contributor_label' => array(),
+  				'field_edoweb_editor' => array(),
+  				'field_edoweb_edt' => array(),
+  				'field_edoweb_translator' => array(),
+  				'field_edoweb_ill' => array(),
+  				'field_edoweb_act' => array(),
+  				'field_edoweb_drt' => array(),
+  				'field_edoweb_clb' => array(),
+  				'field_edoweb_pht' => array(),
+  				'field_edoweb_cnd' => array(),
+  				'field_edoweb_cmp' => array(),
+  				'field_edoweb_aui' => array(),
+  				'field_edoweb_aus' => array(),
+  				'field_edoweb_col' => array(),
+  				'field_edoweb_ctb' => array(),
+  				'field_edoweb_prf' => array(),
+  				'field_edoweb_cng' => array(),
+  				'field_edoweb_ant' => array(),
+  				'field_edoweb_voc' => array(),
+  				'field_edoweb_ivr' => array(),
+  				'field_edoweb_ive' => array(),
+  				'field_edoweb_ctg' => array(),
+  				'field_edoweb_mus' => array(),
+  				'field_edoweb_aft' => array(),
+  				'field_edoweb_pro' => array(),
+  				'field_edoweb_egr' => array(),
+  				'field_edoweb_dte' => array(),
+  				'field_edoweb_red' => array(),
+  				'field_edoweb_edition' => array(),
+  				'field_edoweb_publication_place' => array('required' => TRUE),
+  				'field_edoweb_publisher' => array('required' => TRUE),
+  				'field_edoweb_issued' => array('required' => TRUE),
+  				'field_edoweb_language' =>  array('required' => TRUE),
+  				'field_edoweb_extent' => array('required' => TRUE),
+  				'field_edoweb_description' =>  array('required' => TRUE),
+                'field_edoweb_rpb_subject' => array(),
+  				'field_edoweb_subject' => array('required' => TRUE),
+  				'field_edoweb_subject_chain' => array(),
+  				'field_edoweb_tag' =>  array(),
+  				'field_mab_710' => array('required' => TRUE),
+  				'field_edoweb_abstract' =>  array('required' => TRUE),
+  				'field_edoweb_parallel' => array(
+  						'settings'    => array(
+  								'target_type' => 'edoweb_basic',
+  								'handler_settings' => array(
+  										'target_bundles' => array(
+  												'proceeding' => 'proceeding',
+  										),
+  								),
+  						),
+  				),
+  				'field_edoweb_source' => array(
+  						'settings'    => array(
+  								'target_type' => 'edoweb_basic',
+  								'handler_settings' => array(
+  										'target_bundles' => array(
+  												'proceeding' => 'proceeding',
+  										),
+  								),
+  						),
+  				),
+  				'field_edoweb_volume' => array(),
+  				'field_edoweb_struct_child' => array(
+  						'settings'    => array(
+  								'target_type' => 'edoweb_basic',
+  								'handler_settings' => array(
+  										'target_bundles' => array(
+  												'part' => 'part',
+  												'file' => 'file',
+  										),
+  								),
+  						),
+  				),
+  				'field_edoweb_parent' => array(
+  						'settings'    => array(
+  								'target_type' => 'edoweb_basic',
+  								'handler_settings' => array(
+  										'target_bundles' => array(
+  												'collection' => 'collection',
+  										),
+  								),
+  						),
+  				),
+  				'field_edoweb_collected_by' => array(
+  						'settings'    => array(
+  								'target_type' => 'edoweb_basic',
+  								'handler_settings' => array(
+  										'target_bundles' => array(
+  												'collection' => 'collection',
+  										),
+  								),
+  						),
+  				),
+  				'field_edoweb_thesis_information' => array(),
+  				'field_edoweb_type' => array(),
+  				'field_edoweb_medium' => array('required' => TRUE),
+  				'field_edoweb_urn' => array(),
+  				'field_edoweb_issn' => array(),
+  				'field_edoweb_isbn10' => array('required' => TRUE),
+  				'field_edoweb_isbn13' => array('required' => TRUE),
+  				'field_edoweb_doi' => array(),
+  				'field_edoweb_ht_with_link' => array(),
+  				'field_edoweb_identifier_ht' => array(),
+  				'field_edoweb_institution' => array('required' => TRUE),
+  				'field_edoweb_year_of_copyright' =>  array('required' => TRUE),
+  				'field_edoweb_embargo_time' =>  array('required' => TRUE),
+  				'field_edoweb_license' => array('required' => TRUE),
+  				'field_edoweb_professional_group' =>  array('required' => TRUE),
+  				'field_edoweb_related_resource' =>  array('required' => TRUE),
+  				'field_edoweb_data_origin' =>  array('required' => TRUE),
+  		),
   );
 }
 
@@ -2473,6 +2811,9 @@ function _edoweb_field_instance_defaults($field_name) {
     'field_edoweb_description' => array(
       'label' => $t('Beschreibung'),
     ),
+    'field_edoweb_rpb_subject' => array(
+      'label' => $t('RPB Erschließung'),
+    ),
     'field_edoweb_subject' => array(
       'label' => $t('Sacherschließung'),
     ),
@@ -2506,10 +2847,10 @@ function _edoweb_field_instance_defaults($field_name) {
       'display' => array('compact' => array()),
     ),
     'field_edoweb_struct_parent' => array(
-      'label' => $t('Parent'),
+      'label' => $t('Überordnung'),
     ),
     'field_edoweb_struct_child' => array(
-      'label' => $t('Child'),
+      'label' => $t('Unterordnung'),
     ),
     'field_gnd_name' => array(
       'label' => $t('Name'),
@@ -2559,6 +2900,33 @@ function _edoweb_field_instance_defaults($field_name) {
     ),
     'field_edoweb_thesis_information' => array(
       'label' => $t('Hochschulschriftenvermerk'),
+    ),
+  	'field_edoweb_congress_title' => array(
+      'label' => $t('Konferenz Titel'),
+    ),
+  	'field_edoweb_congress_location' =>  array(
+      'label' => $t('Konferenz Ort'),
+    ),
+  	'field_edoweb_congress_duration' =>  array(
+      'label' => $t('Konferenz Dauer'),
+    ),
+  	'field_edoweb_year_of_copyright' =>  array(
+      'label' => $t('Copyright Jahr'),
+    ),
+  	'field_edoweb_embargo_time' =>  array(
+      'label' => $t('Embargo'),
+    ),
+  	'field_edoweb_license' => array(
+      'label' => $t('Lizenz'),
+    ),
+  	'field_edoweb_professional_group' =>  array(
+      'label' => $t('Fachgruppe'),
+    ),
+  	'field_edoweb_related_resource' =>  array(
+      'label' => $t('Links'),
+    ),
+  	'field_edoweb_data_origin'=>  array(
+      'label' => $t('Erhebungsform'),
     ),
   );
   return $defaults[$field_name];

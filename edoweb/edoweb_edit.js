@@ -95,7 +95,7 @@
           var existing_items = entity.find('.' + field_class);
           if (! existing_items.length && (instance['required'] || instance['settings']['default'])) {
             var field = createField(instance);
-            entity.find('.content').prepend(field);
+            entity.find('.content').append(field);
           } else if (! existing_items.length &&
                      ! instance['settings']['read_only'] &&
                      instance['settings']['metadata_type'] == 'descriptive')
@@ -123,7 +123,7 @@
               Drupal.attachBehaviors(entity_content);
               activateFields(entity_content.find('.field'), bundle, context);
               entity.find('.content').replaceWith(entity_content);
-              $('#page-title', context).text(page_title);
+             $('#page-title', context).text(page_title);
             };
           });
           $.get(Drupal.settings.basePath + 'edoweb/templates/' + bundle,
@@ -142,8 +142,7 @@
           submit_button.after(template_button);
         }
 
-        if (bundle == 'journal' || bundle == 'monograph' || bundle == 'webpage') {
-          var import_button = $('<button style="display: block; margin-bottom: 1em;" class="edoweb edit action">Import einer Resource aus dem Katalog</button>').bind('click', function() {
+          var import_button = $('<button style="display: block; margin-bottom: 1em;" class="edoweb edit action">Titeldaten importieren</button>').bind('click', function() {
             instance = {'bundle': '', 'field_name': ''}
             modal_overlay.html('<div />');
             refreshTable(modal_overlay, null, null, null, null, null, instance, function(uri) {
@@ -175,7 +174,7 @@
             return false;
           });
           additional_fields.before(import_button);
-        }
+        
 
         activateFields(entity.find('.field'), bundle, context);
 
@@ -210,7 +209,7 @@
           // and a real redirect is triggered.
           if (subject.type == 'bnode') {
             entity_load_json('edoweb_basic', resource_uri).onload = function() {
-              if (bundle == 'monograph' || bundle == 'journal') {
+              if (bundle == 'monograph' || bundle == 'journal' || bundle=='proceeding'|| bundle=='researchData') {
                 window.location = href;
               } else {
                 localStorage.setItem('cut_entity', this.responseText);
@@ -255,9 +254,15 @@
         enableTextInput(input, instance);
         target.append(input);
       }
+      
+      function createDisabledTextInput(instance, target) {
+          var input = $('<div class="field-item" />')
+            .attr('property', instance['settings']['predicates'].join(' '));
+          disableTextInput(input, instance);
+          target.append(input);
+        }
 
       function enableTextInput(field, instance) {
-
         field.attr('contenteditable', true)
           .css('border', '1px solid grey')
           .css('margin-top', '0.3em')
@@ -278,7 +283,6 @@
               return false;
             }
           });
-
         // Source: http://stackoverflow.com/a/4238971
         function placeCaretAtEnd(el) {
           el.focus();
@@ -297,10 +301,19 @@
             textRange.select();
           }
         }
-
+    }
+      function disableTextInput(field, instance) {
+          field.attr('contenteditable', false)
+            .css('border', '1px solid grey')
+            .css('margin-top', '0.3em')
+            .css('padding', '0.1em')
+            .css('min-height', '1.5em');
+         field.append("Please click on link symbol to add linked data.");
       }
 
+       
 
+      
       function createLinkInput(instance, target) {
         modal_overlay.html('<div />');
         refreshTable(modal_overlay, null, null, null, null, null, instance, function(uri) {
@@ -335,41 +348,55 @@
         target.append(input);
       }
 
-      function createOptionsInput(instance, target) {
+      function createNewOptionsInput(instance, target, label) {
         var input = $.get(
           Drupal.settings.basePath + 'edoweb_options_list/' + instance['field_name'],
           function(data) {
             var select = $(data);
-            select.prepend('<option selected="selected">Sprache auswählen</option>');
+            select.prepend('<option selected="selected">Bitte '+label+' w&auml;hlen</option>');
             select.change(function() {
               var input = $('<div class="field-item" />')
                 .attr('rel', instance['settings']['predicates'].join(' '))
                 .attr('resource', $(this).find('option:selected').val())
                 .text($(this).find('option:selected').text());
               target.append(input);
-              $(this).remove();
+            //  $(this).remove();
             });
             target.append(select);
           }
         );
       }
 
+      function getSortedByWeight(obj) {
+    	    var keys = []; 
+    	    for(var key in obj['widget']['weight']) {
+    	    	keys.push(key);
+    	    }
+    	    return keys.sort(function(a,b){return obj[a]-obj[b]});
+      }
+      
       function activateFields(fields, bundle, context) {
+    	  console.log("Field");
+     	 console.log(fields);
         $.each(fields, function() {
+        	
           var field = $(this);
           var field_name = getFieldName(field);
           if (!field_name) return true;
           if (!Drupal.settings.edoweb.fields[bundle].hasOwnProperty(field_name)) return true;
 
           var instance = Drupal.settings.edoweb.fields[bundle][field_name]['instance'];
+          console.log(instance['label']+" is of type "+instance['widget']['type']+" with weight "+instance['widget']['weight']);
+          console.log(instance);
+         
           switch (instance['widget']['type']) {
             case 'text_textarea':
+            	
             case 'text_textfield':
               if ('file' == bundle && 'field_edoweb_title' == field_name) {
                 var struct_parent = $(context)
                   .find('.field-name-field-edoweb-struct-parent>.field-items>.field-item>a')
                   .attr('resource');
-
                 if (struct_parent) {
                   var copy_button = $('<a href="#" title="Titelübernahme vom Parent"><span class="octicon octicon-repo-pull" /></a>')
                     .bind('click', function() {
@@ -412,11 +439,12 @@
                       return false;
                     }).css('float', 'right').css('margin-right', '0.3em');
                   field.find('.field-label').append(add_button);
-                  field.find('.field-label').append(remove_button);
+                  //field.find('.field-label').append(remove_button);
                 }
               });
               break;
             case 'edoweb_autocomplete_widget':
+              createDisabledTextInput(instance, $(this));
               field.find('.field-items').each(function() {
                 if (! instance['settings']['read_only']
                     && instance['settings']['metadata_type'] == 'descriptive'
@@ -440,7 +468,7 @@
                       return false;
                     }).css('float', 'right').css('margin-right', '0.3em');
                   field.find('.field-label').append(add_button);
-                  field.find('.field-label').append(remove_button);
+                  //field.find('.field-label').append(remove_button);
                   // Load entities into table with remove ops
                   if ($(this).find('div.field-item').length) {
                     Drupal.edoweb.entity_table($(this), ops);
@@ -464,7 +492,8 @@
               field.find('.field-items').each(function() {
                 if ((instance['settings']['cardinality'] == -1)
                     || ($(this).find('.field-item').length < instance['settings']['cardinality'])) {
-                  createOptionsInput(instance, $(this));
+                	
+                  createNewOptionsInput(instance, $(this),instance['label']);  
                 }
               });
               break;

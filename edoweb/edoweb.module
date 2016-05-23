@@ -61,7 +61,7 @@ function edoweb_init() {
       'fields' => $instances,
       'namespaces' => rdf_get_namespaces(),
       'primary_bundles' => array(
-        'monograph', 'journal', 'volume', 'issue', 'article'
+        'monograph', 'journal', 'volume', 'issue', 'article','proceeding','researchData',
       ),
       'site_frontpage' => variable_get('site_frontpage', '/'),
       'deepzoomServiceUrl' => variable_get('edoweb_deepzoom_url') ,
@@ -213,6 +213,13 @@ function edoweb_entity_info() {
           'access arguments' => array('administer edoweb_basic entities'),
         ),
       ),
+      'rpbSubject' => array(
+    	'label' => t('RPB Erschließung'),
+    	'admin' => array(
+    			'path' => 'admin/structure/edoweb_basic/subject/manage',
+    			'access arguments' => array('administer edoweb_basic entities'),
+    	),
+       ),
       'subject' => array(
         'label' => t('Sachschlagwort'),
         'admin' => array(
@@ -270,6 +277,20 @@ function edoweb_entity_info() {
           'access arguments' => array('administer edoweb_basic entities'),
         ),
       ),
+      'researchData' => array(
+    				'label' => t('Forschungsdaten'),
+    				'admin' => array(
+    						'path' => 'admin/structure/edoweb_basic/researchData/manage',
+    						'access arguments' => array('administer edoweb_basic entities'),
+    				),
+    ),
+    'proceeding' => array(
+    				'label' => t('Konferenzband'),
+    				'admin' => array(
+    						'path' => 'admin/structure/edoweb_basic/proceeding/manage',
+    						'access arguments' => array('administer edoweb_basic entities'),
+    				),
+    		),
     ),
     'view modes' => array(
       'compact' => array(
@@ -617,6 +638,7 @@ function edoweb_repository_configuration_form() {
       'creator.@id' => t('Autor'),
       'contentType' => t('Objektart'),
       'subject.@id' => t('Sacherschließung'),
+      'rpbSubject.@id' => t('RPB Erchließung'),
       'issued' => t('Erscheinungsjahr'),
       'rdftype.@id' => t('Typ'),
       'medium.@id' => t('Medium'),
@@ -676,7 +698,7 @@ function edoweb_info_page() {
   $query->addTag('elasticsearch');
   $query->entityCondition('entity_type', 'edoweb_basic');
   $query->entityCondition('bundle', array(
-    'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'webpage', 'version', 'part'
+    'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'webpage', 'version', 'part', 'proceeding','researchData'
   ));
   $content['resource_list'] = edoweb_basic_search_entities(
     $query, TRUE, array(), TRUE, user_access('edit any edoweb_basic entity'), TRUE, 'compact', TRUE
@@ -832,6 +854,8 @@ function edoweb_basic_search_entities_form($form, &$form_state, $advanced, $sear
   } else if (isset($query['endpoint']) && 'resource' == $query['endpoint']) {
     $options = array(
       'generic' => t('Any'),
+      'researchData'=>t('Forschungsdaten'),
+      'proceeding'=>t('Konferenzband'),
       'monograph' => t('Monograph'),
       'journal' => t('Journal'),
       'webpage' => t('Webpage'),
@@ -942,7 +966,7 @@ function edoweb_basic_search_entities(
 
   if (! (@$childlevel = $query['childlevel'])) {
     //FIXME: this overwrites person etc bundles!!!
-    $efq->entityCondition('bundle', array('monograph', 'journal', 'webpage'));
+    $efq->entityCondition('bundle', array('monograph', 'journal', 'webpage','proceeding','researchData'));
   }
 
   if (@$fulltext = $query['fulltext']) {
@@ -1147,6 +1171,8 @@ function edoweb_basic_table_header($bundle_type = 'generic', $init_sort = false)
     case 'webpage':
     case 'version':
     case 'generic':
+    case 'proceeding':	
+   	case 'researchData':
     case 'part':
       foreach (_edoweb_entity_table_headers($init_sort) as $field => $column) {
         if (isset($entity_table_headers[$field]) && $entity_table_headers[$field]) {
@@ -1318,7 +1344,6 @@ function edoweb_basic_entity_table($header, $entities, $operations = array(), $t
  */
 function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array(), $search_count = 0, $active_facets = null, $sortable = TRUE, $view_mode = 'default') {
   global $user;
-
   // Prepare query: header for table sort
   // TODO: decide which table header to use if multiple target bundles
   // are set.
@@ -1329,9 +1354,9 @@ function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array()
   if ($sortable) {
     $efq->tableSort($header);
   }
-
+  
   $content = array();
-
+  
   // Prepare query: apply active facets
   $content['filters'] = array(
     '#type' => 'fieldset',
@@ -1483,6 +1508,8 @@ function _edoweb_map_string($string) {
       return t('creator');
     case 'subject':
       return t('subject');
+    case 'rpbSubject':
+      	return t('rpbSubject');
     case 'issued':
       return t('issued');
     case 'contentType':
@@ -1572,10 +1599,8 @@ function edoweb_basic_bundle_name($bundle) {
 function edoweb_basic_view($entity, $view_mode = 'default') {
   global $base_url;
   $page_url = $base_url . '/' . current_path();
-
-  // Our entity type, for convenience.
   $entity_type = 'edoweb_basic';
-
+//edoweb_update_7181();
   $wrapper = entity_metadata_wrapper('edoweb_basic', $entity);
   $attr_bundle = 'data-entity-bundle="' .  $entity->bundle_type . '"';
   $attr_rdf_typeof = 'typeof="' . implode(' ', edoweb_rdf_types($entity->bundle_type)) . '"';
@@ -1590,7 +1615,8 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
       '#prefix' => "<div class=\"edoweb entity $view_mode\" $attr_bundle $attr_rdf_resource $attr_rdf_typeof>",
       '#suffix' => "<span about=\"$page_url\" rel=\"foaf:primaryTopic\" $attr_rdf_resource /></div>",
     );
-  } else {
+  } 
+  else {
     $entity->content = array(
       '#prefix' => "<div class=\"edoweb entity $view_mode\" $attr_bundle $attr_rdf_resource $attr_rdf_typeof>"
                  . '<div class="compact-header">' . _full_title($entity->label(), $entity) . '</div>',
@@ -1642,7 +1668,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
       }
       if ($has_inverse) {
         $inverse_query->entityCondition('bundle', array(
-          'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'part'
+          'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'part','proceeding','researchData'
         ));
         $entity->content['related'] = edoweb_basic_search_entities(
           $inverse_query
@@ -1893,6 +1919,8 @@ function edoweb_field_extra_fields() {
   $extra_fields['edoweb_basic']['monograph']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['journal']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['volume']['display'] = $display_elements;
+  $extra_fields['edoweb_basic']['proceeding']['display'] = $display_elements;
+  $extra_fields['edoweb_basic']['researchData']['display'] = $display_elements;
 
   return $extra_fields;
 }
@@ -2564,6 +2592,8 @@ function edoweb_rdf_types($bundle = null) {
     //FIXME: dummy RDF type for version
     'version' => array('lv:ArchivedWebPageVersion'),
     'generic' => array('dc:BibliographicResource'),
+  	'proceeding' => array('bibo:Proceedings'),
+  	'researchData' => array('regal:ResearchData'),
     //FIXME: do we need an RDF type mapping for the 'part' bundle?
     'part' => array('dc:BibliographicResource'),
     'authority_resource' => array('gnd:AuthorityResource'),
@@ -2695,7 +2725,7 @@ function edoweb_block_view($delta = '') {
         );
         $top_level_parent = _edoweb_find_top_level_parent($entity);
         if (_edoweb_is_editable_entity($top_level_parent) &&
-            in_array($top_level_parent->bundle_type, array('monograph', 'journal'))) {
+            in_array($top_level_parent->bundle_type, array('monograph', 'journal','proceeding','researchData'))) {
           $api = new EdowebAPIClient();
           $subtree = _edoweb_build_tree($api->getTree($top_level_parent));
           $block['content'] = theme_item_list(array(
@@ -3003,6 +3033,70 @@ function _edoweb_available_languages() {
   return $languages;
 }
 
+function _edoweb_available_medium() {
+	return array(
+			'http://rdvocab.info/termList/RDAproductionMethod/1010' =>t("Print"),
+			'http://rdvocab.info/termList/RDACarrierType/1018' =>t("Online"),
+			'http://purl.org/ontology/bibo/AudioDocument' =>t("Audio"),
+			'http://rdvocab.info/termList/RDACarrierType/1050' =>t("Video"),
+			'http://purl.org/ontology/bibo/Image' =>t("Bild"),
+			'http://pbcore.org/vocabularies/instantiationMediaType#text ' =>t("Text"),
+			'http://pbcore.org/vocabularies/instantiationMediaType#software' =>t("Software"),
+			'http://purl.org/lobid/lv%23Miscellaneous' =>t("Andere"),
+	);
+	
+}
+
+function _edoweb_available_license() {
+	return array(
+			'https://creativecommons.org/licenses/by/4.0' =>t("CC BY 4.0"),
+			'https://creativecommons.org/licenses/by-nd/4.0' =>t("CC BY-ND 4.0"),
+			'https://creativecommons.org/licenses/by-nc-sa/4.0' =>t("CC BY-NC-SA  4.0"),
+			'https://creativecommons.org/licenses/by-sa/4.0' =>t("CC BY-SA  4.0"),
+			'https://creativecommons.org/licenses/by-nc/4.0' =>t("CC BY-NC  4.0"),
+			'https://creativecommons.org/licenses/by-nc-nd/4.0' =>t("CC BY-NC-ND  4.0"),
+	);
+
+}
+
+function _edoweb_available_professionalGroup() {
+	return array(
+			'http://d-nb.info/gnd/4038243-6' =>t("Medizin"),
+			'http://d-nb.info/gnd/4020775-4' =>t("Gesundheitswesen"),
+			'http://d-nb.info/gnd/4152829-3' =>t("Ernährungswissenschaften"),
+			'http://d-nb.info/gnd/4068473-8' =>t("Agrarwissenschaften"),
+			'http://d-nb.info/gnd/4137364-9' =>t("Umweltwissenschaften"),
+			'http://d-nb.info/gnd/4006851-1' =>t("Biologie"),
+	);
+
+}
+function _edoweb_available_data_origin(){
+	return array(
+			'http://hbz-nrw.de/regal#Interview' =>t("Interview"),
+			'http://hbz-nrw.de/regal#Umfrage' =>t("Umfrage"),
+			'http://hbz-nrw.de/regal#Anamnese' =>t("Anamnese"),
+			'http://hbz-nrw.de/regal#Exploration' =>t("Exploration"),
+			'http://hbz-nrw.de/regal#Probe' =>t("Probe"),
+			'http://hbz-nrw.de/regal#Gewebeprobe' =>t("Gewebeprobe"),
+			'http://hbz-nrw.de/regal#Flaechenmischprobe' =>t("Flächenmischprobe"),
+			'http://hbz-nrw.de/regal#Bodenbohrung' =>t("Bodenbohrung"),
+			'http://hbz-nrw.de/regal#apparativeUntersuchung' =>t("apparative Untersuchung"),
+			'http://hbz-nrw.de/regal#koerperlicheUntersuchung' =>t("körperliche Untersuchung"),
+			'http://hbz-nrw.de/regal#Feldbeobachtung' =>t("Feldbeobachtung"),
+			'http://hbz-nrw.de/regal#Laborbeobachtung' =>t("Laborbeobachtung"),
+			'http://hbz-nrw.de/regal#Analyse' =>t("Analyse"),
+			'http://hbz-nrw.de/regal#Genomsequenzierung' =>t("Genomsequenzierung"),
+			'http://hbz-nrw.de/regal#Messung' =>t("Messung"),
+			'http://hbz-nrw.de/regal#Berechnung' =>t("Berechnung"),
+			'http://hbz-nrw.de/regal#Evaluation' =>t("Evaluation"),
+			'http://hbz-nrw.de/regal#Querschnittstudie' =>t("Querschnittstudie"),
+			'http://hbz-nrw.de/regal#Langzeitstudie' =>t("Langzeitstudie"),
+			'http://hbz-nrw.de/regal#Interventionsstudie' =>t("Interventionsstudie"),
+			'http://hbz-nrw.de/regal#Kohortenstudie' =>t("Kohortenstudie"),
+			'http://hbz-nrw.de/regal#Simulation' =>t("Simulation"),
+			'http://hbz-nrw.de/regal#Andere' =>t("Andere"),
+	);
+}
 function _full_title($label, $entity, $attributes = array()) {
   return '<h1 class="title">' . _get_edoweb_url($entity->label(), $entity, $attributes) . '</h1>'
            . ($entity->subLabel() ? '<h2 class="title-suffix">' . $entity->subLabel() . '</h2>' : '');
@@ -3255,806 +3349,6 @@ function _update_rdf_mapping($updated_mappings = null) {
 
 }
 
-/**
- * Fix RDF mapping of field_edoweb_urn
- */
-function edoweb_update_7100() {
-  $rdf_mapping = array(
-    'type' => EDOWEB_ENTITY_TYPE,
-    'bundle' => RDF_DEFAULT_BUNDLE,
-    'mapping' => array(
-      'field_edoweb_urn' => array(
-        'predicates' => array('orca:hasURN'),
-      ),
-    ),
-  );
-  rdf_mapping_save($rdf_mapping);
-}
-
-/**
- * Update definitions of linked data fields
- */
-function edoweb_update_7101() {
-  $updated_fields = array(
-    'field_edoweb_parent',
-    'field_edoweb_creator',
-    'field_edoweb_contributor',
-    'field_edoweb_parallel',
-  );
-  module_load_install('edoweb');
-  $field_definitions = _edoweb_installed_fields();
-  foreach ($updated_fields as $updated_field) {
-    $field_definition = array();
-    $field_definition['settings']['label_properties'] =
-      $field_definitions[$updated_field]['settings']['label_properties'];
-    $field_definition['field_name'] = $updated_field;
-    field_update_field($field_definition);
-  }
-}
-
-/**
- * Add URN field instances to volume, issue, article and file bundles
- */
-function edoweb_update_7102() {
-  $added_instances = array(
-    'volume' => array('field_edoweb_urn'),
-    'issue' => array('field_edoweb_urn'),
-    'article' => array('field_edoweb_urn'),
-    'file' => array('field_edoweb_urn'),
-  );
-  _update_edoweb_installed_instances($added_instances);
-}
-
-/**
- * Remove superfluous fields
- */
-function edoweb_update_7103() {
-  field_delete_field('field_edoweb_creator_new');
-  field_delete_field('field_edoweb_contributor_new');
-  field_delete_field('field_edoweb_identifier');
-  field_purge_batch(10);
-}
-
-/**
- * Add user id column
- */
-function edoweb_update_7104() {
-  $uid_column = array(
-    'description' => 'The {users}.uid that created this entity.',
-    'type' => 'int',
-    'not null' => TRUE,
-    'default' => 0,
-  );
-  db_add_field('edoweb_basic', 'uid', $uid_column);
-}
-
-/**
- * Update fields, field instances and RDF mappings
- */
-function edoweb_update_7105() {
-  cache_clear_all('field:edoweb_basic:*', 'cache_field', TRUE);
-  _update_edoweb_installed_fields();
-  _update_edoweb_installed_instances();
-  _update_rdf_mapping();
-}
-
-/**
- * Update RDF mapping for field_gnd_name
- */
-function edoweb_update_7106() {
-  _update_edoweb_installed_fields(
-    array('field_gnd_name')
-  );
-  _update_edoweb_installed_instances(
-    array('subject' => array('field_gnd_name'))
-  );
-  _update_rdf_mapping();
-}
-
-/**
- * Update field definitions
- */
-function edoweb_update_7107() {
-  $updated_fields = array(
-    'field_edoweb_parent',
-    'field_edoweb_creator',
-    'field_edoweb_contributor',
-    'field_edoweb_subject',
-    'field_edoweb_parallel',
-  );
-  _update_edoweb_installed_fields($updated_fields);
-}
-
-/**
- * Update RDF mappings, add fields for alternative and short title
- */
-function edoweb_update_7108() {
-  _update_edoweb_installed_fields();
-  $updated_instances = array(
-    'monograph' => array(
-      'field_edoweb_title_alternative',
-      'field_edoweb_title_short',
-    ),
-    'journal' => array(
-      'field_edoweb_title_alternative',
-      'field_edoweb_title_short',
-    ),
-    'corporate_body' => array(
-      'field_gnd_name',
-      'field_gnd_identifier',
-    ),
-  );
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-}
-
-/**
- * Configure inverse fields
- */
-function edoweb_update_7109() {
-  $updated_fields = array(
-    'field_edoweb_creator',
-    'field_edoweb_contributor',
-    'field_edoweb_subject',
-  );
-  _update_edoweb_installed_fields($updated_fields);
-}
-
-/**
- * Configure field groups
- */
-function edoweb_update_7110() {
-  $updated_fields = array(
-    'field_edoweb_creator',
-    'field_edoweb_contributor',
-    'field_edoweb_subject',
-    'field_edoweb_parallel',
-    'field_edoweb_parent',
-  );
-  _update_edoweb_installed_fields($updated_fields);
-}
-
-/**
- * Add extensive list of MARC relator fields
- */
-function edoweb_update_7111() {
-  _update_edoweb_installed_fields();
-  _update_edoweb_installed_instances();
-  _update_rdf_mapping();
-}
-
-/**
- * Update title fields to text_long, apply field weights
- */
-function edoweb_update_7112() {
-  _update_edoweb_installed_fields();
-  _update_edoweb_installed_instances();
-}
-
-/**
- * Ungroup parent, parallel and subject fields
- */
-function edoweb_update_7113() {
-  $updated_fields = array(
-    'field_edoweb_parent',
-    'field_edoweb_parallel',
-    'field_edoweb_subject',
-  );
-  foreach ($updated_fields as $updated_field) {
-    $field_info = field_info_field($updated_field);
-    $field_info['settings']['field_group'] = null;
-    field_update_field($field_info);
-  }
-}
-
-/**
- * Update field and instance definitions:
- * - use name parameter for lobid lookups
- * - delete SKOS-specific fields
- */
-function edoweb_update_7114() {
-  field_delete_field('field_skos_pref_label');
-  field_delete_field('field_skos_notation');
-  $updated_fields = array(
-    'field_edoweb_parent',
-    'field_edoweb_creator',
-    'field_edoweb_contributor',
-    'field_edoweb_editor',
-    'field_edoweb_edt',
-    'field_edoweb_translator',
-    'field_edoweb_ill',
-    'field_edoweb_act',
-    'field_edoweb_drt',
-    'field_edoweb_clb',
-    'field_edoweb_pht',
-    'field_edoweb_cnd',
-    'field_edoweb_cmp',
-    'field_edoweb_aui',
-    'field_edoweb_aus',
-    'field_edoweb_col',
-    'field_edoweb_ctb',
-    'field_edoweb_prf',
-    'field_edoweb_cng',
-    'field_edoweb_ant',
-    'field_edoweb_voc',
-    'field_edoweb_ivr',
-    'field_edoweb_ive',
-    'field_edoweb_ctg',
-    'field_edoweb_mus',
-    'field_edoweb_aft',
-    'field_edoweb_pro',
-    'field_edoweb_egr',
-    'field_edoweb_dte',
-    'field_edoweb_subject',
-    'field_edoweb_parallel',
-    'field_gnd_profession',
-    'field_gnd_name',
-    'field_gnd_identifier',
-  );
-  $updated_instances = array(
-    'person' => array(
-      'field_gnd_profession',
-    ),
-  );
-  _update_edoweb_installed_fields($updated_fields);
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-}
-
-/**
- * Update RDF mappings, set read-only fields
- */
-function edoweb_update_7115() {
-  $updated_fields = array(
-    'field_edoweb_urn',
-    'field_edoweb_identifier_ht',
-    'field_edoweb_identifier_zdb',
-  );
-  _update_edoweb_installed_fields($updated_fields);
-  _update_rdf_mapping();
-}
-
-/**
- * Add free-text tag field
- */
-function edoweb_update_7116() {
-  $updated_fields = array(
-    'field_edoweb_tag',
-  );
-  $updated_instances = array(
-    'monograph' => array(
-      'field_edoweb_tag',
-    ),
-    'journal' => array(
-      'field_edoweb_tag',
-    ),
-    'article' => array(
-      'field_edoweb_tag',
-    ),
-  );
-  _update_edoweb_installed_fields($updated_fields);
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-}
-
-/**
- * Set subject endpoint for all GND lookups
- */
-function edoweb_update_7117() {
-  $updated_fields = array(
-    'field_edoweb_creator',
-    'field_edoweb_contributor',
-    'field_edoweb_editor',
-    'field_edoweb_edt',
-    'field_edoweb_translator',
-    'field_edoweb_ill',
-    'field_edoweb_act',
-    'field_edoweb_drt',
-    'field_edoweb_clb',
-    'field_edoweb_pht',
-    'field_edoweb_cnd',
-    'field_edoweb_cmp',
-    'field_edoweb_aui',
-    'field_edoweb_aus',
-    'field_edoweb_col',
-    'field_edoweb_ctb',
-    'field_edoweb_prf',
-    'field_edoweb_cng',
-    'field_edoweb_ant',
-    'field_edoweb_voc',
-    'field_edoweb_ivr',
-    'field_edoweb_ive',
-    'field_edoweb_ctg',
-    'field_edoweb_mus',
-    'field_edoweb_aft',
-    'field_edoweb_pro',
-    'field_edoweb_egr',
-    'field_edoweb_dte',
-  );
-
-  _update_edoweb_installed_fields($updated_fields);
-  _update_rdf_mapping();
-}
-
-/**
- * Remove add and import actions from menu
- */
-function edoweb_update_7118() {
-  variable_set('menu_rebuild_needed', TRUE);
-}
-
-/**
- * Add bundles for event, family, event, work, place and collection
- */
-function edoweb_update_7119() {
-  cache_clear_all('field:edoweb_basic:*', 'cache_field', TRUE);
-  $updated_fields = array('field_edoweb_subject');
-  $updated_instances = array(
-    'event' => array(
-      'field_gnd_name',
-      'field_gnd_identifier',
-    ),
-    'family' => array(
-      'field_gnd_name',
-      'field_gnd_identifier',
-    ),
-    'work' => array(
-      'field_gnd_name',
-      'field_gnd_identifier',
-    ),
-    'place' => array(
-      'field_gnd_name',
-      'field_gnd_identifier',
-    ),
-    'collection' => array(
-      'field_edoweb_label',
-      'field_edoweb_description',
-    ),
-  );
-  _update_edoweb_installed_fields($updated_fields);
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-}
-
-/**
- * Move field_edoweb_parent field to last position
- */
-function edoweb_update_7120() {
-  $updated_instances = array(
-    'monograph' => array(
-      'field_edoweb_parent',
-    ),
-    'journal' => array(
-      'field_edoweb_parent',
-    ),
-    'file' => array(
-      'field_edoweb_filesize',
-    ),
-  );
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-  variable_set('menu_rebuild_needed', TRUE);
-}
-
-/**
- * Add generic bundle for authority resources, add fields for date of
- * establishment & termination
- */
-function edoweb_update_7121() {
-  $updated_fields = array(
-    'field_gnd_date_of_establishment',
-    'field_gnd_date_of_termination',
-  );
-  $updated_instances = array(
-    'collection' => array(
-      'field_edoweb_title',
-      'field_edoweb_identifier_ht',
-    ),
-    'authority_resource' => array(
-      'field_gnd_name',
-      'field_gnd_identifier',
-    ),
-    'subject' => array(
-      'field_gnd_date_of_establishment',
-      'field_gnd_date_of_termination',
-    ),
-    'corporate_body' => array(
-      'field_gnd_date_of_establishment',
-      'field_gnd_date_of_termination',
-    ),
-    'event' => array(
-      'field_gnd_date_of_establishment',
-      'field_gnd_date_of_termination',
-    ),
-    'work' => array(
-      'field_gnd_date_of_establishment',
-      'field_gnd_date_of_termination',
-    ),
-    'place' => array(
-      'field_gnd_date_of_establishment',
-      'field_gnd_date_of_termination',
-    ),
-  );
-  _update_edoweb_installed_fields($updated_fields);
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-  cache_clear_all('*', 'cache_field', TRUE);
-  db_truncate('edoweb_basic')->execute();
-  drupal_set_message('Entity caches cleared');
-}
-
-/**
- * Configure fieldset rows
- */
-function edoweb_update_7122() {
-  $updated_instances = array(
-    'monograph' => array(
-      'field_edoweb_title',
-      'field_edoweb_title_other',
-      'field_edoweb_title_alternative',
-    ),
-    'journal' => array(
-      'field_edoweb_title',
-      'field_edoweb_title_other',
-      'field_edoweb_title_alternative',
-    ),
-    'issue' => array(
-      'field_edoweb_title',
-    ),
-    'article' => array(
-      'field_edoweb_title',
-      'field_edoweb_title_other',
-    ),
-    'file' => array(
-      'field_edoweb_title',
-    ),
-    'collection' => array(
-      'field_edoweb_title',
-    ),
-  );
-  _update_edoweb_installed_instances($updated_instances);
-}
-
-/**
- * Fix field weights for view mode
- */
-function edoweb_update_7123() {
-  edoweb_update_7122();
-}
-
-/**
- * Add field_edoweb_struct_child for file in article bundle
- */
-function edoweb_update_7124() {
-  $updated_instances = array(
-    'article' => array(
-      'field_edoweb_struct_child',
-    ),
-  );
-  _update_edoweb_installed_instances($updated_instances);
-}
-
-/**
- * Add field_edoweb_title to volume bundle, make title mandatory for all
- * bundles
- */
-function edoweb_update_7125() {
-  $updated_instances = array(
-    'monograph' => array(
-      'field_edoweb_title',
-    ),
-    'journal' => array(
-      'field_edoweb_title',
-    ),
-    'volume' => array(
-      'field_edoweb_title',
-    ),
-    'issue' => array(
-      'field_edoweb_title',
-    ),
-    'article' => array(
-      'field_edoweb_title',
-    ),
-    'file' => array(
-      'field_edoweb_title',
-    ),
-    'collection' => array(
-      'field_edoweb_title',
-    ),
-  );
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-}
-
-/**
- * Rebuild menu
- */
-function edoweb_update_7126() {
-  menu_rebuild();
-}
-
-/**
- * Rebuild menu
- */
-function edoweb_update_7127() {
-  menu_rebuild();
-}
-
-/**
- * Rebuild menu
- */
-function edoweb_update_7128() {
-  menu_rebuild();
-}
-
-/**
- * Update RDF mapping for monographs
- */
-function edoweb_update_7129() {
-  $updated_fields = array(
-    'field_edoweb_parent',
-    'field_edoweb_parallel',
-  );
-  $updated_instances = array(
-    'monograph' => array(
-      'field_edoweb_parent',
-      'field_edoweb_parallel'
-    ),
-    'journal' => array(
-      'field_edoweb_parent',
-      'field_edoweb_parallel'
-    ),
-  );
-  _update_edoweb_installed_fields($updated_fields);
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-}
-
-/**
- * Rebuild menu
- */
-function edoweb_update_7130() {
-  menu_rebuild();
-}
-
-/**
- * Add columns for access rights
- */
-function edoweb_update_7131() {
-  $new_fields = array('access_md', 'access_data');
-  module_load_install('edoweb');
-  if (function_exists('edoweb_schema')) {
-    $schema = edoweb_schema();
-    foreach ($new_fields as $new_field) {
-      $column = $schema[EDOWEB_ENTITY_TYPE]['fields'][$new_field];
-      db_add_field(EDOWEB_ENTITY_TYPE, $new_field, $column);
-    }
-  }
-  menu_rebuild();
-}
-
-/**
- * Add edoweb_backend_reader role and permissions
- */
-function edoweb_update_7132() {
-  module_load_install('edoweb');
-  $permissions = _edoweb_installed_permissions();
-  $role = new stdClass();
-  $role->name = 'edoweb_backend_reader';
-  user_role_save($role);
-  user_role_grant_permissions($role->rid, $permissions[$role->name]);
-}
-
-/**
- * Drop the entity table
- */
-function edoweb_update_7133() {
-  db_drop_table('edoweb_basic');
-  menu_rebuild();
-}
-
-/**
- * Rebuild menu
- */
-function edoweb_update_7134() {
-  menu_rebuild();
-}
-
-/**
- * Regenerate list of available languages
- */
-function edoweb_update_7135() {
-  module_load_install('edoweb');
-  _edoweb_generate_available_languages(
-    dirname(__FILE__) . '/iso639-2.nt',
-    drupal_realpath(file_default_scheme() . '://') .  '/available_languages.inc'
-  );
-}
-
-/**
- * Set default fields for JS forms
- */
-function edoweb_update_7136() {
-  $updated_instances = array(
-    'file' => array('field_edoweb_datastream'),
-    'monograph' => array('field_edoweb_creator', 'field_edoweb_issued'),
-    'journal' => array('field_edoweb_creator'),
-    'article' => array('field_edoweb_creator', 'field_edoweb_issued'),
-    'volume' => array('field_edoweb_issued'),
-    'issue' => array('field_edoweb_issued'),
-    'person' => array('field_gnd_name'),
-    'subject' => array('field_gnd_name'),
-    'corporate_body' => array('field_gnd_name'),
-    'event' => array('field_gnd_name'),
-    'family' => array('field_gnd_name'),
-    'work' => array('field_gnd_name'),
-    'place' => array('field_gnd_name'),
-    'authority_resource' => array('field_gnd_name'),
-  );
-  _update_edoweb_installed_instances($updated_instances);
-}
-
-/**
- * Set subject field to writeable
- */
-function edoweb_update_7137() {
-  $updated_fields = array('field_edoweb_subject');
-  _update_edoweb_installed_fields($updated_fields);
-}
-
-/**
- * Remove field_edoweb_is_like, map umbel:isLike to
- * field_edoweb_parallel
- */
-function edoweb_update_7138() {
-  field_delete_field('field_edoweb_is_like');
-  _update_edoweb_installed_fields(array('field_edoweb_parallel'));
-  _update_rdf_mapping();
-}
-
-/**
- * Update field instances, removing descriptions and updating labels
- */
-function edoweb_update_7139() {
-  _update_edoweb_installed_instances();
-}
-
-/**
- * Update route permissions
- */
-function edoweb_update_7140() {
-  variable_set('menu_rebuild_needed', TRUE);
-}
-
-/**
- * Update permissions for JS access
- */
-function edoweb_update_7141() {
-  _update_edoweb_js_permissions();
-}
-
-/**
- * Clear entity info cache
- */
-function edoweb_update_7142() {
-  entity_info_cache_clear();
-}
-
-/**
- * Add fields for lv:subjectChain, holding:collectedBy and foaf:isPrimaryTopicOf
- */
-function edoweb_update_7143() {
-  $added_fields = array(
-    'field_edoweb_subject_chain',
-    'field_edoweb_collected_by',
-    'field_edoweb_catalog_link',
-  );
-  $added_instances = array(
-    'monograph' => array(
-      'field_edoweb_subject_chain',
-      'field_edoweb_collected_by',
-      'field_edoweb_catalog_link',
-    ),
-    'journal' => array(
-      'field_edoweb_subject_chain',
-      'field_edoweb_collected_by',
-      'field_edoweb_catalog_link',
-    ),
-    'article' => array(
-      'field_edoweb_subject_chain',
-    ),
-  );
-  _update_edoweb_installed_fields($added_fields);
-  _update_edoweb_installed_instances($added_instances);
-  _update_rdf_mapping();
-  entity_info_cache_clear();
-}
-
-/**
- * Add field instances for webpage and version bundles, update RDF mapping of field_edoweb_parallel
- */
-function edoweb_update_7144() {
-
-  entity_info_cache_clear();
-  module_load_install('edoweb');
-
-  $updated_fields = array(
-    'field_edoweb_parallel',
-    'field_edoweb_webpage_archived',
-  );
-  _update_edoweb_installed_fields($updated_fields);
-  _update_rdf_mapping();
-
-  $available_instances = _edoweb_installed_instances();
-  $added_instances = array(
-    'webpage' => array_keys($available_instances['webpage']),
-    'version' => array_keys($available_instances['version']),
-  );
-  _update_edoweb_installed_instances($added_instances);
-
-}
-
-/**
- * Add field and instance for field_edoweb_webpage_archived
- */
-function edoweb_update_7145() {
-
-  $added_fields = array('field_edoweb_webpage_archived');
-  $added_instances = array(
-    'webpage' => array('field_edoweb_webpage_archived')
-  );
-  _update_edoweb_installed_fields($added_fields);
-  _update_edoweb_installed_instances($added_instances);
-  _update_rdf_mapping();
-
-}
-
-/**
- * Remove field_edoweb_webpage_archived and field_edoweb_catalog_link instances.
- */
-function edoweb_update_7146() {
-  $deleted_instances = array(
-    'monograph' => array(
-      'field_edoweb_catalog_link',
-    ),
-    'journal' => array(
-      'field_edoweb_catalog_link',
-    ),
-    'webpage' => array(
-      'field_edoweb_catalog_link',
-      'field_edoweb_webpage_archived',
-    ),
-  );
-  foreach ($deleted_instances as $bundle => $field_names) {
-    foreach ($field_names as $field_name) {
-      if ($instance = field_info_instance(EDOWEB_ENTITY_TYPE, $field_name, $bundle)) {
-        field_delete_instance($instance, FALSE);
-        drupal_set_message("Deleted $field_name in $bundle bundle.");
-      }
-    }
-  }
-}
-
-/**
- * Update field titel
- */
-function edoweb_update_7147() {
-  $updated_instances = array(
-    'monograph' => array('field_edoweb_title_other'),
-    'journal' => array('field_edoweb_title_other'),
-    'article' => array('field_edoweb_title_other'),
-    'webpage' => array('field_edoweb_title_other')
-  );
-  _update_edoweb_installed_instances($updated_instances);
-}
-
-/**
- * Update view mode settings for all fields
- */
-function edoweb_update_7148() {
-  entity_info_cache_clear();
-  _update_edoweb_installed_instances();
-}
 
 /**
  * Add edoweb_backend_subscriber and edoweb_backend_remote roles and permissions
@@ -4073,410 +3367,34 @@ function edoweb_update_7149() {
 }
 
 /**
- * Remove filesize and filetype from file compact view mode
+ * DELETE superfluous fields 
  */
-function edoweb_update_7150() {
-  $updated_instances = array(
-    'file' => array('field_edoweb_filesize', 'field_edoweb_filetype')
-  );
-  _update_edoweb_installed_instances($updated_instances);
+function edoweb_update_7179(){
+  field_delete_field('field_thesis_information');
+  field_delete_field('field_congress_title');
+  field_delete_field('field_congress_location');
+  field_delete_field('field_congress_duration');
+  field_delete_field('field_year_of_copyright');
+  field_delete_field('field_embargo_time');
+  field_delete_field('field_license');
+  field_delete_field('field_professional_group');
+  field_delete_field('field_related_resource');
+  field_purge_batch(10);
 }
 
-/**
- * Map lv:ArchivedWebPage to monograph bundle
- */
-function edoweb_update_7151() {
-  _update_rdf_mapping();
-}
-
-/**
- * Update metadata type of field_edoweb_datastream
- */
-function edoweb_update_7152() {
-  $updated_fields = array('field_edoweb_datastream');
-  _update_edoweb_installed_fields($updated_fields);
-}
-
-/**
- * Remove mapping from lv:ArchivedWebPage to monograph bundle
- */
-function edoweb_update_7153() {
-  _update_rdf_mapping();
-}
-
-/**
- * Add fields to generic bundle
- */
-function edoweb_update_7154() {
-  module_load_install('edoweb');
-  $available_instances = _edoweb_installed_instances();
-  $added_instances = array(
-    'generic' => array_keys($available_instances['generic']),
-  );
-  _update_edoweb_installed_instances($added_instances);
-  _update_rdf_mapping();
-  entity_info_cache_clear();
-}
-
-/**
- * Update field_edoweb_doi mapping
- */
-function edoweb_update_7155() {
-  $updated_fields = array(
-    'field_edoweb_doi',
-    'field_edoweb_urn',
-  );
-  $updated_instances = array(
-    'file' => array('field_edoweb_doi'),
-    'version' => array('field_edoweb_doi')
-  );
-  _update_edoweb_installed_fields($updated_fields);
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-}
-
-function edoweb_update_7156() {
-  module_load_install('edoweb');
-  $available_instances = _edoweb_installed_instances();
-  $updated_instances_fields = array(
-    'field_edoweb_struct_child',
-    'field_edoweb_struct_parent'
-  );
-  $updated_instances = array(
-    'part' => array_keys($available_instances['part']),
-    'monograph' => array(
-      'field_edoweb_struct_child',
-    ),
-    'journal' => array(
-      'field_edoweb_struct_child',
-    ),
-    'volume' => array(
-      'field_edoweb_struct_child',
-      'field_edoweb_struct_parent'
-    ),
-    'issue' => array(
-      'field_edoweb_struct_child',
-      'field_edoweb_struct_parent'
-    ),
-    'article' => array(
-      'field_edoweb_struct_child',
-      'field_edoweb_struct_parent'
-    ),
-    'file' => array(
-      'field_edoweb_struct_parent'
-    ),
-  );
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-  entity_info_cache_clear();
-}
-
-/**
- * Add fields for type, medium and institution to monograph and journal bundles.
- */
-function edoweb_update_7160() {
-  $added_fields = array(
-    'field_edoweb_type',
-    'field_edoweb_medium',
-    'field_edoweb_institution'
-  );
-  $added_instances = array(
-    'monograph' => array(
-      'field_edoweb_type',
-      'field_edoweb_medium',
-      'field_edoweb_institution'
-    ),
-    'journal' => array(
-      'field_edoweb_type',
-      'field_edoweb_medium',
-      'field_edoweb_institution'
-    ),
-  );  
-  _update_edoweb_installed_fields($added_fields);
-  _update_edoweb_installed_instances($added_instances);
-  _update_rdf_mapping();
-}
-    
-/**
- * Add thesis information field.
- */
-function edoweb_update_7158() {
-
-  $added_fields = array('field_edoweb_thesis_information');
-  $added_instances = array(
-    'monograph' => array('field_edoweb_thesis_information'),
-  );
-  _update_edoweb_installed_fields($added_fields);
-  _update_edoweb_installed_instances($added_instances);
-  _update_rdf_mapping();
-}
-
-/**
- * Add text fields for dce:creator and dce:contributor
- */
- function edoweb_update_7159() {
-
-  $added_fields = array(
-    'field_edoweb_creator_label',
-    'field_edoweb_contributor_label',
-  );
-  $added_instances = array(
-    'monograph' => array(
-      'field_edoweb_creator_label',
-      'field_edoweb_contributor_label',
-    ),
-    'journal' => array(
-      'field_edoweb_creator_label',
-      'field_edoweb_contributor_label',
-    ),
-    'webpage' => array(
-      'field_edoweb_creator_label',
-      'field_edoweb_contributor_label',
-    ),
-    'article' => array(
-      'field_edoweb_creator_label',
-      'field_edoweb_contributor_label',
-    ),
-    'generic' => array(
-      'field_edoweb_creator_label',
-      'field_edoweb_contributor_label',
-    ),
-  );
-  _update_edoweb_installed_fields($added_fields);
-  _update_edoweb_installed_instances($added_instances);
-  _update_rdf_mapping();
-
-}
-
-/**
- * Add field for marcrel:red
- */
-function edoweb_update_7166() {
-
-  $added_fields = array(
-    'field_edoweb_red',
-  );
-
-  $updated_instances = array(
-    'monograph' => array('field_edoweb_red'),
-    'journal' => array('field_edoweb_red'),
-    'webpage' => array('field_edoweb_red'),
-    'generic' => array('field_edoweb_red'),
-  );
-
-  _update_edoweb_installed_fields($added_fields);
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-
-}
-
-/**
- * Add field for regal:isPartOf
- */
-function edoweb_update_7165() {
-
-  $added_fields = array(
-    'field_edoweb_source',
-  );
-  $added_instances = array(
-    'monograph' => array(
-      'field_edoweb_source',
-    ),
-    'journal' => array(
-      'field_edoweb_source',
-    ),
-    'webpage' => array(
-      'field_edoweb_source',
-    ),
-    'generic' => array(
-      'field_edoweb_source',
-    ),
-  );
-  _update_edoweb_installed_fields($added_fields);
-  _update_edoweb_installed_instances($added_instances);
-  _update_rdf_mapping();
-
-}
-
-/**
- * Set weight for dce:creator and dce:contributor
- */
-function edoweb_update_7161() {
-
-  $updated_instances = array(
-    'monograph' => array(
-      'field_edoweb_creator',
-      'field_edoweb_contributor',
-      'field_edoweb_creator_label',
-      'field_edoweb_contributor_label',
-    ),
-    'journal' => array(
-      'field_edoweb_creator',
-      'field_edoweb_contributor',
-      'field_edoweb_creator_label',
-      'field_edoweb_contributor_label',
-    ),
-    'webpage' => array(
-      'field_edoweb_creator',
-      'field_edoweb_contributor',
-      'field_edoweb_creator_label',
-      'field_edoweb_contributor_label',
-    ),
-    'article' => array(
-      'field_edoweb_creator',
-      'field_edoweb_contributor',
-      'field_edoweb_creator_label',
-      'field_edoweb_contributor_label',
-    ),
-    'generic' => array(
-      'field_edoweb_creator',
-      'field_edoweb_contributor',
-      'field_edoweb_creator_label',
-      'field_edoweb_contributor_label',
-    ),
-  );
-
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-
-}
-
-/**
- * Set type, medium and description as linked data fields
- */
-function edoweb_update_7167() {
-
-  $updated_fields = array(
-    'field_edoweb_description',
-    'field_edoweb_type',
-    'field_edoweb_medium'
-  );
-
-  $updated_instances = array(
-    'monograph' => array(
-      'field_edoweb_type',
-      'field_edoweb_medium',
-      'field_edoweb_description',
-    ),
-    'journal' => array(
-      'field_edoweb_type',
-      'field_edoweb_medium',
-      'field_edoweb_description',
-    ),
-    'volume' => array(
-      'field_edoweb_description',
-    ),
-    'issue' => array(
-      'field_edoweb_description',
-    ),
-    'article' => array(
-      'field_edoweb_description',
-    ),
-    'webpage' => array(
-      'field_edoweb_description',
-    ),
-    'collection' => array(
-      'field_edoweb_description',
-    ),
-    'generic' => array(
-      'field_edoweb_description',
-      'field_edoweb_type',
-      'field_edoweb_medium',
-    ),
-  );
-
-  _update_edoweb_installed_fields($updated_fields);
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-
-}
-
-/**
- * Add HT-Number to bundles
- */
-function edoweb_update_7168() {
-
-  $updated_instances = array(
-    'volume' => array(
-      'field_edoweb_identifier_ht',
-    ),
-    'issue' => array(
-      'field_edoweb_identifier_ht',
-    ),
-    'article' => array(
-      'field_edoweb_identifier_ht',
-    ),
-    'version' => array(
-      'field_edoweb_identifier_ht',
-    ),
-    'part' => array(
-      'field_edoweb_identifier_ht',
-    ),
-  );
-
-  _update_edoweb_installed_instances($updated_instances);
-  _update_rdf_mapping();
-
-}
-
-/**
- * Update complete drupal data schema
- */
-function edoweb_update_7171() {
-	_update_edoweb_installed_fields ();
-	_update_edoweb_installed_instances ();
-	_update_rdf_mapping ();
-}
-/**
- * Update definition of possible children of a node
- */
-function edoweb_update_7172() {
-	$updated_instances = array (
-			'volume' => array (
-					'field_edoweb_struct_child' 
-			),
-			'issue' => array(
-					'field_edoweb_struct_child',
-			),
-			'article' => array(
-					'field_edoweb_struct_child',
-			),
-			'version' => array(
-					'field_edoweb_struct_child',
-			),
-			'part' => array(
-					'field_edoweb_struct_child',
-			),
-			'webpage' => array(
-					'field_edoweb_struct_child',
-			),
-			'monograph' => array(
-					'field_edoweb_struct_child',
-			),
-			'journal' => array(
-					'field_edoweb_struct_child',
-			),
-			'generic' => array(
-					'field_edoweb_struct_child',
-			),
-			'file' => array(
-					'field_edoweb_struct_child',
-			),
-	);
-
-	_update_edoweb_installed_instances($updated_instances);
-	_update_rdf_mapping();
-
-}
-function edoweb_update_7173(){
-	_update_rdf_mapping();
-}
 /**
  * Update all
  */
-function edoweb_update_7174(){
-    _update_edoweb_installed_fields();
+function edoweb_update_7182(){
+	_update_edoweb_installed_fields();
 	_update_edoweb_installed_instances();
 	_update_rdf_mapping();
+	entity_info_cache_clear();
+	cache_clear_all('*', 'cache_field', TRUE);
+	db_truncate('edoweb_basic')->execute();
+	drupal_set_message('Entity caches cleared');
+	variable_set('menu_rebuild_needed', TRUE);
 }
+
+
 
