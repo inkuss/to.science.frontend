@@ -213,6 +213,13 @@ function edoweb_entity_info() {
           'access arguments' => array('administer edoweb_basic entities'),
         ),
       ),
+      'rpbSubject' => array(
+    	'label' => t('RPB Erschließung'),
+    	'admin' => array(
+    			'path' => 'admin/structure/edoweb_basic/subject/manage',
+    			'access arguments' => array('administer edoweb_basic entities'),
+    	),
+       ),
       'subject' => array(
         'label' => t('Sachschlagwort'),
         'admin' => array(
@@ -631,6 +638,7 @@ function edoweb_repository_configuration_form() {
       'creator.@id' => t('Autor'),
       'contentType' => t('Objektart'),
       'subject.@id' => t('Sacherschließung'),
+      'rpbSubject.@id' => t('RPB Erchließung'),
       'issued' => t('Erscheinungsjahr'),
       'rdftype.@id' => t('Typ'),
       'medium.@id' => t('Medium'),
@@ -1500,6 +1508,8 @@ function _edoweb_map_string($string) {
       return t('creator');
     case 'subject':
       return t('subject');
+    case 'rpbSubject':
+      	return t('rpbSubject');
     case 'issued':
       return t('issued');
     case 'contentType':
@@ -3375,7 +3385,7 @@ function edoweb_update_7179(){
 /**
  * Update all
  */
-function edoweb_update_7181(){
+function edoweb_update_7182(){
 	_update_edoweb_installed_fields();
 	_update_edoweb_installed_instances();
 	_update_rdf_mapping();
