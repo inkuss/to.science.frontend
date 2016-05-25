@@ -3385,15 +3385,10 @@ function edoweb_update_7179(){
 /**
  * Update all
  */
-function edoweb_update_7182(){
-	_update_edoweb_installed_fields();
-	_update_edoweb_installed_instances();
-	_update_rdf_mapping();
-	entity_info_cache_clear();
-	cache_clear_all('*', 'cache_field', TRUE);
-	db_truncate('edoweb_basic')->execute();
-	drupal_set_message('Entity caches cleared');
-	variable_set('menu_rebuild_needed', TRUE);
+function edoweb_update_7185(){
+  _update_edoweb_installed_fields();
+  _update_edoweb_installed_instances();
+  _update_rdf_mapping();
 }
 
 
