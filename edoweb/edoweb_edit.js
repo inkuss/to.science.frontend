@@ -174,10 +174,8 @@
             return false;
           });
           additional_fields.before(import_button);
-        
-
         activateFields(entity.find('.field'), bundle, context);
-
+      $('.field-name-field-edoweb-datastream').insertBefore('.field-name-field-edoweb-title');
       });
 
       function saveEntity(e) {
