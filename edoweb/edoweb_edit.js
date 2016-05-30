@@ -89,8 +89,19 @@
             $(this).remove();
           }
         });
+        
+        var sortedFields = [];
         $.each(Drupal.settings.edoweb.fields[bundle], function(index, value) {
-          var instance = value['instance'];
+        	var instance = value['instance'];
+        	sortedFields.push(instance);
+        });
+        sortedFields.sort(
+ 		   function(a,b){
+ 				  return a['widget']['weight']-b['widget']['weight']
+ 				  }
+ 			  );	 
+        
+        $.each(sortedFields, function(index, instance) {
           var field_class = getFieldClassName(instance);
           var existing_items = entity.find('.' + field_class);
           if (! existing_items.length && (instance['required'] || instance['settings']['default'])) {
@@ -364,32 +375,16 @@
           }
         );
       }
-
-      function getSortedByWeight(obj) {
-    	    var keys = []; 
-    	    for(var key in obj['widget']['weight']) {
-    	    	keys.push(key);
-    	    }
-    	    return keys.sort(function(a,b){return obj[a]-obj[b]});
-      }
       
       function activateFields(fields, bundle, context) {
-    	  console.log("Field");
-     	 console.log(fields);
         $.each(fields, function() {
-        	
           var field = $(this);
           var field_name = getFieldName(field);
           if (!field_name) return true;
           if (!Drupal.settings.edoweb.fields[bundle].hasOwnProperty(field_name)) return true;
-
           var instance = Drupal.settings.edoweb.fields[bundle][field_name]['instance'];
-          console.log(instance['label']+" is of type "+instance['widget']['type']+" with weight "+instance['widget']['weight']);
-          console.log(instance);
-         
           switch (instance['widget']['type']) {
             case 'text_textarea':
-            	
             case 'text_textfield':
               if ('file' == bundle && 'field_edoweb_title' == field_name) {
                 var struct_parent = $(context)
