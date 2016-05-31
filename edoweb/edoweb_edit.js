@@ -464,12 +464,12 @@
                   //field.find('.field-label').append(remove_button);
                   // Load entities into table with remove ops
                   if ($(this).find('div.field-item').length) {
-                    Drupal.edoweb.entity_table($(this), ops);
+                    Drupal.edoweb.entity_table_detail($(this), ops);
                   }
                 } else {
                   // Load entities into table
                   if ($(this).find('div.field-item').length) {
-                    Drupal.edoweb.entity_table($(this));
+                    Drupal.edoweb.entity_table_detail($(this));
                   }
                 }
               });

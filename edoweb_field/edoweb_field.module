@@ -139,18 +139,34 @@ function edoweb_entity_list($entity_type, $view_mode) {
 				header("HTTP/1.0 404 Not Found");
 				exit();
 			}
-			$header = array (
-				'field_edoweb_title' => array (
-				'data' => 'Titel',
-				'type' => 'field',
-				'specifier' => array (
-						'field' => 'field_edoweb_title',
-						'column' => 'value'
-				),
-				'format' => '_compact_title'
-		)
-		);
+			$header =		
+			array (
+					
+					'_edoweb_compact_view' => array (
+						'data' => t ( 'Kurzansicht' ),
+						'type' => 'generated',
+						'format' => '_edoweb_compact_view' 
+					),
+					'_edoweb_format_access_icons' => array (
+							'data' => t ( 'Zugriff' ),
+							'type' => 'generated',
+							'format' => '_edoweb_format_access_icons'
+					),
+					'_edoweb_link_lastmodified' => array (
+							'data' => t ( 'Zuletzt hinzugefügtes Label' ),
+							'type' => 'generated',
+							'format' => '_edoweb_link_lastmodified'
+					),
+					'bundle_type' => array (
+							'data' => t ( 'Objektart' ),
+							'type' => 'property',
+							'specifier' => 'bundle_type',
+							'format' => '_edoweb_format_bundle_name'
+					),
+			);
+		
 			$output = edoweb_basic_entity_table($header, $entities, array(), null, $view_mode);
+			
 			die(drupal_render($output));
 		}
 /**
