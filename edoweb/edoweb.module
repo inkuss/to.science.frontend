@@ -2031,6 +2031,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       'monthly' => t('Monthly'),
       'weekly' => t('Weekly'),
       'daily' => t('Daily'),
+      'once' => t('Once'),
     ),
     '#default_value' => @$conf['interval'],
     '#required' => TRUE,
