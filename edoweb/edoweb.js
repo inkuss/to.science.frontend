@@ -235,6 +235,7 @@
               });
               container.hide();
               container.after(result_table);
+              container.after("<br/>");
 
               for (label in operations) {
                 operations[label](result_table);
@@ -294,7 +295,6 @@
         + '?' + $.param({'ids': entity_curies, 'columns': columns})
       );
     },
-
     last_modified_label: function(container) {
       $('a.edoweb.lastmodified', container).each(function() {
         var link = $(this);
