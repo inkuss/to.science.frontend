@@ -285,7 +285,7 @@ function edoweb_entity_info() {
     				),
     ),
     'proceeding' => array(
-    				'label' => t('Konferenzband'),
+    				'label' => t('Konferenzbeitrag'),
     				'admin' => array(
     						'path' => 'admin/structure/edoweb_basic/proceeding/manage',
     						'access arguments' => array('administer edoweb_basic entities'),
@@ -855,7 +855,7 @@ function edoweb_basic_search_entities_form($form, &$form_state, $advanced, $sear
     $options = array(
       'generic' => t('Any'),
       'researchData'=>t('Forschungsdaten'),
-      'proceeding'=>t('Konferenzband'),
+      'proceeding'=>t('Konferenzbeitrag'),
       'monograph' => t('Monograph'),
       'journal' => t('Journal'),
       'webpage' => t('Webpage'),
@@ -3385,7 +3385,7 @@ function edoweb_update_7179(){
 /**
  * Update all
  */
-function edoweb_update_7185(){
+function edoweb_update_7186(){
   _update_edoweb_installed_fields();
   _update_edoweb_installed_instances();
   _update_rdf_mapping();
