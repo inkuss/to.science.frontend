@@ -2047,7 +2047,6 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     '#type' => 'radios',
     '#title' => t('Robots'),
     '#options' => array(
-      'classic' => t('Classic'),
       'ignore' => t('Ignore'),
       'obey' => t('Obey'),
     ),
