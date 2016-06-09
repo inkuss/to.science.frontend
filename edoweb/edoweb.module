@@ -2050,7 +2050,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       'ignore' => t('Ignore'),
       'obey' => t('Obey'),
     ),
-    '#default_value' => @$conf['robotsPolicy'],
+    '#default_value' => @$conf['robotsPolicy'] == 'classic' ? 'obey' : @$conf['robotsPolicy'],
     '#required' => TRUE,
   );
 
