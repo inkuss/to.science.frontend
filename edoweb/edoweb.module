@@ -3056,7 +3056,6 @@ function _edoweb_available_license() {
 			'https://creativecommons.org/licenses/by-nc/4.0' =>t("CC BY-NC  4.0"),
 			'https://creativecommons.org/licenses/by-nc-nd/4.0' =>t("CC BY-NC-ND  4.0"),
 	);
-
 }
 
 function _edoweb_available_professionalGroup() {
@@ -3385,7 +3384,7 @@ function edoweb_update_7179(){
 /**
  * Update all
  */
-function edoweb_update_7186(){
+function edoweb_update_7187(){
   _update_edoweb_installed_fields();
   _update_edoweb_installed_instances();
   _update_rdf_mapping();
