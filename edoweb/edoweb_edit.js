@@ -21,6 +21,7 @@
 
   Drupal.behaviors.edoweb_edit = {
     attach: function (context, settings) {
+		window.addEventListener("message", handleMessage, false);
       $('input#edit-delete', context).bind('click', function() {
         var confirmed = confirm('Möchten Sie den Eintrag unwideruflich löschen?');
         if (confirmed) {
@@ -188,7 +189,79 @@
         activateFields(entity.find('.field'), bundle, context);
       $('.field-name-field-edoweb-datastream').insertBefore('.field-name-field-edoweb-title');
       });
-
+      function onSuccess(postdata) {
+  		jQuery('#successBox').html(postdata);
+  		jQuery('#successBox').css('visibility', 'visible');
+  		jQuery('#warningBox').css('visibility', 'hidden');
+        $.blockUI(Drupal.edoweb.blockUIMessage);
+        $('button.edoweb.edit.action').hide(); 
+        var url = Drupal.settings.basePath + 'resource/add/researchData';
+        var bundle='researchData';
+  		$.ajax({
+  		  type: 'POST',
+  		  url: url,
+  		  data: htmlUnescape(postdata),
+  		  contentType: "text/xml",
+  		  success: function(data, textStatus, jqXHR) {
+  	          var resource_uri = jqXHR.getResponseHeader('X-Edoweb-Entity');
+  			              
+		          var href = Drupal.settings.basePath + 'resource/' + resource_uri;
+		          // Newly created resources are placed into the clipboard
+		          // and a real redirect is triggered.
+		          if (true) {
+		            entity_load_json('edoweb_basic', resource_uri).onload = function() {
+		           
+		              if (bundle == 'monograph' || bundle == 'journal' || bundle=='proceeding'|| bundle=='researchData') {
+		                window.location = href;
+		              } else {
+		                localStorage.setItem('cut_entity', this.responseText);
+		                history.pushState({tree: true}, null, href);
+		                Drupal.edoweb.navigateTo(href);
+		              }
+		              $.unblockUI();
+		            };
+		          } else {
+		            window.location = href;
+		          }
+		        
+  		  },
+  		  error: function(data, textStatus, jqXHR){
+  			  	console.log(xhr);
+  				console.log(textStatus);
+  				console.log(error);
+  				$.unblockUI();
+  		  }
+  		}); 
+  	}
+  	function onFail(data) {
+  		jQuery('#warningBox').html(data);
+  		jQuery('#warningBox').css('visibility', 'visible');
+  		jQuery('#successBox').css('visibility', 'hidden');
+  	}
+  	function getMessage(e) {
+  		var obj = JSON.parse(e.data);
+  		if (obj.code == 200) {
+  			onSuccess(obj.message);
+  		} else {
+  			onFail(JSON.stringify(obj.message));
+  		}
+  	}
+  	function htmlUnescape(value){
+  	    return String(value)
+  	        .replace(/&quot;/g, '"')
+  	        .replace(/&#39;/g, "'")
+  	        .replace(/&lt;/g, '<')
+  	        .replace(/&gt;/g, '>')
+  	        .replace(/&amp;/g, '&');
+  	}
+  	function handleMessage(e) {
+  		if (e.data.action == 'RESIZE') {
+  			var targetHeight = e.data.height;
+  			jQuery('#iFrame').height(targetHeight);
+  		} else {
+  			getMessage(e);
+  		}
+  	}
       function saveEntity(e) {
         var entity = e.data.entity;
         var bundle = e.data.bundle;
@@ -219,7 +292,7 @@
           if (subject.type == 'bnode') {
             entity_load_json('edoweb_basic', resource_uri).onload = function() {
               if (bundle == 'monograph' || bundle == 'journal' || bundle=='proceeding'|| bundle=='researchData') {
-                window.location = href;
+            	 window.location = href;
               } else {
                 localStorage.setItem('cut_entity', this.responseText);
                 history.pushState({tree: true}, null, href);
@@ -377,6 +450,10 @@
       }
       
       function activateFields(fields, bundle, context) {
+    	  if(bundle=='researchData'){
+    		  $('.region.region-content').html('<div id="successBox"  class="success"></div><div id="warningBox" class="warning"></div> <iframe src="http://api.localhost/tools/zettel/forms?id=katalog:data&format=xml" width="800px" style="border: none;" id="iFrame"><p>iframes are not supported by your browser.</p></iframe>');
+    	  }
+    	  else{
         $.each(fields, function() {
           var field = $(this);
           var field_name = getFieldName(field);
@@ -495,8 +572,9 @@
           }
 
         });
+    	  }
       }
-
+      
     }
   };
 
