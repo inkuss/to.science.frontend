@@ -2012,6 +2012,12 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     '#required' => TRUE,
   );
 
+  $form['active'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Active'),
+    '#default_value' => @$conf['active'],
+  );
+
   $form['startDate'] = array(
     '#type' => 'date',
     '#title' => t('Start date'),
@@ -2044,7 +2050,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       'ignore' => t('Ignore'),
       'obey' => t('Obey'),
     ),
-    '#default_value' => @$conf['robotsPolicy'],
+    '#default_value' => @$conf['robotsPolicy'] == 'classic' ? 'obey' : @$conf['robotsPolicy'],
     '#required' => TRUE,
   );
 
@@ -2075,6 +2081,7 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
 
   $conf = array();
   $conf['url'] = $form_state['values']['url'];
+  $conf['active'] = $form_state['values']['active'];
   $conf['startDate'] = $form_state['values']['startDate']['year']
       . '-' . $form_state['values']['startDate']['month']
       . '-' . $form_state['values']['startDate']['day'];
