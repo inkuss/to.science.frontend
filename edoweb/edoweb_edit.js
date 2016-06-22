@@ -49,6 +49,9 @@
         var href = $(this).attr('href');
         history.pushState({tree: true}, null, href);
         Drupal.edoweb.navigateTo(href);
+        if(href.endsWith("edit")){
+        	location.reload();
+        }
         return false;
       });
 
@@ -83,7 +86,11 @@
         additional_fields.change(function() {
           var instance = Drupal.settings.edoweb.fields[bundle][$(this).val()].instance;
           var field = createField(instance);
-          activateFields(field, bundle, context);
+          if(bundle=="researchData"){
+        	 useZettel(bundle,entity,context); 
+          }else{
+        	  activateFields(field, bundle, context);
+          }
           entity.find('.content').prepend(field);
           $(this).find('option:selected').remove();
           if ($(this).find('option').length == 1) {
@@ -133,7 +140,11 @@
               var entity_content = $(this.responseText).find('.content');
               var page_title = $(this.responseText).find('h2').text();
               Drupal.attachBehaviors(entity_content);
-              activateFields(entity_content.find('.field'), bundle, context);
+              if(bundle=="researchData"){
+             	 useZettel(bundle,entity,context); 
+               }else{
+                   activateFields(entity_content.find('.field'), bundle, context);
+               }
               entity.find('.content').replaceWith(entity_content);
              $('#page-title', context).text(page_title);
             };
@@ -177,7 +188,11 @@
                 });
                 var page_title = $(this.responseText).find('h2').text();
                 Drupal.attachBehaviors(entity_content);
-                activateFields(entity_content.find('.field'), bundle, context);
+                if(bundle=='researchData'){
+                	useZettel(bundle,entity,context);
+                }else{
+                	activateFields(entity_content.find('.field'), bundle, context);
+                }
                 entity.find('.content').replaceWith(entity_content);
                 $('#page-title', context).text(page_title);
               };
@@ -186,9 +201,17 @@
             return false;
           });
           additional_fields.before(import_button);
-        activateFields(entity.find('.field'), bundle, context);
+        
+        if(bundle=='researchData'){
+        	activateFields(entity.find('.field'), bundle, context);
+        	useZettel(bundle,entity,context);
+        }else{
+            activateFields(entity.find('.field'), bundle, context);
+        }
+        
       $('.field-name-field-edoweb-datastream').insertBefore('.field-name-field-edoweb-title');
       });
+      
       function onSuccess(postdata) {
   		jQuery('#successBox').html(postdata);
   		jQuery('#successBox').css('visibility', 'visible');
@@ -226,9 +249,6 @@
 		        
   		  },
   		  error: function(data, textStatus, jqXHR){
-  			  	console.log(xhr);
-  				console.log(textStatus);
-  				console.log(error);
   				$.unblockUI();
   		  }
   		}); 
@@ -254,12 +274,18 @@
   	        .replace(/&gt;/g, '>')
   	        .replace(/&amp;/g, '&');
   	}
-  	function handleMessage(e) {
-  		if (e.data.action == 'RESIZE') {
+  	function handleMessage(e) {	
+  		if(e.data == null){
+  		  var iframe = document.getElementById("iFrame");
+  		  var target =  iframe.contentWindow || iframe;
+  			if (typeof target != "undefined") {
+  				target.postMessage(rdf, "*");
+  			}
+  		}else if (e.data.action == 'RESIZE') {
   			var targetHeight = e.data.height;
   			jQuery('#iFrame').height(targetHeight);
   		} else {
-  			getMessage(e);
+  			getMessage(e);  		
   		}
   	}
       function saveEntity(e) {
@@ -306,6 +332,23 @@
         });
         return false;
       }
+      function getRdf(entity) {
+          $('button.edoweb.edit.action').hide();
+          entity.find('[contenteditable]').each(function() {
+            $(this).text($(this).text());
+          });
+          var rdf = entity.rdf();
+          var topic = rdf.where('?s <http://xmlns.com/foaf/0.1/primaryTopic> ?o').get(0);
+          var url = topic.s.value.toString();
+         
+          var subject = topic.o;
+          var post_data = rdf.databank.dump({
+            format:'application/rdf+xml',
+            serialize: true,
+            namespaces: Drupal.settings.edoweb.namespaces
+          });
+         return post_data;
+        }
 
       function getFieldName(field) {
         var cls = field.attr('class').split(' ');
@@ -449,11 +492,52 @@
         );
       }
       
-      function activateFields(fields, bundle, context) {
-    	  if(bundle=='researchData'){
-    		  $('.region.region-content').html('<div id="successBox"  class="success"></div><div id="warningBox" class="warning"></div> <iframe src="http://api.localhost/tools/zettel/forms?id=katalog:data&format=xml" width="800px" style="border: none;" id="iFrame"><p>iframes are not supported by your browser.</p></iframe>');
+      function useZettel(bundle, entity,context){  
+    	  if($('.edit',context).hasClass('edit')){
+    		  loadZettel(bundle,entity,context);
     	  }
     	  else{
+		  var zettel_form = 
+				  '<div id="successBox" class="success"></div>'+
+				  '<div id="warningBox" class="warning"></div>'+ 
+				  '<iframe name="MyFrame" src="'+
+					  'http://api.localhost/tools/zettel/forms' +
+					  '?id=katalog:data' +
+					  '&format=xml' +
+					  '&documentId=_:foo' +
+					  '&topicId=http://localhost/resource/add/'+bundle+'"'+
+					  ' width="800px" style="border: none;" id="iFrame">'+
+				     '<p>iframes are not supported by your browser.</p></iframe>';
+		  $('.region.region-content').html(zettel_form);
+    	  }
+      }
+      
+      function loadZettel(bundle,entity,context){
+    	  var rid=$(entity).attr("resource");
+    	  var url='http://api.localhost/tools/zettel/forms' +
+			  '?id=katalog:data' +
+			  '&format=xml' +
+			  '&documentId='+rid +
+			  '&topicId=http://localhost/resource/'+rid+'/edit';
+    	  var rdfBox=  '<div id="rdfBox" class="data" style="display:none;"></div>'; 
+    	  var zettel_form = 
+			  '<div id="successBox" class="success"></div>'+
+			  '<div id="warningBox" class="warning"></div>'+ 
+			  '<iframe name="iFrameName" src="'+url+'"'+
+				  ' width="800px" style="border: none;" id="iFrame">'+
+			     '<p>iframes are not supported by your browser.</p></iframe>';
+		  
+	  rdf=getRdf(entity);
+	  $('.region.region-content').html(rdfBox);
+	  $('#rdfBox').text(rdf);
+	  $('.region.region-content').append(zettel_form);
+      }
+
+	  
+     
+      
+      function activateFields(fields, bundle, context) {
+    	 
         $.each(fields, function() {
           var field = $(this);
           var field_name = getFieldName(field);
@@ -575,7 +659,7 @@
     	  }
       }
       
-    }
+    
   };
 
   function refreshTable(container, page, sort, order, term, type, instance, callback) {
