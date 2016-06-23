@@ -66,6 +66,7 @@ function edoweb_init() {
       'site_frontpage' => variable_get('site_frontpage', '/'),
       'deepzoomServiceUrl' => variable_get('edoweb_deepzoom_url') ,
       'thumbyServiceUrl' => variable_get('edoweb_thumby_url'),
+      'zettelServiceUrl' => variable_get('edoweb_zettel_url'),	
     );
     drupal_add_js(array('edoweb' => $settings), 'setting');
     drupal_add_js(
@@ -1801,6 +1802,8 @@ function edoweb_basic_edit($entity, $view_mode = 'edit') {
 
   global $base_url;
   $page_url = $base_url . '/' . current_path();
+  
+  drupal_add_js(array('baseUrl' => $base_url), 'setting');
 
   $postdata = file_get_contents("php://input");
   if ($postdata != '') {

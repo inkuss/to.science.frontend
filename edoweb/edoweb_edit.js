@@ -438,9 +438,6 @@
             .css('min-height', '1.5em');
          field.append("Please click on link symbol to add linked data.");
       }
-
-       
-
       
       function createLinkInput(instance, target) {
         modal_overlay.html('<div />');
@@ -495,8 +492,13 @@
         );
       }
       
+      function isEmpty( el ){
+          return !$.trim(el.html());
+      }
+      
       function useZettel(bundle, entity,context){  
-    	  if(! $('.tabs',context).is(':empty')){
+    	  if(! isEmpty($('.tabs',context))){
+    		  console.log(Drupal.settings);
     		  loadZettel(bundle,entity,context);
     	  }
     	  else{
@@ -504,11 +506,11 @@
 				  '<div id="successBox" class="success"></div>'+
 				  '<div id="warningBox" class="warning"></div>'+ 
 				  '<iframe name="MyFrame" src="'+
-					  'http://api.localhost/tools/zettel/forms' +
+					  Drupal.settings.edoweb.zettelServiceUrl+'/forms' +
 					  '?id=katalog:data' +
 					  '&format=xml' +
 					  '&documentId=_:foo' +
-					  '&topicId=http://localhost/resource/add/'+bundle+'"'+
+					  '&topicId='+Drupal.settings.baseUrl+'/resource/add/'+bundle+'"'+
 					  ' width="800px" style="border: none;" id="iFrame">'+
 				     '<p>iframes are not supported by your browser.</p></iframe>';
 		  $('.region.region-content').html(zettel_form);
@@ -517,11 +519,11 @@
       
       function loadZettel(bundle,entity,context){
     	  var rid=$(entity).attr("resource");
-    	  var url='http://api.localhost/tools/zettel/forms' +
+    	  var url=Drupal.settings.edoweb.zettelServiceUrl+'/forms' +
 			  '?id=katalog:data' +
 			  '&format=xml' +
 			  '&documentId='+rid +
-			  '&topicId=http://localhost/resource/'+rid+'/edit';
+			  '&topicId='+Drupal.settings.baseUrl+'/resource/'+rid+'/edit';
     	  var rdfBox=  '<div id="rdfBox" class="data" style="display:none;"></div>'; 
     	  var zettel_form = 
 			  '<div id="successBox" class="success"></div>'+

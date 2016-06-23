@@ -103,13 +103,26 @@ function edoweb_storage_configuration_form($form, &$form_state) {
     '#type' => 'textfield',
     '#default_value' => variable_get(
       'edoweb_thumby_url',
-      variable_get('edoweb_api_host') . '/thumby'
+      variable_get('edoweb_api_host') . '/tools/thumby'
     ),
     '#title' => t('Thumby URL'),
     '#description' => t('The full URL to a thumby thumbnailer service'),
     '#size' => 40,
     '#maxlength' => 120,
     '#required' => FALSE,
+  );
+  
+  $form['edoweb_zettel_url'] = array(
+  		'#type' => 'textfield',
+  		'#default_value' => variable_get(
+  				'edoweb_zettel_url',
+  				variable_get('edoweb_api_host') . '/tools/zettel'
+  				),
+  		'#title' => t('Zettel URL'),
+  		'#description' => t('The full URL to a zettel form service'),
+  		'#size' => 40,
+  		'#maxlength' => 120,
+  		'#required' => FALSE,
   );
 
  // Text field for deepviewer URL.
