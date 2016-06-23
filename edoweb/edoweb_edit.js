@@ -259,7 +259,7 @@
   		jQuery('#successBox').css('visibility', 'hidden');
   	}
   	function getMessage(e) {
-  		var obj = JSON.parse(e.data);
+  		var obj = JSON.parse(e);
   		if (obj.code == 200) {
   			onSuccess(obj.message);
   		} else {
@@ -275,17 +275,20 @@
   	        .replace(/&amp;/g, '&');
   	}
   	function handleMessage(e) {	
-  		if(e.data == null){
+  		 if (e.data.action == 'establishConnection'){
+  		  var topicId=e.data.topicId;
+  		  var documentId=e.data.documentId;
   		  var iframe = document.getElementById("iFrame");
-  		  var target =  iframe.contentWindow || iframe;
-  			if (typeof target != "undefined") {
-  				target.postMessage(rdf, "*");
-  			}
-  		}else if (e.data.action == 'RESIZE') {
-  			var targetHeight = e.data.height;
+  		  var target =  iframe.contentWindow || iframe;		
+  		  rdf=$('#rdfBox').text();
+          if(typeof rdf!="undefined"){
+  			target.postMessage({'queryParam':'id=katalog:data&format=xml&topicId='+topicId+'&documentId='+documentId,'message':+rdf}, "*");
+  		   }                                
+  		}else if (e.data.action == 'resize') {
+  			var targetHeight = e.data.message;
   			jQuery('#iFrame').height(targetHeight);
-  		} else {
-  			getMessage(e);  		
+  		} else if (e.data.action == 'postData') {
+  			getMessage(e.data.message);  		
   		}
   	}
       function saveEntity(e) {
@@ -493,7 +496,7 @@
       }
       
       function useZettel(bundle, entity,context){  
-    	  if($('.edit',context).hasClass('edit')){
+    	  if(! $('.tabs',context).is(':empty')){
     		  loadZettel(bundle,entity,context);
     	  }
     	  else{
