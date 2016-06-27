@@ -1799,6 +1799,9 @@ function edoweb_basic_edit($entity, $view_mode = 'edit') {
   drupal_add_js(
     drupal_get_path('module', 'edoweb') . '/edoweb_edit.js'
   );
+  drupal_add_js(
+  		drupal_get_path('module', 'edoweb') . '/zettel.js'
+  		);
 
   global $base_url;
   $page_url = $base_url . '/' . current_path();
@@ -2730,6 +2733,9 @@ function edoweb_block_view($delta = '') {
       if ($entity = menu_get_object(EDOWEB_ENTITY_TYPE)) {
         drupal_add_js(
           drupal_get_path('module', 'edoweb') . '/edoweb_edit.js'
+        );
+        drupal_add_js(
+        		drupal_get_path('module', 'edoweb') . '/zettel.js'
         );
         drupal_add_js(
           drupal_get_path('module', 'edoweb') . '/edoweb_tree.js'
