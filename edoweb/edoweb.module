@@ -1603,6 +1603,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
   $entity_type = 'edoweb_basic';
 //edoweb_update_7181();
   $wrapper = entity_metadata_wrapper('edoweb_basic', $entity);
+
   $attr_bundle = 'data-entity-bundle="' .  $entity->bundle_type . '"';
   $attr_rdf_typeof = 'typeof="' . implode(' ', edoweb_rdf_types($entity->bundle_type)) . '"';
   $attr_rdf_resource = isset($entity->remote_id)
@@ -1805,9 +1806,13 @@ function edoweb_basic_edit($entity, $view_mode = 'edit') {
 
   global $base_url;
   $page_url = $base_url . '/' . current_path();
-  
+  $api = new EdowebAPIClient();
   drupal_add_js(array('baseUrl' => $base_url), 'setting');
-
+  $rdf= $api->getMetadata($entity);
+  drupal_add_js(array('rdf' => $rdf), 'setting');
+  drupal_add_js(array('actionPath' =>current_path()), 'setting');
+  
+  
   $postdata = file_get_contents("php://input");
   if ($postdata != '') {
     $rdf_model = new LibRDF_Model(new LibRDF_Storage());

@@ -107,6 +107,16 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     $http_response = $this->_http_get($http_url, 'application/json');
     return json_decode($http_response->data, TRUE);
   }
+  
+  public function getMetadata($entity) {
+  	$http_url = sprintf(
+  			'%s/resource/%s.rdf',
+  			$this->__edoweb_api_host,
+  			$entity->remote_id
+  			);
+  	$http_response = $this->_http_get($http_url, 'application/rdf+xml');
+  	return $http_response->data;
+  }
 
   public function addURN($entity) {
     list($namespace, $id) = explode(':', $entity->remote_id);
@@ -147,8 +157,8 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
   public function saveMetadata($entity) {
     // Send metadata
     $http_post_data = _edoweb_storage_entity_serialize_ntriples(
-      $entity, array('descriptive')
-    );
+    		$entity, array('descriptive')
+   );
     $http_url = sprintf(
       '%s/resource/%s/metadata',
       $this->__edoweb_api_host,

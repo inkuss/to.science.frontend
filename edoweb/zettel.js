@@ -1,50 +1,49 @@
 /**
  * Copyright 2016 hbz NRW (http://www.hbz-nrw.de/)
- *
+ * 
  * This file is part of regal-drupal.
- *
- * regal-drupal is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * regal-drupal is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with regal-drupal.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * regal-drupal is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * regal-drupal is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * regal-drupal. If not, see <http://www.gnu.org/licenses/>.
  */
 
 (function($) {
-	
 	window.addEventListener("message", handleMessage, false);
-	Drupal.behaviors.edoweb = {
-		    attach:	
-	function useZettel(bundle, entity, context) {
-		if (!isEmpty($('.tabs', context))) {
-			console.log(Drupal.settings);
-			loadZettel(bundle, entity, context);
-		} else {
-			var zettel_form = '<div id="successBox" class="success"></div>'
-					+ '<div id="warningBox" class="warning"></div>'
-					+ '<iframe name="MyFrame" src="'
-					+ Drupal.settings.edoweb.zettelServiceUrl
-					+ '/forms'
-					+ '?id=katalog:data'
-					+ '&format=xml'
-					+ '&documentId=_:foo'
-					+ '&topicId='
-					+ Drupal.settings.baseUrl
-					+ '/resource/add/'
-					+ bundle
-					+ '"'
-					+ ' width="800px" style="border: none;" id="iFrame">'
-					+ '<p>iframes are not supported by your browser.</p></iframe>';
-			$('.region.region-content').html(zettel_form);
+	Drupal.zettel = {
+		useZettel : function useZettel(bundle, entity, context) {
+			console.log("start");
+			if (!isEmpty($('.tabs', context))) {
+				console.log(Drupal.settings);
+				loadZettel(bundle, entity, context);
+			} else {
+				var zettel_form = '<div id="successBox" class="success"></div>'
+						+ '<div id="warningBox" class="warning"></div>'
+						+ '<iframe name="MyFrame" src="'
+						+ Drupal.settings.edoweb.zettelServiceUrl
+						+ '/forms'
+						+ '?id=katalog:data'
+						+ '&format=xml'
+						+ '&documentId=_:foo'
+						+ '&topicId='
+						+ Drupal.settings.baseUrl
+						+ '/resource/add/'
+						+ bundle
+						+ '"'
+						+ ' width="800px" style="border: none;" id="iFrame">'
+						+ '<p>iframes are not supported by your browser.</p></iframe>';
+				$('.region.region-content').html(zettel_form);
+			}
 		}
-	}
 	}
 	function loadZettel(bundle, entity, context) {
 		var rid = $(entity).attr("resource");
@@ -59,7 +58,7 @@
 				+ ' width="800px" style="border: none;" id="iFrame">'
 				+ '<p>iframes are not supported by your browser.</p></iframe>';
 
-		rdf = getRdf(entity);
+		rdf = getRdfFromApi(entity);
 		$('.region.region-content').html(rdfBox);
 		$('#rdfBox').text(rdf);
 		$('.region.region-content').append(zettel_form);
@@ -70,7 +69,7 @@
 		jQuery('#warningBox').css('visibility', 'hidden');
 		$.blockUI(Drupal.edoweb.blockUIMessage);
 		$('button.edoweb.edit.action').hide();
-		var url = Drupal.settings.basePath + 'resource/add/researchData';
+		var url = Drupal.settings.basePath + Drupal.settings.actionPath;
 		var bundle = 'researchData';
 		$
 				.ajax({
@@ -79,6 +78,7 @@
 					data : htmlUnescape(postdata),
 					contentType : "text/xml",
 					success : function(data, textStatus, jqXHR) {
+						
 						var resource_uri = jqXHR
 								.getResponseHeader('X-Edoweb-Entity');
 
@@ -157,27 +157,11 @@
 	}
 
 	function getRdfFromApi(entity) {
-		$('button.edoweb.edit.action').hide();
-		entity.find('[contenteditable]').each(function() {
-			$(this).text($(this).text());
-		});
-		var rdf = entity.rdf();
-		var topic = rdf.where('?s <http://xmlns.com/foaf/0.1/primaryTopic> ?o')
-				.get(0);
-		var url = topic.s.value.toString();
-
-		var subject = topic.o;
-		var post_data = rdf.databank.dump({
-			format : 'application/rdf+xml',
-			serialize : true,
-			namespaces : Drupal.settings.edoweb.namespaces
-		});
-		return post_data;
+		return Drupal.settings.rdf;
 	}
 
 	function isEmpty(el) {
 		return !$.trim(el.html());
 	}
 
-	
 })(jQuery);

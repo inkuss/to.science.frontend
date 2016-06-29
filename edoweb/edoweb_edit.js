@@ -86,7 +86,7 @@
           var instance = Drupal.settings.edoweb.fields[bundle][$(this).val()].instance;
           var field = createField(instance);
           if(bundle=="researchData"){
-        	 useZettel(bundle,entity,context); 
+        	 Drupal.zettel.useZettel(bundle,entity,context); 
           }else{
         	  activateFields(field, bundle, context);
           }
@@ -140,7 +140,7 @@
               var page_title = $(this.responseText).find('h2').text();
               Drupal.attachBehaviors(entity_content);
               if(bundle=="researchData"){
-             	 useZettel(bundle,entity,context); 
+             	 Drupal.edoweb.Drupal.zettel.useZettel(bundle,entity,context); 
                }else{
                    activateFields(entity_content.find('.field'), bundle, context);
                }
@@ -188,7 +188,7 @@
                 var page_title = $(this.responseText).find('h2').text();
                 Drupal.attachBehaviors(entity_content);
                 if(bundle=='researchData'){
-                	useZettel(bundle,entity,context);
+                	Drupal.zettel.useZettel(bundle,entity,context);
                 }else{
                 	activateFields(entity_content.find('.field'), bundle, context);
                 }
@@ -203,7 +203,7 @@
         
         if(bundle=='researchData'){
         	activateFields(entity.find('.field'), bundle, context);
-        	useZettel(bundle,entity,context);
+        	Drupal.zettel.useZettel(bundle,entity,context);
         }else{
             activateFields(entity.find('.field'), bundle, context);
         }
