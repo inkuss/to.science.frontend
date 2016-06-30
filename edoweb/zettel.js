@@ -75,8 +75,8 @@
 				.ajax({
 					type : 'POST',
 					url : url,
-					data : htmlUnescape(postdata),
-					contentType : "text/xml",
+					data : decodeURI(postdata),
+					contentType : "text/xml;charset=utf-8",
 					success : function(data, textStatus, jqXHR) {
 						
 						var resource_uri = jqXHR
@@ -127,12 +127,7 @@
 			onFail(JSON.stringify(obj.message));
 		}
 	}
-	function htmlUnescape(value) {
-		return String(value).replace(/&quot;/g, '"').replace(/&#39;/g, "'")
-				.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g,
-						'&');
-	}
-
+	
 	function handleMessage(e) {
 		if (e.data.action == 'establishConnection') {
 			var topicId = e.data.topicId;
@@ -140,12 +135,12 @@
 			var iframe = document.getElementById("iFrame");
 			var target = iframe.contentWindow || iframe;
 			rdf = $('#rdfBox').text();
-			console.log(rdf);
 			if (typeof rdf != "undefined") {
 				target.postMessage({
 					'queryParam' : 'id=katalog:data&format=xml&topicId='
 							+ topicId + '&documentId=' + documentId,
-					'message' : rdf
+					'message' : rdf,
+					'action'  : 'postDataToZettel'
 				}, "*");
 			}
 		} else if (e.data.action == 'resize') {
@@ -157,7 +152,7 @@
 	}
 
 	function getRdfFromApi(entity) {
-		return Drupal.settings.rdf;
+		return encodeURI(Drupal.settings.rdf);
 	}
 
 	function isEmpty(el) {

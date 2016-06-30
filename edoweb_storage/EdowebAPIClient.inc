@@ -831,7 +831,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     return _edoweb_http_request($request_url, $http_options);
   }
 
-  protected function _http_get($request_url, $content_type = 'text/plain') {
+  protected function _http_get($request_url, $content_type = 'text/plain;charset=utf-8') {
     $http_options = array(
       'method' => 'GET',
       'headers' => array('Accept' => $content_type),
