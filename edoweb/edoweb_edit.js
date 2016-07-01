@@ -527,9 +527,7 @@
                   createNewOptionsInput(instance, $(this),instance['label']);  
                 }
               });
-              break;
-            default:
-              console.log(instance['widget']['type']);
+              break;             
           }
 
         });

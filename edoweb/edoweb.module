@@ -1808,6 +1808,7 @@ function edoweb_basic_edit($entity, $view_mode = 'edit') {
   $page_url = $base_url . '/' . current_path();
   $api = new EdowebAPIClient();
   drupal_add_js(array('baseUrl' => $base_url), 'setting');
+  drupal_add_js(array('rdf' => ""), 'setting');
   $rdf= $api->getMetadata($entity);
   drupal_add_js(array('rdf' => $rdf), 'setting');
   drupal_add_js(array('actionPath' =>current_path()), 'setting');

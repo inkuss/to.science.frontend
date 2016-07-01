@@ -21,9 +21,7 @@
 	window.addEventListener("message", handleMessage, false);
 	Drupal.zettel = {
 		useZettel : function useZettel(bundle, entity, context) {
-			console.log("start");
 			if (!isEmpty($('.tabs', context))) {
-				console.log(Drupal.settings);
 				loadZettel(bundle, entity, context);
 			} else {
 				var zettel_form = '<div id="successBox" class="success"></div>'
@@ -58,7 +56,7 @@
 				+ ' width="800px" style="border: none;" id="iFrame">'
 				+ '<p>iframes are not supported by your browser.</p></iframe>';
 
-		rdf = getRdfFromApi(entity);
+		var rdf = getRdfFromApi(entity);
 		$('.region.region-content').html(rdfBox);
 		$('#rdfBox').text(rdf);
 		$('.region.region-content').append(zettel_form);
@@ -134,7 +132,7 @@
 			var documentId = e.data.documentId;
 			var iframe = document.getElementById("iFrame");
 			var target = iframe.contentWindow || iframe;
-			rdf = $('#rdfBox').text();
+			var rdf = $('#rdfBox').text();
 			if (typeof rdf != "undefined") {
 				target.postMessage({
 					'queryParam' : 'id=katalog:data&format=xml&topicId='
@@ -147,7 +145,7 @@
 			var targetHeight = e.data.message;
 			jQuery('#iFrame').height(targetHeight);
 		} else if (e.data.action == 'postData') {
-			getMessage(e.data.message);
+			getMessage(decodeURI(e.data.message));
 		}
 	}
 
