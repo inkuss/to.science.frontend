@@ -659,7 +659,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
         $facet_field = explode('.', $available_facet);
         $field_name = current($facet_field);
         if (next($facet_field) == '@id') {
-          $query['facets'][$field_name]['terms']['script_field'] = "_source.?$field_name";
+          $query['facets'][$field_name]['terms']['field'] = $field_name.'.prefLabel';
         } else {
           $query['facets'][$field_name]['terms']['field'] = $available_facet;
         }

@@ -902,7 +902,7 @@ function _field_name_to_jsonld_key($field_name) {
   foreach ($context as $key => $property) {
     if (is_object($property)) {
       if ('edoweb_ld_reference' == $field_info['type']) {
-        $key .= '.@id';
+        $key .= '.prefLabel';
       }
       $property = $property->{'@id'};
     }

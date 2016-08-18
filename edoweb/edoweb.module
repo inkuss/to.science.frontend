@@ -1429,9 +1429,9 @@ function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array()
         $facet_entity_uri = $term->term;
         $facet_entity_count = $term->count;
         if ($is_ref) {
-          $facet_object = es_facet_object($facet_entity_uri);
-          $title = isset($facet_object['prefLabel']) ? $facet_object['prefLabel'] : $facet_object['@id'];
-          $facet_entity_uri = $facet_object['@id'];
+	      //$facet_object = es_facet_object($facet_entity_uri);
+      	      $title = $facet_entity_uri;//$facet_object['prefLabel'];
+      	      $facet_entity_uri = $facet_entity_uri;//$facet_object['@id'];
         } else if ($is_user) {
           $title = _edoweb_user_name($facet_entity_uri);
         } else {
@@ -2476,8 +2476,8 @@ function edoweb_basic_browse($jsonld_property) {
     $facet_entity_count = $term->count;
     if ($is_ref) {
       $facet_object = es_facet_object($facet_entity_uri);
-      $title = $facet_object['prefLabel'];
-      $facet_entity_uri = $facet_object['@id'];
+      $title = $facet_entity_uri;//$facet_object['prefLabel'];
+      $facet_entity_uri = $facet_entity_uri;//$facet_object['@id'];
     } else if ($is_user) {
       $title = _edoweb_user_name($facet_entity_uri);
     } else {
@@ -2509,6 +2509,7 @@ function edoweb_basic_browse($jsonld_property) {
 function es_facet_object($string) {
   $string = substr($string, 1, -1);
   $regex = '/(?<=\s|\A)([^\s=]+)=(.*?)(?=(?:\s[^\s=]+=|$))/';
+// $regex = '/(.*)=(.*)/';
   $matches = array();
   if (preg_match_all($regex, $string, $matches)) {
     $result = array();
