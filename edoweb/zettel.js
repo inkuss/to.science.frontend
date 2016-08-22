@@ -26,7 +26,7 @@
 			} else {
 				var zettel_form = '<div id="successBox" class="success"></div>'
 						+ '<div id="warningBox" class="warning"></div>'
-						+ '<iframe name="MyFrame" src="'
+						+ '<iframe name="'+Date.now()+'" src="'
 						+ Drupal.settings.edoweb.zettelServiceUrl
 						+ '/forms'
 						+ '?id=katalog:data'
@@ -52,8 +52,8 @@
 		var rdfBox = '<div id="rdfBox" class="data" style="display:none;"></div>';
 		var zettel_form = '<div id="successBox" class="success"></div>'
 				+ '<div id="warningBox" class="warning"></div>'
-				+ '<iframe name="iFrameName" src="' + url + '"'
-				+ ' width="800px" style="border: none;" id="iFrame">'
+				+ '<iframe name="'+Date.now()+'" src="' + url + '"'
+		                + ' width="800px" style="border: none;" id="iFrame">'
 				+ '<p>iframes are not supported by your browser.</p></iframe>';
 
 		var rdf = getRdfFromApi(entity);
