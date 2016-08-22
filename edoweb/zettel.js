@@ -26,7 +26,7 @@
 			} else {
 				var zettel_form = '<div id="successBox" class="success"></div>'
 						+ '<div id="warningBox" class="warning"></div>'
-						+ '<iframe name="MyFrame" src="'
+						+ '<iframe name="'+Date.now()+'" src="'
 						+ Drupal.settings.edoweb.zettelServiceUrl
 						+ '/forms'
 						+ '?id=katalog:data'
