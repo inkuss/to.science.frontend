@@ -172,7 +172,7 @@ function _edoweb_installed_fields() {
   		),  		
   		'field_edoweb_recording_location' => array(
   				'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-  				'type'        => 'text',
+  				'type'        => 'edoweb_ld_reference',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
   						'predicates' => array('regal:recordingLocation'),
