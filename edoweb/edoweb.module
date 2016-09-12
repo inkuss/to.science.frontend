@@ -1413,6 +1413,7 @@ function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array()
   // Available facets
   if (isset($result['facets'])) {
     // Add list of available facets
+    //drupal_set_message(var_dump($jsonld_property));
     foreach ($result['facets'] as $jsonld_property => $facet) {
       $content['filters']['facets'][$jsonld_property] = array(
         '#theme' => 'item_list',
@@ -2506,6 +2507,65 @@ function edoweb_basic_browse($jsonld_property) {
 
 }
 
+function edoweb_restricted_browse($inst_name, $jsonld_property = 'institution') {
+
+  $api = new EdowebApiClient();
+  $query = new EntityFieldQuery();
+  $query->addTag('elasticsearch');
+  $query->addMetaData('facet_size', 999);
+  $result = $query->execute();
+
+  if (!property_exists($result['facets'], $jsonld_property)) {
+    return drupal_not_found();
+  }
+
+  $is_ref = in_array($jsonld_property, array('creator', 'subject', 'institution', 'rdftype', 'medium'));
+  $is_user = ('createdBy' == $jsonld_property
+      || 'lastModifiedBy' == $jsonld_property);
+  $items = array();
+  foreach ($result['facets']->$jsonld_property->terms as $term) {
+
+    if( $term->term == $inst_name){
+
+    //drupal_set_message(var_dump($result['facets']->$jsonld_property));
+
+    $facet_entity_uri = $term->term;
+    $facet_entity_count = $term->count;
+    if ($is_ref) {
+      $facet_object = es_facet_object($facet_entity_uri);
+      $title = $facet_entity_uri;//$facet_object['prefLabel'];
+      $facet_entity_uri = $facet_entity_uri;//$facet_object['@id'];
+    } else if ($is_user) {
+      $title = _edoweb_user_name($facet_entity_uri);
+    } else {
+      $title = _edoweb_map_string("$facet_entity_uri");
+    }
+    $params = array();
+    $params['query'][0]['facets'][$jsonld_property][] = $facet_entity_uri;
+    $apply_facet_link = l(
+      $title, '/resource/',
+      array(
+        'query' => $params,
+        'attributes' => array(),
+      )
+    ) . " <span>($facet_entity_count)</span>";
+    $items[] = array(
+      'data' => $apply_facet_link,
+    );
+
+    };
+  }
+
+  return theme_item_list(array(
+    'items' => $items,
+    'title' => _edoweb_map_string($jsonld_property),
+    'type' => 'ul',
+    'attributes' => array('class' => array('listnav')),
+  ));
+
+}
+
+
 function es_facet_object($string) {
   $string = substr($string, 1, -1);
   $regex = '/(?<=\s|\A)([^\s=]+)=(.*?)(?=(?:\s[^\s=]+=|$))/';
@@ -2684,6 +2744,14 @@ function edoweb_block_info() {
     'weight' => '100',
   );
 
+  $blocks['edoweb_entity_list'] = array(
+    'info' => t('Edoweb Entity List'),
+    'status' => 1,
+    'region' => 'content',
+    'weight' => '100',
+  );
+
+
   return $blocks;
 }
 
@@ -2744,6 +2812,29 @@ function edoweb_block_view($delta = '') {
           ));
         }
       }
+      break;
+    case 'edoweb_entity_list':
+          $items = array('Item 1' => 'erstes Item', 'Item 2' => 'zweites Item', 'Item 3' => 'drittes Item'); 
+          //$block['content'] = '<p>Hier soll ein Block entstehen</p>';
+          //$block['content'] = edoweb_restricted_browse('IHP GmbH');
+          
+          $query = new EntityFieldQuery();
+          //$query->entityCondition('entity_type', 'edoweb_basic');
+          $query->entityCondition('bundle', array(
+          'monograph', 'journal', 'volume', 'issue', 'file', 'webpage', 'version', 'part', 'proceeding', 'researchData')); 
+          $query->addMetaData('term', 'Deutsche Zentralbibliothek für Medizin');
+          $active_facets = 'institution';
+          $query->addTag('elasticsearch');
+          
+          //$content['results'] = edoweb_basic_list_entities($query, FALSE, array(), FALSE, TRUE, 'default');
+          $block['content'] = edoweb_basic_list_entities($query, FALSE, array(), FALSE, TRUE, 'default'); 
+          //$block['content'] = drupal_render($content);
+            /*
+             theme_item_list(array(
+            'items' => 'Item',
+            'title' => null,
+            'type' => 'ul'
+          ));*/
       break;
   }
   return $block;
