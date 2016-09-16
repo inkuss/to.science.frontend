@@ -2876,7 +2876,7 @@ function edoweb_block_view($delta = '') {
         $table_name = variable_get('tablename');
         }
 
-      var_dump(variable_get('tablename'));
+      //var_dump(variable_get('tablename'));
       $entity  = menu_get_object();
       $query = new EntityFieldQuery();
       $query->entityCondition('bundle', array(
