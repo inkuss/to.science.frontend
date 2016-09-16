@@ -542,6 +542,20 @@ function _edoweb_storage_entity_serialize_rdf(
   }
 
   $wrapper = entity_metadata_wrapper(EDOWEB_ENTITY_TYPE, $entity);
+
+  if(!empty($entity->postData)){
+	$rdfxml_parser = new LibRDF_Parser('rdfxml');
+        $rdf_model = new LibRDF_Model(new LibRDF_Storage());
+        $rdf_serializer = new LibRDF_Serializer('ntriples');
+        try {
+            $rdf_model->loadStatementsFromString($rdfxml_parser, 
+                    $entity->postData);
+            return $rdf_model->serializeStatements($rdf_serializer);
+        } catch (LibRDF_Error $e) {
+            drupal_set_message("Problems to serialize rdf " . $e);
+        }
+  }
+
   // Following elements contain predicate mappings
   foreach ($rdf_mapping as $field_name => $field_mapping) {
     $field_info = field_info_field($field_name);

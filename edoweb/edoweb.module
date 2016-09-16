@@ -1837,6 +1837,7 @@ function edoweb_basic_edit($entity, $view_mode = 'edit') {
     if ($entity_uri instanceof LibRDF_BlankNode) {
       $entity->remote_id = null;
     }
+    $entity->postData = $postdata;
     edoweb_basic_save($entity);
     drupal_add_http_header('X-Edoweb-Entity', $entity->remote_id);
     die($entity->remote_id);
