@@ -2769,6 +2769,16 @@ function edoweb_block_list_alter(&$blocks) {
 }
 
 /**
+ * Implements hook_block_configure().
+ *
+ * This hook provides block configuration
+ */
+function edoweb_block_configure($delta ='') {
+   
+}
+
+
+/**
  * Implements hook_block_view().
  *
  * This hook generates the contents of the blocks themselves.
@@ -2814,21 +2824,24 @@ function edoweb_block_view($delta = '') {
       }
       break;
     case 'edoweb_entity_list':
+      drupal_add_css(
+        '.block fieldset.edoweb-entity-list {width: 100%;}',
+        array('type' => 'inline')
+      );
 
-          $table_name = t('Liste der assoziierten Publikationen');
-          $entity  = menu_get_object();
-          $query = new EntityFieldQuery();
-          $query->entityCondition('bundle', array(
-          'monograph', 'journal', 'volume', 'issue', 'file', 'webpage', 'version', 'part', 'proceeding', 'researchData')); 
-          $query->addMetaData('term', $entity->title);
-          $active_facets = 'institution';
-          $query->addTag('elasticsearch');
-          
+      $table_name = t('Liste der assoziierten Publikationen');
+      $entity  = menu_get_object();
+      $query = new EntityFieldQuery();
+      $query->entityCondition('bundle', array(
+      'monograph', 'journal', 'volume', 'issue', 'file', 'webpage', 'version', 'part', 'proceeding', 'researchData')); 
+      $query->addMetaData('term', $entity->title);
+      $active_facets = 'institution';
+      $query->addTag('elasticsearch');
 
-          $block['content'] = edoweb_basic_list_entities($query, FALSE, array(), null, TRUE, 'default'); 
-          $block['content']['filters'] = null; 
-          $block['content']['entity_list']['#title'] = $table_name; 
-          //var_dump($block);
+      $block['content'] = edoweb_basic_list_entities($query, FALSE, array(), null, TRUE, 'default'); 
+      $block['content']['filters'] = null; 
+      $block['content']['entity_list']['#title'] = $table_name; 
+      //var_dump($block);
       break;
   }
   return $block;
