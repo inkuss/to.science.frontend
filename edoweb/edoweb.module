@@ -2814,27 +2814,21 @@ function edoweb_block_view($delta = '') {
       }
       break;
     case 'edoweb_entity_list':
-          $items = array('Item 1' => 'erstes Item', 'Item 2' => 'zweites Item', 'Item 3' => 'drittes Item'); 
-          //$block['content'] = '<p>Hier soll ein Block entstehen</p>';
-          //$block['content'] = edoweb_restricted_browse('IHP GmbH');
-          
+
+          $table_name = t('Liste der assoziierten Publikationen');
+          $entity  = menu_get_object();
           $query = new EntityFieldQuery();
-          //$query->entityCondition('entity_type', 'edoweb_basic');
           $query->entityCondition('bundle', array(
           'monograph', 'journal', 'volume', 'issue', 'file', 'webpage', 'version', 'part', 'proceeding', 'researchData')); 
-          $query->addMetaData('term', 'Deutsche Zentralbibliothek für Medizin');
+          $query->addMetaData('term', $entity->title);
           $active_facets = 'institution';
           $query->addTag('elasticsearch');
           
-          //$content['results'] = edoweb_basic_list_entities($query, FALSE, array(), FALSE, TRUE, 'default');
-          $block['content'] = edoweb_basic_list_entities($query, FALSE, array(), FALSE, TRUE, 'default'); 
-          //$block['content'] = drupal_render($content);
-            /*
-             theme_item_list(array(
-            'items' => 'Item',
-            'title' => null,
-            'type' => 'ul'
-          ));*/
+
+          $block['content'] = edoweb_basic_list_entities($query, FALSE, array(), null, TRUE, 'default'); 
+          $block['content']['filters'] = null; 
+          $block['content']['entity_list']['#title'] = $table_name; 
+          //var_dump($block);
       break;
   }
   return $block;
