@@ -2774,7 +2774,53 @@ function edoweb_block_list_alter(&$blocks) {
  * This hook provides block configuration
  */
 function edoweb_block_configure($delta ='') {
-   
+  $form = array();
+  // The $delta parameter tells us which block is being requested.
+  switch ($delta) {
+    case 'edoweb_entity_list':
+      $tablename_value = 'Trefferliste';
+      if(variable_get('tablename')){
+        $tablename_value = variable_get('tablename');
+      }
+      $hide_facets_value = 1;
+      if(variable_get('hide_facets')== 0){
+        $hide_facets_value = 0;
+      }
+      $form['tablename'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Bennenung der Tabelle'),
+        '#default_value' => $tablename_value,
+        '#description' => "Hier kann der Name der Tabelle geändert werden",
+        //'#options' => drupal_map_assoc(array(2,3,4,5,6)),
+      );
+      $form['hide_facets'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Facetten verstecken'),
+        '#default_value' => $hide_facets_value,
+        '#description' => "Wenn aktiviert (default), werden die Filter innerhalb des Blocks ausgeblendet",
+        //'#options' => drupal_map_assoc(array(2,3,4,5,6)),
+      );
+    break;
+  }
+  return $form;
+}
+
+/**
+ * Implements hook_block_save().
+ *
+ * This hook saves a block configuration
+ */
+function edoweb_block_save($delta ='', $edit = array()) {
+  $block = array();
+  // The $delta parameter tells us which block is being requested.
+  switch ($delta) {
+    case 'edoweb_entity_list':
+      variable_set('tablename', $edit['tablename']);
+      variable_set('hide_facets', $edit['hide_facets']);
+      
+    break;
+  }
+  return $form;
 }
 
 
@@ -2824,12 +2870,13 @@ function edoweb_block_view($delta = '') {
       }
       break;
     case 'edoweb_entity_list':
-      drupal_add_css(
-        '.block fieldset.edoweb-entity-list {width: 100%;}',
-        array('type' => 'inline')
-      );
 
       $table_name = t('Liste der assoziierten Publikationen');
+      if(variable_get('tablename')) {
+        $table_name = variable_get('tablename');
+        }
+
+      var_dump(variable_get('tablename'));
       $entity  = menu_get_object();
       $query = new EntityFieldQuery();
       $query->entityCondition('bundle', array(
@@ -2838,8 +2885,17 @@ function edoweb_block_view($delta = '') {
       $active_facets = 'institution';
       $query->addTag('elasticsearch');
 
-      $block['content'] = edoweb_basic_list_entities($query, FALSE, array(), null, TRUE, 'default'); 
-      $block['content']['filters'] = null; 
+      $block['content'] = edoweb_basic_list_entities($query, array(), FALSE, NULL, TRUE, 'default'); 
+      if(variable_get('hide_facets')== 1) {
+        $block['content']['filters'] = null; 
+
+        drupal_add_css(
+          '.block fieldset.edoweb-entity-list {width: 100%;}',
+          array('type' => 'inline')
+        );
+
+        }
+
       $block['content']['entity_list']['#title'] = $table_name; 
       //var_dump($block);
       break;
