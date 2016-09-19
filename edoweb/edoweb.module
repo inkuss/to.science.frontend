@@ -66,6 +66,7 @@ function edoweb_init() {
       'site_frontpage' => variable_get('site_frontpage', '/'),
       'deepzoomServiceUrl' => variable_get('edoweb_deepzoom_url') ,
       'thumbyServiceUrl' => variable_get('edoweb_thumby_url'),
+      'zettelServiceUrl' => variable_get('edoweb_zettel_url'),	
     );
     drupal_add_js(array('edoweb' => $settings), 'setting');
     drupal_add_js(
@@ -1603,6 +1604,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
   $entity_type = 'edoweb_basic';
 //edoweb_update_7181();
   $wrapper = entity_metadata_wrapper('edoweb_basic', $entity);
+
   $attr_bundle = 'data-entity-bundle="' .  $entity->bundle_type . '"';
   $attr_rdf_typeof = 'typeof="' . implode(' ', edoweb_rdf_types($entity->bundle_type)) . '"';
   $attr_rdf_resource = isset($entity->remote_id)
@@ -1799,10 +1801,20 @@ function edoweb_basic_edit($entity, $view_mode = 'edit') {
   drupal_add_js(
     drupal_get_path('module', 'edoweb') . '/edoweb_edit.js'
   );
+  drupal_add_js(
+  		drupal_get_path('module', 'edoweb') . '/zettel.js'
+  		);
 
   global $base_url;
   $page_url = $base_url . '/' . current_path();
-
+  $api = new EdowebAPIClient();
+  drupal_add_js(array('baseUrl' => $base_url), 'setting');
+  drupal_add_js(array('rdf' => ""), 'setting');
+  $rdf= $api->getMetadata($entity);
+  drupal_add_js(array('rdf' => $rdf), 'setting');
+  drupal_add_js(array('actionPath' =>current_path()), 'setting');
+  
+  
   $postdata = file_get_contents("php://input");
   if ($postdata != '') {
     $rdf_model = new LibRDF_Model(new LibRDF_Storage());
@@ -1826,6 +1838,7 @@ function edoweb_basic_edit($entity, $view_mode = 'edit') {
     if ($entity_uri instanceof LibRDF_BlankNode) {
       $entity->remote_id = null;
     }
+    $entity->postData = $postdata;
     edoweb_basic_save($entity);
     drupal_add_http_header('X-Edoweb-Entity', $entity->remote_id);
     die($entity->remote_id);
@@ -2853,6 +2866,9 @@ function edoweb_block_view($delta = '') {
           drupal_get_path('module', 'edoweb') . '/edoweb_edit.js'
         );
         drupal_add_js(
+        		drupal_get_path('module', 'edoweb') . '/zettel.js'
+        );
+        drupal_add_js(
           drupal_get_path('module', 'edoweb') . '/edoweb_tree.js'
         );
         $top_level_parent = _edoweb_find_top_level_parent($entity);
@@ -3546,7 +3562,7 @@ function edoweb_update_7179(){
 /**
  * Update all
  */
-function edoweb_update_7187(){
+function edoweb_update_7191(){
   _update_edoweb_installed_fields();
   _update_edoweb_installed_instances();
   _update_rdf_mapping();

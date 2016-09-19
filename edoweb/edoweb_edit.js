@@ -48,6 +48,9 @@
         var href = $(this).attr('href');
         history.pushState({tree: true}, null, href);
         Drupal.edoweb.navigateTo(href);
+        if(href.endsWith("edit")){
+        	location.reload();
+        }
         return false;
       });
 
@@ -82,7 +85,11 @@
         additional_fields.change(function() {
           var instance = Drupal.settings.edoweb.fields[bundle][$(this).val()].instance;
           var field = createField(instance);
-          activateFields(field, bundle, context);
+          if(bundle=="researchData"){
+        	 Drupal.zettel.useZettel(bundle,entity,context); 
+          }else{
+        	  activateFields(field, bundle, context);
+          }
           entity.find('.content').prepend(field);
           $(this).find('option:selected').remove();
           if ($(this).find('option').length == 1) {
@@ -132,7 +139,11 @@
               var entity_content = $(this.responseText).find('.content');
               var page_title = $(this.responseText).find('h2').text();
               Drupal.attachBehaviors(entity_content);
-              activateFields(entity_content.find('.field'), bundle, context);
+              if(bundle=="researchData"){
+             	 Drupal.edoweb.Drupal.zettel.useZettel(bundle,entity,context); 
+               }else{
+                   activateFields(entity_content.find('.field'), bundle, context);
+               }
               entity.find('.content').replaceWith(entity_content);
              $('#page-title', context).text(page_title);
             };
@@ -176,7 +187,11 @@
                 });
                 var page_title = $(this.responseText).find('h2').text();
                 Drupal.attachBehaviors(entity_content);
-                activateFields(entity_content.find('.field'), bundle, context);
+                if(bundle=='researchData'){
+                	Drupal.zettel.useZettel(bundle,entity,context);
+                }else{
+                	activateFields(entity_content.find('.field'), bundle, context);
+                }
                 entity.find('.content').replaceWith(entity_content);
                 $('#page-title', context).text(page_title);
               };
@@ -185,10 +200,18 @@
             return false;
           });
           additional_fields.before(import_button);
-        activateFields(entity.find('.field'), bundle, context);
+        
+        if(bundle=='researchData'){
+        	activateFields(entity.find('.field'), bundle, context);
+        	Drupal.zettel.useZettel(bundle,entity,context);
+        }else{
+            activateFields(entity.find('.field'), bundle, context);
+        }
+        
       $('.field-name-field-edoweb-datastream').insertBefore('.field-name-field-edoweb-title');
       });
-
+      
+   
       function saveEntity(e) {
         var entity = e.data.entity;
         var bundle = e.data.bundle;
@@ -219,7 +242,7 @@
           if (subject.type == 'bnode') {
             entity_load_json('edoweb_basic', resource_uri).onload = function() {
               if (bundle == 'monograph' || bundle == 'journal' || bundle=='proceeding'|| bundle=='researchData') {
-                window.location = href;
+            	 window.location = href;
               } else {
                 localStorage.setItem('cut_entity', this.responseText);
                 history.pushState({tree: true}, null, href);
@@ -233,6 +256,23 @@
         });
         return false;
       }
+      function getRdf(entity) {
+          $('button.edoweb.edit.action').hide();
+          entity.find('[contenteditable]').each(function() {
+            $(this).text($(this).text());
+          });
+          var rdf = entity.rdf();
+          var topic = rdf.where('?s <http://xmlns.com/foaf/0.1/primaryTopic> ?o').get(0);
+          var url = topic.s.value.toString();
+         
+          var subject = topic.o;
+          var post_data = rdf.databank.dump({
+            format:'application/rdf+xml',
+            serialize: true,
+            namespaces: Drupal.settings.edoweb.namespaces
+          });
+         return post_data;
+        }
 
       function getFieldName(field) {
         var cls = field.attr('class').split(' ');
@@ -319,9 +359,6 @@
             .css('min-height', '1.5em');
          field.append("Please click on link symbol to add linked data.");
       }
-
-       
-
       
       function createLinkInput(instance, target) {
         modal_overlay.html('<div />');
@@ -375,8 +412,9 @@
           }
         );
       }
-      
+     
       function activateFields(fields, bundle, context) {
+    	 
         $.each(fields, function() {
           var field = $(this);
           var field_name = getFieldName(field);
@@ -489,15 +527,14 @@
                   createNewOptionsInput(instance, $(this),instance['label']);  
                 }
               });
-              break;
-            default:
-              console.log(instance['widget']['type']);
+              break;             
           }
 
         });
+    	  }
       }
-
-    }
+      
+    
   };
 
   function refreshTable(container, page, sort, order, term, type, instance, callback) {

@@ -259,7 +259,6 @@
             }
             insert_position.append(inserted_item);
             $.post(target_struct_url, {'parent_id': target_parent_id}, function(data, textStatus, jqXHR) {
-              console.log(data);
               saveStructure(list_item, function() {$.unblockUI()});
               throbber.remove();
               Drupal.edoweb.refreshTree();
@@ -293,7 +292,6 @@
             }
             insert_position.prepend(inserted_item);
             $.post(target_struct_url, {'parent_id': target_parent_id}, function(data, textStatus, jqXHR) {
-              console.log(data);
               saveStructure(list_item, function() {$.unblockUI()});
               throbber.remove();
               Drupal.edoweb.refreshTree();
@@ -332,8 +330,7 @@
                   loadTree(entity_id, inserted_item);
                 }
                 list_item.after(inserted_item);
-                $.post(target_struct_url, {'parent_id': target_parent_id}, function(data, textStatus, jqXHR) {
-                  console.log(data);
+                $.post(target_struct_url, {'parent_id': target_parent_id}, function(data, textStatus, jqXHR) {            
                   saveStructure(list_item.parent().closest('li'), function() {$.unblockUI()});
                   throbber.remove();
                   Drupal.edoweb.refreshTree();
@@ -425,7 +422,6 @@
       ordered_children.push(decodeURIComponent($(this).attr('href').split('/').pop()));
     });
     $.post(target_parent_url + '/structure', {'parts': ordered_children}, function(data, textStatus, jqXHR) {
-      console.log(data);
       if (callback) callback();
     });
   }
