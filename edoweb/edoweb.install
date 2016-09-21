@@ -82,6 +82,54 @@ function edoweb_install() {
 function _edoweb_installed_fields() {
   $t = get_t();
   return array(
+ 		'field_edoweb_title_language'=> array('cardinality' => 1,
+      			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'edoweb_ld_reference',
+  				'settings'    => array(
+  					'metadata_type' => 'descriptive',
+        			'predicates' => array('regal:titleLanguage'),
+      			),
+  		),
+ 		'field_edoweb_project_id'=> array('cardinality' => 1,
+      			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  					'metadata_type' => 'descriptive',
+        			'predicates' => array('regal:projectId'),
+      			),
+  		),
+ 		'field_edoweb_funding_program'=> array('cardinality' => 1,
+      			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
+  				'settings'    => array(
+  					'metadata_type' => 'descriptive',
+        			'predicates' => array('regal:fundingProgram'),
+      			),
+  		),
+ 		'field_edoweb_assoc_publication'=> array('cardinality' => 1,
+      			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'edoweb_ld_reference',
+  				'settings'    => array(
+  					'metadata_type' => 'descriptive',
+        			'predicates' => array('regal:associatedPublication'),
+      			),
+  		),
+ 		'field_edoweb_assoc_dataset'=> array('cardinality' => 1,
+      			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'edoweb_ld_reference',
+  				'settings'    => array(
+  					'metadata_type' => 'descriptive',
+        			'predicates' => array('regal:associatedDataset'),
+      			),
+  		),
+ 		'field_edoweb_references'=> array('cardinality' => 1,
+      			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'edoweb_ld_reference',
+  				'settings'    => array(
+  					'metadata_type' => 'descriptive',
+        			'predicates' => array('regal:references'),
+      			),
+  		),
   		'field_edoweb_data_origin'=> array('cardinality' => 1,
       			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
   				'type'        => 'edoweb_ld_reference',
@@ -2591,6 +2639,7 @@ function _edoweb_installed_instances() {
   				'field_edoweb_title' => array('required' => TRUE),
   				'field_edoweb_title_other' => array(),
   				'field_edoweb_title_alternative' => array(),
+				'field_edoweb_title_language' => array(),
   				'field_edoweb_title_short' => array(),
   				'field_edoweb_creator' => array('required' => TRUE),
   				'field_edoweb_creator_label' => array(),
@@ -2712,6 +2761,11 @@ function _edoweb_installed_instances() {
   				'field_edoweb_professional_group' =>  array('required' => TRUE),
   				'field_edoweb_related_resource' =>  array('required' => TRUE),
   				'field_edoweb_data_origin' =>  array('required' => TRUE),
+ 		'field_edoweb_project_id'=> array(),
+ 		'field_edoweb_funding_program'=> array(),
+ 		'field_edoweb_assoc_publication'=> array(),
+ 		'field_edoweb_assoc_dataset'=> array(),
+ 		'field_edoweb_references'=> array(),
   		),
   );
 }
@@ -3067,6 +3121,13 @@ function _edoweb_field_instance_defaults($field_name) {
   	'field_edoweb_data_origin'=>  array(
       'label' => $t('Erhebungsform'),
     ),
+ 		'field_edoweb_title_language' => array(      'label' => $t('Sprache des Titels'),),
+ 		'field_edoweb_project_id'=> array(      'label' => $t('Projekt-ID'),),
+ 		'field_edoweb_funding_program'=> array(      'label' => $t('Förderprogramm'),),
+ 		'field_edoweb_assoc_publication'=> array(      'label' => $t('Zugehörige Textpublikation'),),
+ 		'field_edoweb_assoc_dataset'=> array(      'label' => $t('Zugehöriges Dataset'),),
+ 		'field_edoweb_references'=> array(      'label' => $t('Quelle'),),
+
   );
   return $defaults[$field_name];
 }
