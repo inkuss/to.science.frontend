@@ -1594,6 +1594,14 @@ function _edoweb_installed_fields() {
         'predicates' => array('regal:ddc'),
       ),
     ),
+    'field_edoweb_agrovoc' => array(
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+      'type'        => 'edoweb_ld_reference',
+      'settings'    => array(
+        'metadata_type' => 'descriptive',
+        'predicates' => array('regal:agrovoc'),
+      ),
+    ),
   );
 }
 
@@ -2683,6 +2691,7 @@ function _edoweb_installed_instances() {
   				'field_edoweb_subject' => array('required' => TRUE),
   				'field_edoweb_subject_chain' => array(),
       			'field_edoweb_ddc' => array(),
+			'field_edoweb_agrovoc' => array(),
   				'field_edoweb_tag' =>  array(),
   				'field_mab_710' => array('required' => TRUE),
   				'field_edoweb_abstract' =>  array('required' => TRUE),
@@ -3006,6 +3015,9 @@ function _edoweb_field_instance_defaults($field_name) {
     ),
     'field_edoweb_ddc' => array(
     		'label' => $t('Dewey'),
+    ),    
+    'field_edoweb_agrovoc' => array(
+    		'label' => $t('Agrovoc'),
     ),
     'field_edoweb_abstract' => array(
       'label' => $t('Abstract'),
