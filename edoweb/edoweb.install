@@ -108,15 +108,15 @@ function _edoweb_installed_fields() {
   		),
  		'field_edoweb_assoc_publication'=> array('cardinality' => 1,
       			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-  				'type'        => 'edoweb_ld_reference',
+  				'type'        => 'text',
   				'settings'    => array(
   					'metadata_type' => 'descriptive',
         			'predicates' => array('regal:associatedPublication'),
       			),
   		),
  		'field_edoweb_assoc_dataset'=> array('cardinality' => 1,
-      			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-  				'type'        => 'edoweb_ld_reference',
+     			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  				'type'        => 'text',
   				'settings'    => array(
   					'metadata_type' => 'descriptive',
         			'predicates' => array('regal:associatedDataset'),
@@ -124,10 +124,10 @@ function _edoweb_installed_fields() {
   		),
  		'field_edoweb_references'=> array('cardinality' => 1,
       			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-  				'type'        => 'edoweb_ld_reference',
+  				'type'        => 'text',
   				'settings'    => array(
   					'metadata_type' => 'descriptive',
-        			'predicates' => array('regal:references'),
+        			'predicates' => array('regal:reference'),
       			),
   		),
   		'field_edoweb_data_origin'=> array('cardinality' => 1,
@@ -258,6 +258,15 @@ function _edoweb_installed_fields() {
   						'predicates' => array('regal:nextVersion'),
   				),
   		),
+                'field_edoweb_usageManual' => array(
+                                'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+                                'type'        => 'text',
+                                'settings'    => array(
+                                                'metadata_type' => 'descriptive',
+                                                'predicates' => array('regal:usageManual'),
+                                ),
+                ),
+
   	  'field_edoweb_ht_with_link' => array(
   	  'cardinality' => FIELD_CARDINALITY_UNLIMITED,
       'type'        => 'edoweb_ld_reference',
@@ -1602,6 +1611,14 @@ function _edoweb_installed_fields() {
         'predicates' => array('regal:agrovoc'),
       ),
     ),
+    'field_edoweb_manual' => array(
+      'cardinality' => 1,
+      'type'        => 'text',
+      'settings'    => array(
+        'metadata_type' => 'descriptive',
+        'predicates' => array('regal:usageManual'),
+      ),
+    ),
   );
 }
 
@@ -2754,7 +2771,8 @@ function _edoweb_installed_instances() {
 	  'field_edoweb_recording_period' => array(),
 	  'field_edoweb_recording_location' => array(),
 	  'field_edoweb_recording_coord' => array(),
-	  'field_edoweb_previous_version' => array(),
+          'field_edoweb_manual'=> array(),
+ 	  'field_edoweb_previous_version' => array(),
 	  'field_edoweb_next_version' => array(), 
   				'field_edoweb_urn' => array(),
   				'field_edoweb_issn' => array(),
@@ -3004,6 +3022,9 @@ function _edoweb_field_instance_defaults($field_name) {
     'field_edoweb_description' => array(
       'label' => $t('Beschreibung'),
     ),
+    'field_edoweb_manual'=> array(
+      'label' => $t('Hinweise zur Nutzung'),
+    ),	 
     'field_edoweb_rpb_subject' => array(
       'label' => $t('RPB Erschließung'),
     ),
