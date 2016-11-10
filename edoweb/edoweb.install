@@ -258,15 +258,6 @@ function _edoweb_installed_fields() {
   						'predicates' => array('regal:nextVersion'),
   				),
   		),
-                'field_edoweb_usageManual' => array(
-                                'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-                                'type'        => 'text',
-                                'settings'    => array(
-                                                'metadata_type' => 'descriptive',
-                                                'predicates' => array('regal:usageManual'),
-                                ),
-                ),
-
   	  'field_edoweb_ht_with_link' => array(
   	  'cardinality' => FIELD_CARDINALITY_UNLIMITED,
       'type'        => 'edoweb_ld_reference',
