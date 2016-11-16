@@ -2225,7 +2225,7 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
     '#weight' => 100,
   );
 
-  if (_is_edoweb_entity($entity)) {
+//  if (_is_edoweb_entity($entity)) {
     $api = new EdowebAPIClient();
     $has_urn = field_get_items('edoweb_basic', $entity, 'field_edoweb_urn') ? TRUE : FALSE;
     if (!$has_urn) {
@@ -2237,14 +2237,14 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
       );
     }
     $has_doi = field_get_items('edoweb_basic', $entity, 'field_edoweb_doi') ? TRUE : FALSE;
-    if (!$has_doi) {
+//    if (!$has_doi) {
       $form['actions']['doi'] = array(
         '#type' => 'submit',
         '#value' => t('Add DOI'),
         '#submit' => array('edoweb_basic_admin_add_doi'),
         '#weight' => 50,
       );
-    }
+  //  }
     $form['actions']['index'] = array(
       '#type' => 'submit',
       '#value' => t('Index'),
@@ -2287,7 +2287,7 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
       $form['transformers']['transformers']['#options'][$transformer] = $api_link;
     }
 
-  }
+  //}
 
   _edoweb_build_breadcrumb($entity);
   return $form;
