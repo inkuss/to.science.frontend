@@ -112,7 +112,6 @@
     },
     
     t: function(string) {
-      console.log(string);
       if (string in translations) {
         return translations[string];
       } else {

@@ -66,6 +66,7 @@ function edoweb_init() {
       'site_frontpage' => variable_get('site_frontpage', '/'),
       'deepzoomServiceUrl' => variable_get('edoweb_deepzoom_url') ,
       'thumbyServiceUrl' => variable_get('edoweb_thumby_url'),
+      'zettelServiceUrl' => variable_get('edoweb_zettel_url'),	
     );
     drupal_add_js(array('edoweb' => $settings), 'setting');
     drupal_add_js(
@@ -1413,6 +1414,7 @@ function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array()
   // Available facets
   if (isset($result['facets'])) {
     // Add list of available facets
+    //drupal_set_message(var_dump($jsonld_property));
     foreach ($result['facets'] as $jsonld_property => $facet) {
       $content['filters']['facets'][$jsonld_property] = array(
         '#theme' => 'item_list',
@@ -1602,6 +1604,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
   $entity_type = 'edoweb_basic';
 //edoweb_update_7181();
   $wrapper = entity_metadata_wrapper('edoweb_basic', $entity);
+
   $attr_bundle = 'data-entity-bundle="' .  $entity->bundle_type . '"';
   $attr_rdf_typeof = 'typeof="' . implode(' ', edoweb_rdf_types($entity->bundle_type)) . '"';
   $attr_rdf_resource = isset($entity->remote_id)
@@ -1798,10 +1801,20 @@ function edoweb_basic_edit($entity, $view_mode = 'edit') {
   drupal_add_js(
     drupal_get_path('module', 'edoweb') . '/edoweb_edit.js'
   );
+  drupal_add_js(
+  		drupal_get_path('module', 'edoweb') . '/zettel.js'
+  		);
 
   global $base_url;
   $page_url = $base_url . '/' . current_path();
-
+  $api = new EdowebAPIClient();
+  drupal_add_js(array('baseUrl' => $base_url), 'setting');
+  drupal_add_js(array('rdf' => ""), 'setting');
+  $rdf= $api->getMetadata($entity);
+  drupal_add_js(array('rdf' => $rdf), 'setting');
+  drupal_add_js(array('actionPath' =>current_path()), 'setting');
+  
+  
   $postdata = file_get_contents("php://input");
   if ($postdata != '') {
     $rdf_model = new LibRDF_Model(new LibRDF_Storage());
@@ -1825,6 +1838,7 @@ function edoweb_basic_edit($entity, $view_mode = 'edit') {
     if ($entity_uri instanceof LibRDF_BlankNode) {
       $entity->remote_id = null;
     }
+    $entity->postData = $postdata;
     edoweb_basic_save($entity);
     drupal_add_http_header('X-Edoweb-Entity', $entity->remote_id);
     die($entity->remote_id);
@@ -2211,7 +2225,7 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
     '#weight' => 100,
   );
 
-  if (_is_edoweb_entity($entity)) {
+//  if (_is_edoweb_entity($entity)) {
     $api = new EdowebAPIClient();
     $has_urn = field_get_items('edoweb_basic', $entity, 'field_edoweb_urn') ? TRUE : FALSE;
     if (!$has_urn) {
@@ -2223,14 +2237,14 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
       );
     }
     $has_doi = field_get_items('edoweb_basic', $entity, 'field_edoweb_doi') ? TRUE : FALSE;
-    if (!$has_doi) {
+//    if (!$has_doi) {
       $form['actions']['doi'] = array(
         '#type' => 'submit',
         '#value' => t('Add DOI'),
         '#submit' => array('edoweb_basic_admin_add_doi'),
         '#weight' => 50,
       );
-    }
+  //  }
     $form['actions']['index'] = array(
       '#type' => 'submit',
       '#value' => t('Index'),
@@ -2273,7 +2287,7 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
       $form['transformers']['transformers']['#options'][$transformer] = $api_link;
     }
 
-  }
+  //}
 
   _edoweb_build_breadcrumb($entity);
   return $form;
@@ -2506,6 +2520,65 @@ function edoweb_basic_browse($jsonld_property) {
 
 }
 
+function edoweb_restricted_browse($inst_name, $jsonld_property = 'institution') {
+
+  $api = new EdowebApiClient();
+  $query = new EntityFieldQuery();
+  $query->addTag('elasticsearch');
+  $query->addMetaData('facet_size', 999);
+  $result = $query->execute();
+
+  if (!property_exists($result['facets'], $jsonld_property)) {
+    return drupal_not_found();
+  }
+
+  $is_ref = in_array($jsonld_property, array('creator', 'subject', 'institution', 'rdftype', 'medium'));
+  $is_user = ('createdBy' == $jsonld_property
+      || 'lastModifiedBy' == $jsonld_property);
+  $items = array();
+  foreach ($result['facets']->$jsonld_property->terms as $term) {
+
+    if( $term->term == $inst_name){
+
+    //drupal_set_message(var_dump($result['facets']->$jsonld_property));
+
+    $facet_entity_uri = $term->term;
+    $facet_entity_count = $term->count;
+    if ($is_ref) {
+      $facet_object = es_facet_object($facet_entity_uri);
+      $title = $facet_entity_uri;//$facet_object['prefLabel'];
+      $facet_entity_uri = $facet_entity_uri;//$facet_object['@id'];
+    } else if ($is_user) {
+      $title = _edoweb_user_name($facet_entity_uri);
+    } else {
+      $title = _edoweb_map_string("$facet_entity_uri");
+    }
+    $params = array();
+    $params['query'][0]['facets'][$jsonld_property][] = $facet_entity_uri;
+    $apply_facet_link = l(
+      $title, '/resource/',
+      array(
+        'query' => $params,
+        'attributes' => array(),
+      )
+    ) . " <span>($facet_entity_count)</span>";
+    $items[] = array(
+      'data' => $apply_facet_link,
+    );
+
+    };
+  }
+
+  return theme_item_list(array(
+    'items' => $items,
+    'title' => _edoweb_map_string($jsonld_property),
+    'type' => 'ul',
+    'attributes' => array('class' => array('listnav')),
+  ));
+
+}
+
+
 function es_facet_object($string) {
   $string = substr($string, 1, -1);
   $regex = '/(?<=\s|\A)([^\s=]+)=(.*?)(?=(?:\s[^\s=]+=|$))/';
@@ -2684,6 +2757,14 @@ function edoweb_block_info() {
     'weight' => '100',
   );
 
+  $blocks['edoweb_entity_list'] = array(
+    'info' => t('Edoweb Entity List'),
+    'status' => 1,
+    'region' => 'content',
+    'weight' => '100',
+  );
+
+
   return $blocks;
 }
 
@@ -2699,6 +2780,62 @@ function edoweb_block_list_alter(&$blocks) {
     }
   }
 }
+
+/**
+ * Implements hook_block_configure().
+ *
+ * This hook provides block configuration
+ */
+function edoweb_block_configure($delta ='') {
+  $form = array();
+  // The $delta parameter tells us which block is being requested.
+  switch ($delta) {
+    case 'edoweb_entity_list':
+      $tablename_value = 'Trefferliste';
+      if(variable_get('tablename')){
+        $tablename_value = variable_get('tablename');
+      }
+      $hide_facets_value = 1;
+      if(variable_get('hide_facets')== 0){
+        $hide_facets_value = 0;
+      }
+      $form['tablename'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Bennenung der Tabelle'),
+        '#default_value' => $tablename_value,
+        '#description' => "Hier kann der Name der Tabelle geändert werden",
+        //'#options' => drupal_map_assoc(array(2,3,4,5,6)),
+      );
+      $form['hide_facets'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Facetten verstecken'),
+        '#default_value' => $hide_facets_value,
+        '#description' => "Wenn aktiviert (default), werden die Filter innerhalb des Blocks ausgeblendet",
+        //'#options' => drupal_map_assoc(array(2,3,4,5,6)),
+      );
+    break;
+  }
+  return $form;
+}
+
+/**
+ * Implements hook_block_save().
+ *
+ * This hook saves a block configuration
+ */
+function edoweb_block_save($delta ='', $edit = array()) {
+  $block = array();
+  // The $delta parameter tells us which block is being requested.
+  switch ($delta) {
+    case 'edoweb_entity_list':
+      variable_set('tablename', $edit['tablename']);
+      variable_set('hide_facets', $edit['hide_facets']);
+      
+    break;
+  }
+  return $form;
+}
+
 
 /**
  * Implements hook_block_view().
@@ -2729,6 +2866,9 @@ function edoweb_block_view($delta = '') {
           drupal_get_path('module', 'edoweb') . '/edoweb_edit.js'
         );
         drupal_add_js(
+        		drupal_get_path('module', 'edoweb') . '/zettel.js'
+        );
+        drupal_add_js(
           drupal_get_path('module', 'edoweb') . '/edoweb_tree.js'
         );
         $top_level_parent = _edoweb_find_top_level_parent($entity);
@@ -2744,6 +2884,36 @@ function edoweb_block_view($delta = '') {
           ));
         }
       }
+      break;
+    case 'edoweb_entity_list':
+
+      $table_name = t('Liste der assoziierten Publikationen');
+      if(variable_get('tablename')) {
+        $table_name = variable_get('tablename');
+        }
+
+      //var_dump(variable_get('tablename'));
+      $entity  = menu_get_object();
+      $query = new EntityFieldQuery();
+      $query->entityCondition('bundle', array(
+      'monograph', 'journal', 'volume', 'issue', 'file', 'webpage', 'version', 'part', 'proceeding', 'researchData')); 
+      $query->addMetaData('term', $entity->title);
+      $active_facets = 'institution';
+      $query->addTag('elasticsearch');
+
+      $block['content'] = edoweb_basic_list_entities($query, array(), FALSE, NULL, TRUE, 'default'); 
+      if(variable_get('hide_facets')== 1) {
+        $block['content']['filters'] = null; 
+
+        drupal_add_css(
+          '.block fieldset.edoweb-entity-list {width: 100%;}',
+          array('type' => 'inline')
+        );
+
+        }
+
+      $block['content']['entity_list']['#title'] = $table_name; 
+      //var_dump($block);
       break;
   }
   return $block;
@@ -3392,7 +3562,7 @@ function edoweb_update_7179(){
 /**
  * Update all
  */
-function edoweb_update_7187(){
+function edoweb_update_7199(){
   _update_edoweb_installed_fields();
   _update_edoweb_installed_instances();
   _update_rdf_mapping();

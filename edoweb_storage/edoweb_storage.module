@@ -103,13 +103,26 @@ function edoweb_storage_configuration_form($form, &$form_state) {
     '#type' => 'textfield',
     '#default_value' => variable_get(
       'edoweb_thumby_url',
-      variable_get('edoweb_api_host') . '/thumby'
+      variable_get('edoweb_api_host') . '/tools/thumby'
     ),
     '#title' => t('Thumby URL'),
     '#description' => t('The full URL to a thumby thumbnailer service'),
     '#size' => 40,
     '#maxlength' => 120,
     '#required' => FALSE,
+  );
+  
+  $form['edoweb_zettel_url'] = array(
+  		'#type' => 'textfield',
+  		'#default_value' => variable_get(
+  				'edoweb_zettel_url',
+  				variable_get('edoweb_api_host') . '/tools/zettel'
+  				),
+  		'#title' => t('Zettel URL'),
+  		'#description' => t('The full URL to a zettel form service'),
+  		'#size' => 40,
+  		'#maxlength' => 120,
+  		'#required' => FALSE,
   );
 
  // Text field for deepviewer URL.
@@ -529,6 +542,20 @@ function _edoweb_storage_entity_serialize_rdf(
   }
 
   $wrapper = entity_metadata_wrapper(EDOWEB_ENTITY_TYPE, $entity);
+
+  if(!empty($entity->postData) && $entity->type == 'researchData'){
+	$rdfxml_parser = new LibRDF_Parser('rdfxml');
+        $rdf_model = new LibRDF_Model(new LibRDF_Storage());
+        $rdf_serializer = new LibRDF_Serializer('ntriples');
+        try {
+            $rdf_model->loadStatementsFromString($rdfxml_parser, 
+                    $entity->postData);
+            return $rdf_model->serializeStatements($rdf_serializer);
+        } catch (LibRDF_Error $e) {
+            drupal_set_message("Problems to serialize rdf " . $e);
+        }
+  }
+
   // Following elements contain predicate mappings
   foreach ($rdf_mapping as $field_name => $field_mapping) {
     $field_info = field_info_field($field_name);
