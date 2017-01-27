@@ -12,7 +12,7 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="128"
    height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
    id="svg2606"
    sodipodi:version="0.32"
    inkscape:version="0.48.0 r9654"
@@ -3360,7 +3360,7 @@
           </g>
           <use
              height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
              width="128"
              transform="matrix(0.7499999,0,0,0.7499999,-4.8749993,-2.7499996)"
              id="use3640"
@@ -3376,10 +3376,10 @@
              transform="matrix(0.3749999,0,0,0.3749999,29.562501,15.375001)"
              width="128"
              height="128"
-	viewBox="0 0 100 100" />
+	viewBox="0 0 128 128" />
           <use
              height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
              width="128"
              transform="matrix(0.4999999,0,0,0.4999999,12.750001,-12.999999)"
              id="use3650"
@@ -3389,7 +3389,7 @@
           <use
              style="filter:url(#filter3690)"
              height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
              width="128"
              transform="matrix(0.6249999,0,0,0.6249999,38.9375,6.1250003)"
              id="use3652"
@@ -3405,10 +3405,10 @@
              transform="matrix(-0.5416666,0,0,0.5416666,82.687487,38.875001)"
              width="128"
              height="128"
-	viewBox="0 0 100 100" />
+	viewBox="0 0 128 128" />
           <use
              height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
              width="128"
              transform="matrix(-0.3749999,0,0,0.3749999,60.437487,36.375001)"
              id="use3870"
@@ -3425,7 +3425,7 @@
              transform="matrix(-0.4999999,0,0,0.4999999,77.249987,8.000001)"
              width="128"
              height="128"
-	viewBox="0 0 100 100" />
+	viewBox="0 0 128 128" />
           <use
              x="0"
              y="0"
@@ -3434,7 +3434,7 @@
              transform="matrix(0.4999999,0,0,0.4999999,34.750001,-1.999999)"
              width="128"
              height="128"
-	viewBox="0 0 100 100" />
+	viewBox="0 0 128 128" />
         </g>
       </g>
       <g
@@ -4330,10 +4330,10 @@
              transform="matrix(0.7499999,0,0,0.7499999,-4.8749993,-2.7499996)"
              width="128"
              height="128"
-	viewBox="0 0 100 100" />
+	viewBox="0 0 128 128" />
           <use
              height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
              width="128"
              transform="matrix(0.3749999,0,0,0.3749999,29.562501,15.375001)"
              id="use11107"
@@ -4349,7 +4349,7 @@
              transform="matrix(0.4999999,0,0,0.4999999,12.750001,-12.999999)"
              width="128"
              height="128"
-	viewBox="0 0 100 100" />
+	viewBox="0 0 128 128" />
           <use
              x="0"
              y="0"
@@ -4358,11 +4358,11 @@
              transform="matrix(0.6249999,0,0,0.6249999,38.9375,6.1250003)"
              width="128"
              height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
              style="filter:url(#filter3690)" />
           <use
              height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
              width="128"
              transform="matrix(-0.5416666,0,0,0.5416666,82.687487,38.875001)"
              id="use11113"
@@ -4379,10 +4379,10 @@
              transform="matrix(-0.3749999,0,0,0.3749999,60.437487,36.375001)"
              width="128"
              height="128"
-	viewBox="0 0 100 100" />
+	viewBox="0 0 128 128" />
           <use
              height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
              width="128"
              transform="matrix(-0.4999999,0,0,0.4999999,77.249987,8.000001)"
              id="use11117"
@@ -4392,7 +4392,7 @@
              style="opacity:0.40807178;filter:url(#filter4038)" />
           <use
              height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
              width="128"
              transform="matrix(0.4999999,0,0,0.4999999,34.750001,-1.999999)"
              id="use11119"
@@ -4413,7 +4413,7 @@
        id="rect3915"
        width="128"
        height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
        x="0"
        y="0"
        rx="0"
@@ -6030,7 +6030,7 @@
         </g>
         <use
            height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
            width="128"
            transform="matrix(0.7499999,0,0,0.7499999,-4.8749993,-2.7499996)"
            id="use10557"
@@ -6046,10 +6046,10 @@
            transform="matrix(0.3749999,0,0,0.3749999,29.562501,15.375001)"
            width="128"
            height="128"
-	viewBox="0 0 100 100" />
+	viewBox="0 0 128 128" />
         <use
            height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
            width="128"
            transform="matrix(0.4999999,0,0,0.4999999,12.750001,-12.999999)"
            id="use10561"
@@ -6059,7 +6059,7 @@
         <use
            style="filter:url(#filter3690)"
            height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
            width="128"
            transform="matrix(0.6249999,0,0,0.6249999,38.9375,6.1250003)"
            id="use10563"
@@ -6075,10 +6075,10 @@
            transform="matrix(-0.5416666,0,0,0.5416666,82.687487,38.875001)"
            width="128"
            height="128"
-	viewBox="0 0 100 100" />
+	viewBox="0 0 128 128" />
         <use
            height="128"
-	viewBox="0 0 100 100"
+	viewBox="0 0 128 128"
            width="128"
            transform="matrix(-0.3749999,0,0,0.3749999,60.437487,36.375001)"
            id="use10567"
@@ -6095,7 +6095,7 @@
            transform="matrix(-0.4999999,0,0,0.4999999,77.249987,8.000001)"
            width="128"
            height="128"
-	viewBox="0 0 100 100" />
+	viewBox="0 0 128 128" />
         <use
            x="0"
            y="0"
@@ -6104,7 +6104,7 @@
            transform="matrix(0.4999999,0,0,0.4999999,34.750001,-1.999999)"
            width="128"
            height="128"
-	viewBox="0 0 100 100" />
+	viewBox="0 0 128 128" />
       </g>
     </g>
     <g
