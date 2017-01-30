@@ -965,7 +965,7 @@ function edoweb_basic_search_entities(
     $efq->addMetaData('term', $term);
   }
 
-  if (! (@$childlevel = $query['childlevel'])) {
+  if (! (@$childlevel = $query['childlevel']) && ! (@$fulltext = $query['fulltext']) ) {
     //FIXME: this overwrites person etc bundles!!!
     $efq->entityCondition('bundle', array('monograph', 'journal', 'webpage','proceeding','researchData'));
   }
