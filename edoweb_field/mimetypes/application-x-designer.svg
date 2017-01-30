@@ -12,7 +12,7 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="128"
    height="128"
-	viewBox="0 0 100 100"
+	viewBox="-8 -8 136 136"
    id="svg2606"
    sodipodi:version="0.32"
    inkscape:version="0.48.0 r9654"
@@ -3253,7 +3253,7 @@
          transform="translate(14.495266,0)"
          width="128"
          height="128"
-	viewBox="0 0 100 100" />
+	viewBox="-8 -8 136 136" />
       <use
          x="0"
          y="0"
@@ -3262,7 +3262,7 @@
          transform="matrix(-1,0,0,1,155,0)"
          width="128"
          height="128"
-	viewBox="0 0 100 100" />
+	viewBox="-8 -8 136 136" />
       <g
          transform="matrix(0.69025076,0,0,0.69034153,58.86323,16.79907)"
          id="g6120">
@@ -4099,7 +4099,7 @@
          inkscape:connector-curvature="0" />
       <use
          height="128"
-	viewBox="0 0 100 100"
+	viewBox="-8 -8 136 136"
          width="128"
          transform="translate(14.495266,0)"
          id="use10758"
@@ -4108,7 +4108,7 @@
          x="0" />
       <use
          height="128"
-	viewBox="0 0 100 100"
+	viewBox="-8 -8 136 136"
          width="128"
          transform="matrix(-1,0,0,1,155,0)"
          id="use10847"
