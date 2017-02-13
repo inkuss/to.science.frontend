@@ -860,6 +860,7 @@ function edoweb_basic_search_entities_form($form, &$form_state, $advanced, $sear
       'monograph' => t('Monograph'),
       'journal' => t('Journal'),
       'webpage' => t('Webpage'),
+      'article'=>t('Artikel'),	
     );
     $form['query'][$search_count]['type'] = array(
       '#type' => 'radios',
@@ -967,7 +968,7 @@ function edoweb_basic_search_entities(
 
   if (! (@$childlevel = $query['childlevel']) && ! (@$fulltext = $query['fulltext']) ) {
     //FIXME: this overwrites person etc bundles!!!
-    $efq->entityCondition('bundle', array('monograph', 'journal', 'webpage','proceeding','researchData'));
+    $efq->entityCondition('bundle', array('monograph', 'journal', 'webpage','proceeding','researchData','article'));
   }
 
   if (@$fulltext = $query['fulltext']) {
@@ -1966,6 +1967,7 @@ function edoweb_field_extra_fields() {
   $extra_fields['edoweb_basic']['volume']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['proceeding']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['researchData']['display'] = $display_elements;
+  $extra_fields['edoweb_basic']['article']['display'] = $display_elements;
 
   return $extra_fields;
 }
@@ -2904,7 +2906,7 @@ function edoweb_block_view($delta = '') {
         );
         $top_level_parent = _edoweb_find_top_level_parent($entity);
         if (_edoweb_is_editable_entity($top_level_parent) &&
-            in_array($top_level_parent->bundle_type, array('monograph', 'journal','proceeding','researchData'))) {
+            in_array($top_level_parent->bundle_type, array('monograph', 'journal','proceeding','researchData','article'))) {
           $api = new EdowebAPIClient();
           $subtree = _edoweb_build_tree($api->getTree($top_level_parent));
           $block['content'] = theme_item_list(array(
