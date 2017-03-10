@@ -70,7 +70,8 @@
 		$.blockUI(Drupal.edoweb.blockUIMessage);
 		$('button.edoweb.edit.action').hide();
 		var url = Drupal.settings.basePath + Drupal.settings.actionPath;
-		//var bundle = 'researchData';
+		
+		var bundle = postdata.formType;
 		$
 				.ajax({
 					type : 'POST',
@@ -132,13 +133,14 @@
 	function handleMessage(e) {
 		if (e.data.action == 'establishConnection') {
 			var topicId = e.data.topicId;
+			var bundle = e.data.formType;
 			var documentId = e.data.documentId;
 			var iframe = document.getElementById("iFrame");
 			var target = iframe.contentWindow || iframe;
 			var rdf = $('#rdfBox').text();
 			if (typeof rdf != "undefined") {
 				target.postMessage({
-					'queryParam' : 'id=katalog:'+bundle+'&format=xml&topicId='
+					'queryParam' : 'id='+bundle+'&format=xml&topicId='
 							+ topicId + '&documentId=' + documentId,
 					'message' : rdf,
 					'action'  : 'postDataToZettel'
