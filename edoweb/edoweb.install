@@ -2483,6 +2483,7 @@ function _edoweb_installed_instances() {
             ),
           ),
         ),
+      ),
       'field_edoweb_struct_parent' => array(
         'settings'    => array(
           'target_type' => 'edoweb_basic',
@@ -2515,7 +2516,6 @@ function _edoweb_installed_instances() {
       'field_edoweb_ht_with_link' => array(),
       'field_edoweb_identifier_ht' => array(),
       'field_edoweb_institution' => array(),
-      )
     ), 
     /*
      * Field instances proceeding resource bundle
