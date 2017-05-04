@@ -70,13 +70,13 @@
 		$.blockUI(Drupal.edoweb.blockUIMessage);
 		$('button.edoweb.edit.action').hide();
 		var url = Drupal.settings.basePath + Drupal.settings.actionPath;
-		
+
 		var bundle = postdata.formType;
 		$
 				.ajax({
 					type : 'POST',
 					url : url,
-					data : decodeURI(postdata),
+					data : postdata,
 					contentType : "text/xml;charset=utf-8",
 					success : function(data, textStatus, jqXHR) {
 						
