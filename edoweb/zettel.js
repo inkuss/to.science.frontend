@@ -45,7 +45,6 @@
 		}
 	}
 	function loadZettel(bundle, entity, context) {
-		console.log(bundle);
 		var rid = $(entity).attr("resource");
 		var url = Drupal.settings.edoweb.zettelServiceUrl + '/forms'
 				+ '?id=katalog:'+bundle + '&format=xml' + '&documentId=' + rid
@@ -131,7 +130,7 @@
 	}
 	
 	function handleMessage(e) {
-		if (e.data.action == 'establishConnection') {
+	   	if (e.data.action == 'establishConnection') {
 			var topicId = e.data.topicId;
 			var bundle = e.data.formType;
 			var documentId = e.data.documentId;
@@ -146,11 +145,18 @@
 					'action'  : 'postDataToZettel'
 				}, "*");
 			}
+		        target.postMessage({
+                               'message' : document.referrer,
+                               'action'  : 'sendReferrer'
+                        }, "*");
+
 		} else if (e.data.action == 'resize') {
 			var targetHeight = e.data.message;
 			jQuery('#iFrame').height(targetHeight);
 		} else if (e.data.action == 'postData') {
 			getMessage(decodeURI(e.data.message));
+		} else if (e.data.action == 'cancel') {
+		        window.location.href =e.data.message;
 		}
 	}
 
@@ -161,5 +167,4 @@
 	function isEmpty(el) {
 		return !$.trim(el.html());
 	}
-
 })(jQuery);
