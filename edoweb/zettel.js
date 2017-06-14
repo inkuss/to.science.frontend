@@ -145,10 +145,16 @@
 					'action'  : 'postDataToZettel'
 				}, "*");
 			}
+		        var url = document.referrer;
+		        if ( !url ){
+			    url= document.documentURI;
+			}
+			    
 		        target.postMessage({
-                               'message' : document.referrer,
+                               'message' : url,
                                'action'  : 'sendReferrer'
                         }, "*");
+		    console.log("Set cancel link to "+url+"!");
 
 		} else if (e.data.action == 'resize') {
 			var targetHeight = e.data.message;
@@ -156,7 +162,12 @@
 		} else if (e.data.action == 'postData') {
 			getMessage(decodeURI(e.data.message));
 		} else if (e.data.action == 'cancel') {
-		        window.location.href =e.data.message;
+		        var url =  e.data.message;
+		     if( url.match("edit$") != null){
+			window.location.href = document.documentURI.replace("/edit","");
+		     }else{
+		        window.location.href =  document.referrer;
+		     }
 		}
 	}
 
