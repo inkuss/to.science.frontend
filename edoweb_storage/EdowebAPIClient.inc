@@ -871,5 +871,11 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     return _edoweb_http_request($request_url, $http_options);
   }
 
+  public function getTitle($remote_id) {
+    $http_url = sprintf('%s/resource/%s/title',
+      $this->__edoweb_api_host,$remote_id);
+      $http_response = $this->_http_get($http_url, 'text/html');
+      return $http_response->data;
+  }
 }
 
