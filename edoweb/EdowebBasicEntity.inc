@@ -142,5 +142,9 @@ class EdowebBasicEntity extends Entity {
     return $title_values;
   }
 
-
+  public function pageTitle(){
+	$api = new EdowebAPIClient();
+  	$htmlString=$api->getTitle($this->remote_id);
+	return $htmlString;
+  }
 }

@@ -2992,6 +2992,7 @@ function edoweb_preprocess_html(&$vars) {
 function edoweb_preprocess_page(&$vars) {
   if ($entity = menu_get_object(EDOWEB_ENTITY_TYPE)) {
     $vars['title_suffix']['edoweb']['#markup'] = '<h2 class="title-suffix" id="page-title-suffix">' . $entity->subLabel() . '</h2>';
+    $vars['pageTitle']=$entity->pageTitle();
   }
 }
 
