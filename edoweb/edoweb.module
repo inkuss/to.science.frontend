@@ -1630,7 +1630,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
   
   			$userInfo = '<small>Letzte Änderung ';
   			$userInfo .= isset($entity->updated) ? _edoweb_format_date($entity->updated) : '';
-  			$userInfo .= ' durch ' . _edoweb_user_name($entity->mid) . ', erstellt: ';
+  			$userInfo .= '. Erstellt: ';
   			$userInfo .= isset($entity->created) ? _edoweb_format_date($entity->created) : '';
   			$userInfo .= ' durch ' .  _edoweb_user_name($entity->uid) . '</small>';
   	   
@@ -1718,7 +1718,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
       if (user_access('edit any edoweb_basic entity')) {
         $markup = '<small>Letzte Änderung ';
         $markup .= isset($entity->updated) ? _edoweb_format_date($entity->updated) : '';
-        $markup .= ' durch ' . _edoweb_user_name($entity->mid) . ', erstellt: ';
+        $markup .= '. Erstellt: ';
         $markup .= isset($entity->created) ? _edoweb_format_date($entity->created) : '';
         $markup .= ' durch ' .  _edoweb_user_name($entity->uid) . '</small>';
         $entity->content['_updated'] = array(
