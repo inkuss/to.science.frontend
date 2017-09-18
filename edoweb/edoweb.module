@@ -2046,6 +2046,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
   if (!$conf = $api->getCrawlerConfiguration($entity)) {
     $conf = array();
   }
+  console_log($conf); // loggt nach apache error_log
 
   $form['basic_entity'] = array(
     '#type' => 'value',
@@ -2101,6 +2102,27 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     '#required' => TRUE,
   );
 
+  $form['crawlerSelection'] = array(
+    '#type' => 'select',
+    '#title' => t('Crawler-Auswahl'),
+    '#options' => array(
+      'heritrix' => t('heritrix'),
+      'wpull' => t('wpull'),
+    ),
+    // '#default_value' => isset(@$conf['crawlerSelection']) ? @$conf['crawlerSelection'] : 'heritrix',
+    '#default_value' => @$conf['crawlerSelection'],
+    '#required' => FALSE,
+  );
+
+  if( @$conf['crawlerSelection'] == 'wpull' ) {
+    $form['urlExcluded'] = array(
+      '#type' => 'textfield',
+      '#title' => t('URL-Bereich ausschließen'),
+      '#default_value' => @$conf['urlExcluded'],
+      '#required' => FALSE,
+    );
+  }
+
   $form['save'] = array(
     '#type' => 'submit',
     '#name' => 'save',
@@ -2134,6 +2156,7 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
       . '-' . $form_state['values']['startDate']['day'];
   $conf['interval'] = $form_state['values']['interval'];
   $conf['robotsPolicy'] = $form_state['values']['robotsPolicy'];
+  $conf['crawlerSelection'] = $form_state['values']['crawlerSelection'];
 
   $api->setCrawlerConfiguration($entity, $conf);
   
