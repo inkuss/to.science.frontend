@@ -2046,6 +2046,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
   if (!$conf = $api->getCrawlerConfiguration($entity)) {
     $conf = array();
   }
+  // console_log('conf: '.$conf); // logs to apache error_log
 
   $form['basic_entity'] = array(
     '#type' => 'value',
@@ -2057,12 +2058,43 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     '#title' => t('URL'),
     '#default_value' => @$conf['url'],
     '#required' => TRUE,
+    '#weight' => 00,
   );
+
+  $form['domains'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Zusätzliche Domänen, die ebenfalls gecrawlt werden sollen'),
+    '#weight' => 10,
+  );
+
+  $form['domains']['domain00'] = array(
+    '#type' => 'textfield',
+    '#title' => t('1. zusätzliche Domäne'),
+    '#default_value' => @$conf['domains'][0],
+    '#required' => FALSE,
+  );
+  for($i = 1; $i < sizeof(@$conf['domains']); $i++) {
+    $form['domains'][sprintf('domain%02d', $i)] = array(
+      '#type' => 'textfield',
+      '#title' => t(sprintf('%d. zusätzliche Domäne', $i+1)),
+      '#default_value' => @$conf['domains'][$i],
+      '#required' => FALSE,
+    );
+  }
+  if( sizeof(@$conf['domains']) > 0 ) {
+    $form['domains'][sprintf('domain%02d', sizeof(@$conf['domains']))] = array(
+      '#type' => 'textfield',
+      '#title' => t('Weitere Domäne angeben'),
+      '#default_value' => '',
+      '#required' => FALSE,
+    );
+  }
 
   $form['active'] = array(
     '#type' => 'checkbox',
     '#title' => t('Active'),
     '#default_value' => @$conf['active'],
+    '#weight' => 20,
   );
 
   $form['startDate'] = array(
@@ -2072,6 +2104,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       ?  date_parse($conf['startDate'])
       : array(),
     '#required' => TRUE,
+    '#weight' => 30,
   );
 
   $form['interval'] = array(
@@ -2088,6 +2121,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     ),
     '#default_value' => @$conf['interval'],
     '#required' => TRUE,
+    '#weight' => 40,
   );
 
   $form['robotsPolicy'] = array(
@@ -2099,18 +2133,21 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     ),
     '#default_value' => @$conf['robotsPolicy'] == 'classic' ? 'obey' : @$conf['robotsPolicy'],
     '#required' => TRUE,
+    '#weight' => 50,
   );
 
   $form['save'] = array(
     '#type' => 'submit',
     '#name' => 'save',
     '#value' => t('Save'),
+    '#weight' => 100,
   );
 
   $form['crawl'] = array(
     '#type' => 'submit',
     '#name' => 'crawl',
     '#value' => t('Save & Crawl'),
+    '#weight' => 100,
   );
 
   _edoweb_build_breadcrumb($entity);
@@ -2128,6 +2165,14 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
 
   $conf = array();
   $conf['url'] = $form_state['values']['url'];
+  if( isset($form_state['values']['domain00']) && $form_state['values']['domain00'] != '') {
+    $conf['domains'] = array($form_state['values']['domain00']);
+  }
+  $i = 1;
+  while( isset($form_state['values'][sprintf('domain%02d',$i)]) && $form_state['values'][sprintf('domain%02d',$i)] != '') {
+    array_push($conf['domains'], $form_state['values'][sprintf('domain%02d',$i)]);
+    $i++;
+    }
   $conf['active'] = $form_state['values']['active'];
   $conf['startDate'] = $form_state['values']['startDate']['year']
       . '-' . $form_state['values']['startDate']['month']
