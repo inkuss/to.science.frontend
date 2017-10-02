@@ -2808,7 +2808,8 @@ function edoweb_rdf_namespaces() {
     'holding' => 'http://purl.org/ontology/holding#',
     'dbpedia' => 'http://dbpedia.org/ontology/',
     'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-    'rda' => 'http://rdaregistry.info/Elements/u/',
+      'rda' => 'http://rdaregistry.info/Elements/u/',
+      'rda-media' => 'http://rdaregistry.info/termList/RDAMediaType/',
   );
 }
 
