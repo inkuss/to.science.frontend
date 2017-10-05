@@ -2136,6 +2136,51 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     '#weight' => 50,
   );
 
+  $form['crawlerSelection'] = array(
+    '#type' => 'select',
+    '#title' => t('Crawler-Auswahl'),
+    '#options' => array(
+      'heritrix' => t('heritrix'),
+      'wpull' => t('wpull'),
+    ),
+    // '#default_value' => isset(@$conf['crawlerSelection']) ? @$conf['crawlerSelection'] : 'heritrix',
+    '#default_value' => @$conf['crawlerSelection'],
+    '#required' => FALSE,
+    '#weight' => 60,
+  );
+
+  if( @$conf['crawlerSelection'] == 'wpull' ) {
+
+    $form['urlsExcluded'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('URL-Bereiche, die ausgeschlossen werden sollen'),
+      '#weight' => 70,
+    );
+
+    $form['urlsExcluded']['urlExcluded00'] = array(
+      '#type' => 'textfield',
+      '#title' => t('1. auszuschließender Bereich'),
+      '#default_value' => @$conf['urlsExcluded'][0],
+      '#required' => FALSE,
+    );
+    for($i = 1; $i < sizeof(@$conf['urlsExcluded']); $i++) {
+      $form['urlsExcluded'][sprintf('urlExcluded%02d', $i)] = array(
+        '#type' => 'textfield',
+        '#title' => t(sprintf('%d. auszuschließender Bereich', $i+1)),
+        '#default_value' => @$conf['urlsExcluded'][$i],
+        '#required' => FALSE,
+      );
+    }
+    if( sizeof(@$conf['urlsExcluded']) > 0 ) {
+      $form['urlsExcluded'][sprintf('urlExcluded%02d', sizeof(@$conf['urlsExcluded']))] = array(
+        '#type' => 'textfield',
+        '#title' => t('Weitere Bereich ausschließen'),
+        '#default_value' => '',
+        '#required' => FALSE,
+      );
+    }
+  }
+
   $form['save'] = array(
     '#type' => 'submit',
     '#name' => 'save',
@@ -2179,6 +2224,17 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
       . '-' . $form_state['values']['startDate']['day'];
   $conf['interval'] = $form_state['values']['interval'];
   $conf['robotsPolicy'] = $form_state['values']['robotsPolicy'];
+  $conf['crawlerSelection'] = $form_state['values']['crawlerSelection'];
+  if( $conf['crawlerSelection'] == 'wpull' ) {
+    if( isset($form_state['values']['urlExcluded00']) && $form_state['values']['urlExcluded00'] != '') {
+      $conf['urlsExcluded'] = array($form_state['values']['urlExcluded00']);
+    }
+    $i = 1;
+    while( isset($form_state['values'][sprintf('urlExcluded%02d',$i)]) && $form_state['values'][sprintf('urlExcluded%02d',$i)] != '') {
+      array_push($conf['urlsExcluded'], $form_state['values'][sprintf('urlExcluded%02d',$i)]);
+      $i++;
+      }
+    }
 
   $api->setCrawlerConfiguration($entity, $conf);
   
