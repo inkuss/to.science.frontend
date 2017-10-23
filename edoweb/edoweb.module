@@ -894,7 +894,6 @@ function edoweb_basic_search_entities(
   $list_noterm = TRUE, $add_links = FALSE, $sortable = TRUE,
   $view_mode = 'default', $fulltext_option = false
 ) {
-drupal_set_message("Edoweb basic search entities");
   static $search_count = 0;
   if (array_key_exists('query', $_GET)
       && !empty($_GET['query'])
@@ -1843,7 +1842,7 @@ function edoweb_basic_edit($entity, $view_mode = 'edit') {
   $api = new EdowebAPIClient();
   drupal_add_js(array('baseUrl' => $base_url), 'setting');
   drupal_add_js(array('rdf' => ""), 'setting');
-  $rdf= $api->getMetadata($entity);
+ $rdf= $api->getMetadata($entity);
   drupal_add_js(array('rdf' => $rdf), 'setting');
   drupal_add_js(array('actionPath' =>current_path()), 'setting');
   
@@ -3034,7 +3033,7 @@ function edoweb_block_view($delta = '') {
       $query = new EntityFieldQuery();
       $query->entityCondition('bundle', array(
       'monograph', 'journal', 'volume', 'issue', 'file', 'webpage', 'version', 'part', 'proceeding', 'researchData')); 
-      $query->addMetaData('term', $entity->title);
+  //    $query->addMetaData('term', $entity->title);
       $active_facets = 'institution';
       $query->addTag('elasticsearch');
 

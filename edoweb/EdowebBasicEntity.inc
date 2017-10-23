@@ -90,6 +90,8 @@ class EdowebBasicEntity extends Entity {
         break;
     }
 
+    if(!isset($this->remote_id))
+        return "";
     return (empty($this->stringifyFields($label_fields) && isset($this->remote_id))
       ? _edoweb_expand_curie($this->remote_id)
       : implode(' / ', $this->stringifyFields($label_fields)));

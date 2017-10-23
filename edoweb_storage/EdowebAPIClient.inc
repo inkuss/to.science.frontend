@@ -108,14 +108,21 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     return json_decode($http_response->data, TRUE);
   }
   
-  public function getMetadata($entity) {
-  	$http_url = sprintf(
-  			'%s/resource/%s.rdf',
-  			$this->__edoweb_api_host,
-  			$entity->remote_id
-  			);
-  	$http_response = $this->_http_get($http_url, 'application/rdf+xml');
-  	return $http_response->data;
+  public function getMetadata($entity) { 
+      try{
+          if(!isset($entity->remote_id)){
+              return "";
+          }
+      	$http_url = sprintf(
+      			'%s/resource/%s.rdf',
+      			$this->__edoweb_api_host,
+      			$entity->remote_id
+      			);
+      	$http_response = $this->_http_get($http_url, 'application/rdf+xml');
+      	return $http_response->data;
+      }catch(Exception $e){
+          return "";
+      }
   }
 
   public function addURN($entity) {
@@ -521,7 +528,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     );
 
     $query = $this->_efq_to_es($efq, $page);
-    drupal_set_message($query);
+   
     $http_response = $this->_http_post(
       $http_url, $query, 'application/json'
     );
