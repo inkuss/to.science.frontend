@@ -2131,10 +2131,12 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       'ignore' => t('Ignore'),
       'obey' => t('Obey'),
     ),
-    '#default_value' => @$conf['robotsPolicy'] == 'classic' ? 'obey' : @$conf['robotsPolicy'],
+    '#default_value' => @$conf['robotsPolicy'] == null ? 'obey' : @$conf['robotsPolicy'] == 'classic' ? 'obey' : @$conf['robotsPolicy'],
     '#required' => TRUE,
     '#weight' => 50,
   );
+  console_log('issetRobotsPolicy='.(@$conf['robotsPolicy']!==null));
+  console_log('robotsPolicy='.@$conf['robotsPolicy']);
 
   $form['crawlerSelection'] = array(
     '#type' => 'select',
@@ -2143,11 +2145,14 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       'heritrix' => t('heritrix'),
       'wpull' => t('wpull'),
     ),
-    // '#default_value' => isset(@$conf['crawlerSelection']) ? @$conf['crawlerSelection'] : 'heritrix',
-    '#default_value' => @$conf['crawlerSelection'],
+    '#default_value' => @$conf['crawlerSelection'] == null ? 'heritrix' : @$conf['crawlerSelection'],
     '#required' => FALSE,
     '#weight' => 60,
   );
+  console_log('issetCrawlerSelection='.(@$conf['crawlerSelection']!==null));
+  console_log('crawlerSelection='.@$conf['crawlerSelection']);
+  console_log('issetDeepness='.(@$conf['deepness']!==null));
+  console_log('deepness='.@$conf['deepness']);
 
   if( @$conf['crawlerSelection'] == 'wpull' ) {
 
