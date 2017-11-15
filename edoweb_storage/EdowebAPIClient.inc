@@ -108,14 +108,21 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     return json_decode($http_response->data, TRUE);
   }
   
-  public function getMetadata($entity) {
-  	$http_url = sprintf(
-  			'%s/resource/%s.rdf',
-  			$this->__edoweb_api_host,
-  			$entity->remote_id
-  			);
-  	$http_response = $this->_http_get($http_url, 'application/rdf+xml');
-  	return $http_response->data;
+  public function getMetadata($entity) { 
+      try{
+          if(!isset($entity->remote_id)){
+              return "";
+          }
+      	$http_url = sprintf(
+      			'%s/resource/%s.rdf',
+      			$this->__edoweb_api_host,
+      			$entity->remote_id
+      			);
+      	$http_response = $this->_http_get($http_url, 'application/rdf+xml');
+      	return $http_response->data;
+      }catch(Exception $e){
+          return "";
+      }
   }
 
   public function addURN($entity) {
@@ -304,7 +311,9 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     }
 
     $results_per_page = variable_get('edoweb_storage_results_per_page', 10);
+
     pager_default_initialize($results['hits'], $results_per_page, $query_count);
+    
     $query_count++;
     return $results;
   }
@@ -517,6 +526,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     );
 
     $query = $this->_efq_to_es($efq, $page);
+   
     $http_response = $this->_http_post(
       $http_url, $query, 'application/json'
     );
@@ -542,7 +552,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     );
     $rdf_parser = new LibRDF_Parser('ntriples');
     $rdf_model = new LibRDF_Model(new LibRDF_Storage());
-
+ if(isset($hits))
     foreach ($hits->hits as $hit) {
       try {
         $rdf_ntriples = jsonld_to_rdf($hit->_source, $options);
@@ -633,6 +643,9 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
       $field_info = field_info_field($field_name);
       $json_ld_property = _field_name_to_jsonld_key($field_name);
       $field_value = $field_condition['value'];
+      if($json_ld_property == "contribution"){
+          $json_ld_property ="contribution.agent.prefLabel";
+      }
       if ($bool_op == 'and') {
         $query['query']['filtered']['filter']['bool']['must'][]['term'][$json_ld_property] = "$field_value";
       } else if ($bool_op == 'or') {
