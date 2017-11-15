@@ -514,8 +514,6 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
       ? variable_get('edoweb_api_namespace')
       : 'public_' . variable_get('edoweb_api_namespace');
 
-    $index .= '2';
-
     if (isset($efq->tags['fulltext'])) {
       $index .= ',fulltext_' . variable_get('edoweb_api_namespace');
     }
