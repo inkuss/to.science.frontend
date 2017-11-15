@@ -614,11 +614,10 @@ function edoweb_repository_configuration_form() {
     '#title' => t('Felder'),
     '#options' => array(
       'field_edoweb_creator' => t('Autor'),
-      'field_edoweb_contribution' => t('Beteiligung'),
       'field_edoweb_contributor' => t('Bearbeiter'),
       'field_edoweb_issued' => t('Erschienen'),
     ),
-    '#default_value' => variable_get('sub_title_fields', array('field_edoweb_contribution')),
+    '#default_value' => variable_get('sub_title_fields', array('field_edoweb_creator')),
   );
 
   $form['sub_title_config']['sub_title_field_separator'] = array(
@@ -3413,8 +3412,8 @@ function _edoweb_available_data_origin(){
 	);
 }
 function _full_title($label, $entity, $attributes = array()) {
-    $api = new EdowebAPIClient();
-    return $api->getTitle($entity->remote_id);
+  return '<h1 class="title">' . _get_edoweb_url($entity->label(), $entity, $attributes) . '</h1>'
+           . ($entity->subLabel() ? '<h2 class="title-suffix">' . $entity->subLabel() . '</h2>' : '');
 }
 
 function _compact_title($label, $entity, $attributes = array()) {
