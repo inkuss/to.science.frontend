@@ -2208,15 +2208,15 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
 
    // create an value array with non sequential integers
     # the values for the dropdown box
-	$form['type_options'] = array(
+	$form['time_options'] = array(
       '#type' => 'value',
       '#value' => array('0' => t('keine'),
                     '1' => t('1'),
-                    '2' => t('2')),
+                    '2' => t('2'),
                     '5' => t('5'),
-                    '10' => t('10')),
+                    '10' => t('10'),
                     '20' => t('20'),
-                    '60' => t('60')),
+                    '60' => t('60'),
                     '180' => t('180'),
                     '600' => t('600'),
                     ),
@@ -2249,7 +2249,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       ),
       '#default_value' => "keine",
       '#default_value' => @$conf['tries'] == null ? '0' : @$conf['tries'] == '0' ? '0' : @$conf['tries'],
-      '#weight' => 87,
+      '#weight' => 88,
       '#required' => FALSE,
     );
 
@@ -2259,7 +2259,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       '#options' => $form['time_options']['#value'],
       '#default_value' => "keine",
       '#default_value' => @$conf['waitRetry'] == null ? '0' : @$conf['waitRetry'] == '0' ? '0' : @$conf['waitRetry'],
-      '#weight' => 87,
+      '#weight' => 89,
       '#required' => FALSE,
     );
 
