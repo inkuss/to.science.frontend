@@ -2205,33 +2205,8 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       '#weight' => 80,
       '#required' => FALSE,
     );
-    
-  $form['limitCrawlSize'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Maximale Größe eines Crawls'),
-    '#attributes' => array('class' => array('container-inline')),
-    '#weight' => 85,
-  );
-  $form['limitCrawlSize']['maxCrawlSize'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Wert'),
-    '#default_value' => @$conf['maxCrawlSize'],
-    '#required' => FALSE,
-    '#size' => 4,
-  );
-  $form['limitCrawlSize']['quotaUnitSelection'] = array(
-    '#type' => 'select',
 
-    '#options' => array(
-      'KB' => t('Kilobyte'),
-      'MB' => t('Megabyte'),
-      'GB' => t('Gigabyte'),
-    ),
-    '#default_value' => @$conf['quotaUnitSelection'] == null ? 'Megabyte' : @$conf['quotaUnitSelection'],
-    '#required' => FALSE,
-  );
-
-    $form['wait'] = array(
+    $form['waitSecBtRequests'] = array(
       '#type' => 'select',
       '#title' => t('Sekunden zwischen zwei Anfragen an Server'),
       '#options' => array(
@@ -2245,7 +2220,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
         '120',
       ),
       '#default_value' => "keine",
-      '#default_value' => @$conf['wait'] == null ? '0' : @$conf['wait'] == '0' ? '0' : @$conf['wait'],
+      '#default_value' => @$conf['waitSecBtRequests'] == null ? '0' : @$conf['waitSecBtRequests'] == '0' ? '0' : @$conf['waitSecBtRequests'],
       '#weight' => 87,
       '#required' => FALSE,
     );
@@ -2287,6 +2262,29 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       '#required' => FALSE,
     );
 
+    $form['limitCrawlSize'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Maximale Größe eines Crawls'),
+      '#attributes' => array('class' => array('container-inline')),
+      '#weight' => 85,
+    );
+    $form['limitCrawlSize']['maxCrawlSize'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Wert'),
+      '#default_value' => @$conf['maxCrawlSize'],
+      '#required' => FALSE,
+      '#size' => 4,
+    );
+    $form['limitCrawlSize']['quotaUnitSelection'] = array(
+      '#type' => 'select',
+      '#options' => array(
+      'KB' => t('Kilobyte'),
+      'MB' => t('Megabyte'),
+      'GB' => t('Gigabyte'),
+      ),
+    '#default_value' => @$conf['quotaUnitSelection'] == null ? 'Megabyte' : @$conf['quotaUnitSelection'],
+    '#required' => FALSE,
+    );
 
 
   }
@@ -2347,7 +2345,7 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
     $conf['deepness'] = $form_state['values']['deepness'];
     $conf['maxCrawlSize'] = $form_state['values']['maxCrawlSize'];
     $conf['quotaUnitSelection'] = $form_state['values']['quotaUnitSelection'];
-    $conf['wait'] = $form_state['values']['wait'];
+    $conf['waitSecBtRequests'] = $form_state['values']['waitSecBtRequests'];
     $conf['tries'] = $form_state['values']['tries'];
     $conf['waitRetry'] = $form_state['values']['waitRetry'];
     }
