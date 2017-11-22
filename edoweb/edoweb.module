@@ -2206,19 +2206,26 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       '#required' => FALSE,
     );
 
+   // create an value array with non sequential integers
+    # the values for the dropdown box
+	$form['type_options'] = array(
+      '#type' => 'value',
+      '#value' => array('0' => t('keine'),
+                    '1' => t('1'),
+                    '2' => t('2')),
+                    '5' => t('5'),
+                    '10' => t('10')),
+                    '20' => t('20'),
+                    '60' => t('60')),
+                    '180' => t('180'),
+                    '600' => t('600'),
+                    ),
+     );
+
     $form['waitSecBtRequests'] = array(
       '#type' => 'select',
       '#title' => t('Sekunden zwischen zwei Anfragen an Server'),
-      '#options' => array(
-        '0' => t('keine'),
-        '1',
-        '2',
-        '5',
-        '10',
-        '20',
-        '60',
-        '120',
-      ),
+      '#options' => $form['time_options']['#value'],
       '#default_value' => "keine",
       '#default_value' => @$conf['waitSecBtRequests'] == null ? '0' : @$conf['waitSecBtRequests'] == '0' ? '0' : @$conf['waitSecBtRequests'],
       '#weight' => 87,
@@ -2235,7 +2242,10 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
         '3',
         '4',
         '5',
-        '10',
+        '6',
+        '7',
+        '8',
+        '9',
       ),
       '#default_value' => "keine",
       '#default_value' => @$conf['tries'] == null ? '0' : @$conf['tries'] == '0' ? '0' : @$conf['tries'],
@@ -2246,16 +2256,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     $form['waitRetry'] = array(
       '#type' => 'select',
       '#title' => t('Pause zwischen neuen Versuchen (Sekunden)'),
-      '#options' => array(
-        '0' => t('keine'),
-        '1',
-        '2',
-        '5',
-        '10',
-        '20',
-        '60',
-        '120',
-      ),
+      '#options' => $form['time_options']['#value'],
       '#default_value' => "keine",
       '#default_value' => @$conf['waitRetry'] == null ? '0' : @$conf['waitRetry'] == '0' ? '0' : @$conf['waitRetry'],
       '#weight' => 87,
@@ -2266,7 +2267,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       '#type' => 'fieldset',
       '#title' => t('Maximale Größe eines Crawls'),
       '#attributes' => array('class' => array('container-inline')),
-      '#weight' => 85,
+      '#weight' => 95,
     );
     $form['limitCrawlSize']['maxCrawlSize'] = array(
       '#type' => 'textfield',
