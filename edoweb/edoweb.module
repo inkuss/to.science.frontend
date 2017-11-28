@@ -2205,32 +2205,89 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
       '#weight' => 80,
       '#required' => FALSE,
     );
-    
-  
-  $form['limitCrawlSize'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Maximale Größe eines Crawls'),
-    '#attributes' => array('class' => array('container-inline')),
-    '#weight' => 85,
-  );
-  $form['limitCrawlSize']['maxCrawlSize'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Wert'),
-    '#default_value' => @$conf['maxCrawlSize'],
-    '#required' => FALSE,
-    '#size' => 4,
-  );
-  $form['limitCrawlSize']['quotaUnitSelection'] = array(
-    '#type' => 'select',
 
-    '#options' => array(
+   // create an value array with non sequential integers
+    # the values for the dropdown box
+	$form['time_options'] = array(
+      '#type' => 'value',
+      '#value' => array('0' => t('keine'),
+                    '1' => t('1'),
+                    '2' => t('2'),
+                    '5' => t('5'),
+                    '10' => t('10'),
+                    '20' => t('20'),
+                    '60' => t('60'),
+                    '180' => t('180'),
+                    '600' => t('600'),
+                    ),
+     );
+
+    $form['waitSecBtRequests'] = array(
+      '#type' => 'select',
+      '#title' => t('Sekunden zwischen zwei Anfragen an Server'),
+      '#options' => $form['time_options']['#value'],
+      '#default_value' => "keine",
+      '#default_value' => @$conf['waitSecBtRequests'] == null ? '0' : @$conf['waitSecBtRequests'] == '0' ? '0' : @$conf['waitSecBtRequests'],
+      '#weight' => 87,
+      '#required' => FALSE,
+    );
+
+    $form['tries'] = array(
+      '#type' => 'select',
+      '#title' => t('Anzahl der Versuche bei Serverfehlern'),
+      '#options' => array(
+        '0' => t('keine'),
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9',
+      ),
+      '#default_value' => "keine",
+      '#default_value' => @$conf['tries'] == null ? '0' : @$conf['tries'] == '0' ? '0' : @$conf['tries'],
+      '#weight' => 88,
+      '#required' => FALSE,
+    );
+
+    $form['waitRetry'] = array(
+      '#type' => 'select',
+      '#title' => t('Pause zwischen neuen Versuchen (Sekunden)'),
+      '#options' => $form['time_options']['#value'],
+      '#default_value' => "keine",
+      '#default_value' => @$conf['waitRetry'] == null ? '0' : @$conf['waitRetry'] == '0' ? '0' : @$conf['waitRetry'],
+      '#weight' => 89,
+      '#required' => FALSE,
+    );
+
+    $form['limitCrawlSize'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Maximale Größe eines Crawls'),
+      '#attributes' => array('class' => array('container-inline')),
+      '#weight' => 95,
+    );
+    $form['limitCrawlSize']['maxCrawlSize'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Wert'),
+      '#default_value' => @$conf['maxCrawlSize'],
+      '#required' => FALSE,
+      '#size' => 4,
+    );
+    $form['limitCrawlSize']['quotaUnitSelection'] = array(
+      '#type' => 'select',
+      '#options' => array(
       'KB' => t('Kilobyte'),
       'MB' => t('Megabyte'),
       'GB' => t('Gigabyte'),
-    ),
+      ),
     '#default_value' => @$conf['quotaUnitSelection'] == null ? 'Megabyte' : @$conf['quotaUnitSelection'],
     '#required' => FALSE,
-  );
+    );
+
+
   }
 
   $form['save'] = array(
@@ -2285,10 +2342,13 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
     while( isset($form_state['values'][sprintf('urlExcluded%02d',$i)]) && $form_state['values'][sprintf('urlExcluded%02d',$i)] != '') {
       array_push($conf['urlsExcluded'], $form_state['values'][sprintf('urlExcluded%02d',$i)]);
       $i++;
-      }
+    }
     $conf['deepness'] = $form_state['values']['deepness'];
     $conf['maxCrawlSize'] = $form_state['values']['maxCrawlSize'];
     $conf['quotaUnitSelection'] = $form_state['values']['quotaUnitSelection'];
+    $conf['waitSecBtRequests'] = $form_state['values']['waitSecBtRequests'];
+    $conf['tries'] = $form_state['values']['tries'];
+    $conf['waitRetry'] = $form_state['values']['waitRetry'];
     }
 
   $api->setCrawlerConfiguration($entity, $conf);
