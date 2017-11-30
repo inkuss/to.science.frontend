@@ -2184,6 +2184,21 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
         '#required' => FALSE,
       );
     }
+
+  $form['agentIdSelection'] = array(
+    '#type' => 'select',
+    '#title' => t('Auswahl der Browser-ID'),
+    '#options' => array(
+      'Undefined' => t('Standard - Nicht spezifiziert'),
+      'Edge' => t('Microsoft Edge und IE'),
+      'IE' => t('Microsoft IE 11'),
+      'Firefox' => t('Mozilla Firefox'),
+      'Safari' => t('Apple Safari'),
+    ),
+    '#default_value' => @$conf['agentIdSelection'] == null ? 'Undefined' : @$conf['agentIdSelection'],
+    '#required' => FALSE,
+    '#weight' => 65,
+  );
     
     $form['deepness'] = array(
       '#type' => 'select',
