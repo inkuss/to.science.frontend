@@ -2361,6 +2361,7 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
     $conf['deepness'] = $form_state['values']['deepness'];
     $conf['maxCrawlSize'] = $form_state['values']['maxCrawlSize'];
     $conf['quotaUnitSelection'] = $form_state['values']['quotaUnitSelection'];
+    $conf['agentIdSelection'] = $form_state['values']['agentIdSelection'];
     $conf['waitSecBtRequests'] = $form_state['values']['waitSecBtRequests'];
     $conf['tries'] = $form_state['values']['tries'];
     $conf['waitRetry'] = $form_state['values']['waitRetry'];
