@@ -1668,7 +1668,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
   else {
   	$entity->content = array(
   			'#prefix' => "<div class=\"edoweb entity $view_mode\" $attr_bundle $attr_rdf_resource $attr_rdf_typeof>"
-  			. '<div class="compact-header">' . _full_title($entity->label(), $entity) . '</div>',
+  			. '<div class="compact-header">' . _full_title($entity->label(), $entity) . '&nbsp;<span><img src="/public/images/icon_lastwagen.jpeg" title="de Sick is umjetrocke!" /></span>' . '</div>',
   			'#suffix' => "</div>",
   	);
   }
