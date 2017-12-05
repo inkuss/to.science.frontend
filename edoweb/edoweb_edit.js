@@ -62,7 +62,8 @@
         width: '80%'
       });
 
-      var additional_fields = $('<select class="field-selector"><option>Feld hinzufügen</option></select>');
+      // as additional_fields is used to control various functions, I can only provide a hack to prevent it from being displayed 
+      var additional_fields = $('<select class="field-selector" style="display: none;"><option>Feld hinzufügen</option></select>');
       var ops = {
         '-': function(table) {
           table.find('tbody > tr').each(function() {
@@ -161,7 +162,8 @@
           );
           additional_fields.after(template_select);
           var template_button = $('<button class="edoweb edit action" id="save-entity-template">Als Satzschablone Speichern</button>').bind('click', {entity: entity, bundle: bundle}, saveEntity);
-          submit_button.after(template_button);
+          // hack to remove Als Satzschablone Speichern Button
+          //submit_button.after(template_button);
         }
 
           var import_button = $('<button style="display: block; margin-bottom: 1em;" class="edoweb edit action">Titeldaten importieren</button>').bind('click', function() {
