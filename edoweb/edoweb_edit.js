@@ -82,7 +82,7 @@
         var bundle = $(this).attr('data-entity-bundle');
         var entity = $(this);
         entity.css('margin-bottom', '2em');
-        /* additional_fields.change(function() {
+        additional_fields.change(function() {
           var instance = Drupal.settings.edoweb.fields[bundle][$(this).val()].instance;
           var field = createField(instance);
           if(bundle=="researchData" || bundle=="article"){
@@ -95,7 +95,7 @@
           if ($(this).find('option').length == 1) {
             $(this).remove();
           }
-        }); */
+        });
         
         var sortedFields = [];
         $.each(Drupal.settings.edoweb.fields[bundle], function(index, value) {
@@ -119,12 +119,12 @@
                      instance['settings']['metadata_type'] == 'descriptive')
           {
             var option = $('<option />').text(instance['label']).val(index);
-            // additional_fields.append(option);
+            additional_fields.append(option);
           }
         });
-        /* if (additional_fields.find('option').length > 1) {
+        if (additional_fields.find('option').length > 1) {
           entity.before(additional_fields);
-        } */
+        }
 
         var submit_button = $('<button class="edoweb edit action" id="save-entity">Speichern</button>').bind('click', {entity: entity, bundle: bundle}, saveEntity);
         entity.after(submit_button);
@@ -159,7 +159,7 @@
               template_select.find('option').first().text("Satzschablone laden");
             }
           );
-          // additional_fields.after(template_select);
+          additional_fields.after(template_select);
           var template_button = $('<button class="edoweb edit action" id="save-entity-template">Als Satzschablone Speichern</button>').bind('click', {entity: entity, bundle: bundle}, saveEntity);
           submit_button.after(template_button);
         }
@@ -199,7 +199,7 @@
             modal_overlay.dialog('open');
             return false;
           });
-          // additional_fields.before(import_button);
+          additional_fields.before(import_button);
         
         if(bundle=='researchData' || bundle =='article'){
         	activateFields(entity.find('.field'), bundle, context);
@@ -325,9 +325,9 @@
                 $(this).remove();
               } else if (! instance['required'] ) {
                 $(this).closest('div.field').remove();
-                /* additional_fields.append(
+                additional_fields.append(
                   $('<option />').text(instance['label']).val(instance['field_name'])
-                ); */
+                );
               }
               return false;
             }
@@ -464,9 +464,9 @@
                       );
                       if (!confirmed) return false;
                       $(this).closest('div.field').remove();
-                      /* additional_fields.append(
+                      additional_fields.append(
                         $('<option />').text(instance['label']).val(instance['field_name'])
-                      ); */
+                      );
                       return false;
                     }).css('float', 'right').css('margin-right', '0.3em');
                   field.find('.field-label').append(add_button);
@@ -493,9 +493,9 @@
                       );
                       if (!confirmed) return false;
                       $(this).closest('div.field').remove();
-                      /* additional_fields.append(
+                      additional_fields.append(
                         $('<option />').text(instance['label']).val(instance['field_name'])
-                      ); */
+                      );
                       return false;
                     }).css('float', 'right').css('margin-right', '0.3em');
                   field.find('.field-label').append(add_button);
