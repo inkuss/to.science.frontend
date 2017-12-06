@@ -2184,6 +2184,21 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
         '#required' => FALSE,
       );
     }
+
+  $form['agentIdSelection'] = array(
+    '#type' => 'select',
+    '#title' => t('Auswahl der Browser-ID'),
+    '#options' => array(
+      'Undefined' => t('Standard - Nicht spezifiziert'),
+      'Edge' => t('Microsoft Edge und IE'),
+      'IE' => t('Microsoft IE 11'),
+      'Firefox' => t('Mozilla Firefox'),
+      'Safari' => t('Apple Safari'),
+    ),
+    '#default_value' => @$conf['agentIdSelection'] == null ? 'Undefined' : @$conf['agentIdSelection'],
+    '#required' => FALSE,
+    '#weight' => 65,
+  );
     
     $form['deepness'] = array(
       '#type' => 'select',
@@ -2343,12 +2358,22 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
       array_push($conf['urlsExcluded'], $form_state['values'][sprintf('urlExcluded%02d',$i)]);
       $i++;
     }
-    $conf['deepness'] = $form_state['values']['deepness'];
-    $conf['maxCrawlSize'] = $form_state['values']['maxCrawlSize'];
-    $conf['quotaUnitSelection'] = $form_state['values']['quotaUnitSelection'];
-    $conf['waitSecBtRequests'] = $form_state['values']['waitSecBtRequests'];
-    $conf['tries'] = $form_state['values']['tries'];
-    $conf['waitRetry'] = $form_state['values']['waitRetry'];
+    if( isset($form_state['values']['deepness']) && $form_state['values']['deepness'] != '' )
+      { $conf['deepness'] = $form_state['values']['deepness']; }
+    if( isset($form_state['values']['maxCrawlSize']) && $form_state['values']['maxCrawlSize'] != '' )
+      { $conf['maxCrawlSize'] = $form_state['values']['maxCrawlSize']; }
+    if( isset($form_state['values']['quotaUnitSelection']) && $form_state['values']['quotaUnitSelection'] != '' )
+      { $conf['quotaUnitSelection'] = $form_state['values']['quotaUnitSelection']; }
+    if( isset($form_state['values']['agentIdSelection']) && $form_state['values']['agentIdSelection'] != '' )
+      { $conf['agentIdSelection'] = $form_state['values']['agentIdSelection']; }
+    if( isset($form_state['values']['waitSecBtRequests']) && $form_state['values']['waitSecBtRequests'] != '' )
+      { $conf['waitSecBtRequests'] = $form_state['values']['waitSecBtRequests']; }
+    if( isset($form_state['values']['tries']) && $form_state['values']['tries'] != '' )
+      { $conf['tries'] = $form_state['values']['tries']; }
+      else $conf['tries'] = '5';
+    if( isset($form_state['values']['waitRetry']) && $form_state['values']['waitRetry'] != '' )
+      { $conf['waitRetry'] = $form_state['values']['waitRetry']; }
+      else $conf['waitRetry'] = '20';
     }
 
   $api->setCrawlerConfiguration($entity, $conf);
