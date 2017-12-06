@@ -2066,34 +2066,47 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     '#value' => $entity,
   );
 
-  if( @$conf['invalidUrl'] == true && @$conf['urlNew'] == null ) {
-    $url_title = t('URL <span class="octicon red octicon-alert" title="Ungültige URL oder Website unbekannt verzogen !"></span>');
-  } else {
-    $url_title = t('URL');
-  }
   $form['url'] = array(
     '#type' => 'textfield',
-    '#title' => $url_title,
     '#default_value' => @$conf['url'],
-    '#required' => TRUE,
     '#weight' => 00,
   );
-
-  if( @$conf['invalidUrl'] == true && @$conf['urlNew'] != null ) {
+  if( @$conf['invalidUrl'] == true ) {
+    $form['url']['#title'] = t('URL <span class="octicon octicon-alert" title="Ungültige URL oder Website ist umgezogen !"></span>');
+    $form['url']['#attributes'] = array('readonly' => 'readonly');
+    $form['url']['#required'] = FALSE;
     $form['urlNew'] = array(
       '#type' => 'textfield',
-      '#title' => t('neue URL <span class="octicon red octicon-alert" title="Website ist umgezogen ! Bitte URL bestätigen !"></span>'),
-      '#default_value' => @$conf['urlNew'],
-      '#required' => FALSE,
+      '#title' => t('neue URL <span class="octicon red octicon-alert" title="Bitte neue URL bestätigen, ggfs. editieren !"></span>'),
+      '#default_value' => @$conf['urlNew'] == null ? '' : @$conf['urlNew'],
+      '#required' => TRUE,
       '#weight' => 02,
     );
-    $form['urlUebernehmen'] = array(
+    $form['confirmNewUrl'] = array(
       '#type' => 'submit',
-      '#name' => 'urlUebernehmen',
+      '#name' => 'confirmNewUrl',
       '#value' => t('Neue URL bestätigen'),
       '#weight' => 04,
     );
+  } else {
+    $form['url']['#title'] = t('URL');
+    $form['url']['#required'] = TRUE;
   }
+
+  $form['httpResponseCode'] = array(
+    '#type' => 'hidden',
+    '#value' => @$conf['httpResponseCode'],
+  );
+
+  $form['invalidUrl'] = array(
+    '#type' => 'hidden',
+    '#value' => @$conf['invalidUrl'] == null ? false : @$conf['invalidUrl'],
+  );
+
+  $form['urlHist'] = array(
+    '#type' => 'hidden',
+    '#value' => @$conf['urlHist'],
+  );
 
   $form['domains'] = array(
     '#type' => 'fieldset',
@@ -2353,6 +2366,12 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
 
   $conf = array();
   $conf['url'] = $form_state['values']['url'];
+  $conf['httpResponseCode'] = $form_state['values']['httpResponseCode'];
+  $conf['invalidUrl'] = $form_state['values']['invalidUrl'];
+  if( $conf['invalidUrl'] == true ) {
+    $conf['urlNew'] = $form_state['values']['urlNew'];
+  }
+  $conf['urlHist'] = $form_state['values']['urlHist'];
   if( isset($form_state['values']['domain00']) && $form_state['values']['domain00'] != '') {
     $conf['domains'] = array($form_state['values']['domain00']);
   }
@@ -2393,6 +2412,9 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
     $form_state['redirect'] = $uri['path'] . '/status';
   }
 
+  if ('confirmNewUrl' == $form_state['triggering_element']['#name']) {
+    $api->confirmNewUrl($entity);
+  }
 }
 
 /**
@@ -3375,6 +3397,7 @@ function _edoweb_http_request($request_url, $http_options) {
         $code = $http_response->code;
       } else {
         $data = json_decode($http_response->data);
+        // drupal_set_message("http_response->data: " . $http_response->data, 'debug');
         $message = $data->text;
         $code = $data->code;
       }
