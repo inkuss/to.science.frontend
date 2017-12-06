@@ -1666,9 +1666,22 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
   
   }
   else {
+	$prefix = "<div class=\"edoweb entity $view_mode\" $attr_bundle $attr_rdf_resource $attr_rdf_typeof>"
+  			. '<div class="compact-header">' . _full_title($entity->label(), $entity);
+ 	$api = new EdowebAPIClient();
+	if (!$conf = $api->getCrawlerConfiguration($entity)) {
+		$conf = array();
+	}
+	if( @$conf['invalidUrl'] != null && @$conf['invalidUrl'] == true ) {
+		if( @$conf['urlNew'] != null ) {
+			$prefix .=  '&nbsp;<span><img src="/public/images/icon_lastwagen.jpeg" title="de Sick is umjetrocke noh ' . @$conf['urlNew'] . ' (Bitte bestätigen!)" /></span>';
+		} else {
+			$prefix .=  '&nbsp;<span><img src="/public/images/icon_lastwagen.jpeg" title="de Sick is umjetrocke !" /></span>&nbsp;<span class="octicon octicon-alert" title="Website unbekannt verzogen !"></span>';
+		}
+	}
+	$prefix .= '</div>';
   	$entity->content = array(
-  			'#prefix' => "<div class=\"edoweb entity $view_mode\" $attr_bundle $attr_rdf_resource $attr_rdf_typeof>"
-  			. '<div class="compact-header">' . _full_title($entity->label(), $entity) . '&nbsp;<span><img src="/public/images/icon_lastwagen.jpeg" title="de Sick is umjetrocke!" /></span>' . '</div>',
+  			'#prefix' => $prefix,
   			'#suffix' => "</div>",
   	);
   }
