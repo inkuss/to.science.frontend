@@ -21,6 +21,7 @@
 
   Drupal.behaviors.edoweb_edit = {
     attach: function (context, settings) {
+ 
       $('input#edit-delete', context).bind('click', function() {
         var confirmed = confirm('Möchten Sie den Eintrag unwideruflich löschen?');
         if (confirmed) {
@@ -109,12 +110,24 @@
  				  }
  			  );	 
         
+
+        var submit_button = null;
+        var hbzId = null;
+        submit_button = $('<button class="edoweb edit action" id="save-entity">Speichern</button>').bind('click', {entity: entity, bundle: bundle}, saveEntity);
+        submit_button.hide();
         $.each(sortedFields, function(index, instance) {
           var field_class = getFieldClassName(instance);
           var existing_items = entity.find('.' + field_class);
+
           if (! existing_items.length && (instance['required'] || instance['settings']['default'])) {
             var field = createField(instance);
-            entity.find('.content').append(field);
+            var htnumber = entity.find('.catalogLink a').html();
+            hbzId = entity.find('.parallelEdition a').html();
+            if (! htnumber || htnumber == null){
+               entity.find('.content').append(field);
+               submit_button.show();
+            }
+
           } else if (! existing_items.length &&
                      ! instance['settings']['read_only'] &&
                      instance['settings']['metadata_type'] == 'descriptive')
@@ -127,7 +140,6 @@
           entity.before(additional_fields);
         }
 
-        var submit_button = $('<button class="edoweb edit action" id="save-entity">Speichern</button>').bind('click', {entity: entity, bundle: bundle}, saveEntity);
         entity.after(submit_button);
 
         if (Drupal.settings.edoweb.primary_bundles.indexOf(entity.attr('data-entity-bundle')) != -1) {
@@ -143,7 +155,7 @@
               if(bundle=="researchData" || bundle=='article'){
              	 Drupal.edoweb.Drupal.zettel.useZettel(bundle,entity,context); 
                }else{
-                   activateFields(entity_content.find('.field'), bundle, context);
+                  activateFields(entity_content.find('.field'), bundle, context);
                }
               entity.find('.content').replaceWith(entity_content);
              $('#page-title', context).text(page_title);
@@ -158,6 +170,7 @@
                 $('<option />').text(label).val(entity['@id']).appendTo(template_select);
               });
               template_select.find('option').first().text("Satzschablone laden");
+              template_select.hide();
             }
           );
           additional_fields.after(template_select);
@@ -165,6 +178,7 @@
           // hack to remove Als Satzschablone Speichern Button
           //submit_button.after(template_button);
         }
+
 
           var import_button = $('<button style="display: block; margin-bottom: 1em;" class="edoweb edit action">Titeldaten importieren</button>').bind('click', function() {
             instance = {'bundle': '', 'field_name': ''}
@@ -195,14 +209,15 @@
                 	activateFields(entity_content.find('.field'), bundle, context);
                 }
                 entity.find('.content').replaceWith(entity_content);
+
                 $('#page-title', context).text(page_title);
               };
+              submit_button.show();
             });
             modal_overlay.dialog('open');
             return false;
           });
           additional_fields.before(import_button);
-        
         if(bundle=='researchData' || bundle =='article'){
         	activateFields(entity.find('.field'), bundle, context);
         	Drupal.zettel.useZettel(bundle,entity,context);
@@ -258,6 +273,7 @@
         });
         return false;
       }
+
       function getRdf(entity) {
           $('button.edoweb.edit.action').hide();
           entity.find('[contenteditable]').each(function() {
@@ -483,7 +499,7 @@
                     && instance['settings']['metadata_type'] == 'descriptive'
                     && ((instance['settings']['cardinality'] == -1)
                     || ($(this).find('.field-item').length < instance['settings']['cardinality']))) {
-                  var add_button = $('<a href="#"><span class="octicon octicon-link" /></a>')
+                   var add_button = $('<a href="#"><span class="octicon octicon-link" /></a>')
                     .bind('click', function() {
                       createLinkInput(instance, field.find('.field-items'));
                       return false;
