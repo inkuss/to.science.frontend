@@ -2066,13 +2066,34 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     '#value' => $entity,
   );
 
+  if( @$conf['invalidUrl'] == true && @$conf['urlNew'] == null ) {
+    $url_title = t('URL <span class="octicon red octicon-alert" title="Ungültige URL oder Website unbekannt verzogen !"></span>');
+  } else {
+    $url_title = t('URL');
+  }
   $form['url'] = array(
     '#type' => 'textfield',
-    '#title' => t('URL'),
+    '#title' => $url_title,
     '#default_value' => @$conf['url'],
     '#required' => TRUE,
     '#weight' => 00,
   );
+
+  if( @$conf['invalidUrl'] == true && @$conf['urlNew'] != null ) {
+    $form['urlNew'] = array(
+      '#type' => 'textfield',
+      '#title' => t('neue URL <span class="octicon red octicon-alert" title="Website ist umgezogen ! Bitte URL bestätigen !"></span>'),
+      '#default_value' => @$conf['urlNew'],
+      '#required' => FALSE,
+      '#weight' => 02,
+    );
+    $form['urlUebernehmen'] = array(
+      '#type' => 'submit',
+      '#name' => 'urlUebernehmen',
+      '#value' => t('Neue URL bestätigen'),
+      '#weight' => 04,
+    );
+  }
 
   $form['domains'] = array(
     '#type' => 'fieldset',
