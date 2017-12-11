@@ -1673,10 +1673,13 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
 		$conf = array();
 	}
 	if( @$conf['invalidUrl'] != null && @$conf['invalidUrl'] == true ) {
+        	$url = $entity->url() . '/crawler';
 		if( @$conf['urlNew'] != null ) {
-			$prefix .=  '&nbsp;<span><img src="/public/images/icon_lastwagen.jpeg" title="de Sick is umjetrocke noh ' . @$conf['urlNew'] . ' (Bitte bestätigen!)" /></span>';
+			$img = '<img src="/public/images/icon_lastwagen.jpeg" title="de Sick is umjetrocke noh ' . @$conf['urlNew'] . ' (Bitte bestätigen!)" />';
+	 		$prefix .=  '&nbsp;<span><a href="'.$url.'">'.$img.'</a></span>';
 		} else {
-			$prefix .=  '&nbsp;<span><img src="/public/images/icon_lastwagen.jpeg" title="de Sick is umjetrocke !" /></span>&nbsp;<span class="octicon octicon-alert" title="Website unbekannt verzogen !"></span>';
+			$img = '<img src="/public/images/icon_lastwagen.jpeg" title="de Sick is umjetrocke !" />';
+	 		$prefix .=  '&nbsp;<span><a href="'.$url.'">'.$img.'</a></span>&nbsp;<span class="octicon octicon-alert" title="Website unbekannt verzogen !"></span>';
 		}
 	}
 	$prefix .= '</div>';
