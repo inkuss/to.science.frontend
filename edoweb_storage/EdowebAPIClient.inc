@@ -381,6 +381,19 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
 
   }
 
+  public function getUrlHist($entity) {
+
+    $http_url = sprintf(
+      '%s/resource/%s/urlHist',
+      $this->__edoweb_api_host,
+      $entity->remote_id
+    );
+
+    $http_response = $this->_http_get($http_url);
+    return json_decode($http_response->data, TRUE);
+
+  }
+
   public function triggerCrawl($entity) {
 
     $http_url = sprintf(

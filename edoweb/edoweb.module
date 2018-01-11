@@ -507,6 +507,16 @@ function edoweb_menu() {
     'type' => MENU_LOCAL_TASK,
   );
 
+  // 'UrlHist' tab for an individual webpage.
+  $items['resource/%edoweb_basic/urlHist'] = array(
+    'title' => 'UrlHist',
+    'page callback' => 'edoweb_basic_urlHist',
+    'page arguments' => array(1),
+    'access callback' => '_edoweb_is_webpage_entity',
+    'access arguments' => array(1, 'edit any edoweb_basic entity'),
+    'type' => MENU_LOCAL_TASK,
+  );
+
   // 'Admin' tab for an individual entity page.
   $items['resource/%edoweb_basic/admin'] = array(
     'title' => 'Admin',
@@ -2420,6 +2430,45 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Provides URL historical information for a single webpage
+ */
+function edoweb_basic_urlHist($entity) {
+
+  $api = new EdowebAPIClient();
+  if (!$urlHist = $api->getUrlHist($entity)) {
+    $urlHist = array();
+  }
+
+  $content = array();
+
+  for($i = sizeof(@$urlHist['urlHistEntries']) -1; $i >=0; $i-- ) {
+      $content['url '.$i] = array(
+        '#type' => 'fieldset',
+        '#title' => t('URL '.$i),
+      );
+      $content['url '.$i]['_url'] = array(
+        '#prefix' => '<div class="field field-label-above"><div class="field-label">'
+                      . t('URL')
+                      . ':</div><div class="field-items"><div class="field-item even">',
+        '#suffix' => '</div></div></div>',
+        '#markup' => @$urlHist['urlHistEntries'][$i]['url'],
+        '#weight' => 999,
+      );
+      if( @$urlHist['urlHistEntries'][$i]['endDate'] ) {
+          $content['url '.$i]['_endDate'] = array(
+            '#prefix' => '<div class="field field-label-above"><div class="field-label">'
+                          . t('Gültig bis')
+                          . ':</div><div class="field-items"><div class="field-item even">',
+            '#suffix' => '</div></div></div>',
+            '#markup' => @$urlHist['urlHistEntries'][$i]['endDate'],
+            '#weight' => 999,
+          );
+      }
+  }
+
+  return $content;
+}
 /**
  * Provides API status information for a single entity.
  */
