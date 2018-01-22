@@ -22,9 +22,9 @@ Clone the repository and submodules to Drupal's module directory:
 Download non Drupal-core dependency modules:
 
     $ cd sites/all/modules
-    $ curl http://ftp.drupal.org/files/projects/entity-7.x-1.1.tar.gz | tar xz
-    $ curl http://ftp.drupal.org/files/projects/entity_js-7.x-1.0-alpha3.tar.gz | tar xz
-    $ curl http://ftp.drupal.org/files/projects/ctools-7.x-1.3.tar.gz | tar xz
+    $ curl https://ftp.drupal.org/files/projects/entity-7.x-1.1.tar.gz | tar xz
+    $ curl https://ftp.drupal.org/files/projects/entity_js-7.x-1.0-alpha3.tar.gz | tar xz
+    $ curl https://ftp.drupal.org/files/projects/ctools-7.x-1.3.tar.gz | tar xz
 
 Activate "Edoweb Entities" module at (e.g. at
 <http://localhost/drupal/?q=admin/modules>) and confirm activation of
