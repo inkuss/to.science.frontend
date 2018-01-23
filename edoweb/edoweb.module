@@ -642,10 +642,10 @@ function edoweb_repository_configuration_form() {
       'rdftype.@id' => t('Typ'),
       'medium.@id' => t('Medium'),
       'issued' => t('Erscheinungsjahr'),
-      'contribution.agent.prefLabel' => t('Beteiligung'),
+'creator.@id' => t('Autor'),
       'institution.@id' => t('Institution'),
     ),
-    '#default_value' => variable_get('available_facets', array('contribution.agent.prefLabel')),
+    '#default_value' => variable_get('available_facets', array('creator.@id')),
   );
   
   $entity_table_headers = array();
@@ -1380,7 +1380,7 @@ function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array()
       );
     }
     foreach ($active_facets as $jsonld_property => $facet) {
-      $is_ref = in_array($jsonld_property, array('contribution', 'subject'));
+      $is_ref = in_array($jsonld_property, array('creator', 'subject'));
       $is_user = ('createdBy' == $jsonld_property
           || 'lastModifiedBy' == $jsonld_property);
       foreach ($facet as $key => $value) {
@@ -1423,7 +1423,7 @@ function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array()
         ),
         '#title' => l(_edoweb_map_string($jsonld_property), 'browse/' . $jsonld_property),
       );
-      $is_ref = in_array($jsonld_property, array('contribution', 'subject', 'institution', 'medium', 'rdftype'));
+      $is_ref = in_array($jsonld_property, array('creator', 'subject', 'institution', 'medium', 'rdftype'));
       $is_user = ('createdBy' == $jsonld_property
           || 'lastModifiedBy' == $jsonld_property);
       foreach ($facet->terms as $term) {
@@ -1507,8 +1507,6 @@ function _edoweb_map_string($string) {
   switch ($string) {
     case 'creator':
       return t('creator');
-    case 'contribution':
-        return t('contribution');
     case 'subject':
       return t('subject');
     case 'rpbSubject':
@@ -2755,7 +2753,7 @@ function edoweb_basic_browse($jsonld_property) {
     return drupal_not_found();
   }
 
-  $is_ref = in_array($jsonld_property, array('contribution', 'subject', 'institution', 'rdftype', 'medium'));
+  $is_ref = in_array($jsonld_property, array('creator', 'subject', 'institution', 'rdftype', 'medium'));
   $is_user = ('createdBy' == $jsonld_property
       || 'lastModifiedBy' == $jsonld_property);
   $items = array();
@@ -2806,7 +2804,7 @@ function edoweb_restricted_browse($inst_name, $jsonld_property = 'institution') 
     return drupal_not_found();
   }
 
-  $is_ref = in_array($jsonld_property, array('contribution', 'subject', 'institution', 'rdftype', 'medium'));
+  $is_ref = in_array($jsonld_property, array('creator', 'subject', 'institution', 'rdftype', 'medium'));
   $is_user = ('createdBy' == $jsonld_property
       || 'lastModifiedBy' == $jsonld_property);
   $items = array();
@@ -3839,7 +3837,7 @@ function edoweb_update_7179(){
 /**
  * Update all
  */
-function edoweb_update_7210(){
+function edoweb_update_7211(){
   _update_edoweb_installed_fields();
   _update_edoweb_installed_instances();
   _update_rdf_mapping();

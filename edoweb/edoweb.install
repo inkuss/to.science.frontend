@@ -410,15 +410,6 @@ function _edoweb_installed_fields() {
         'predicates' => array('dce:contributor'),
       ),
     ),
-      'field_edoweb_contribution' => array(
-          'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-          'type'        => 'text',
-          'settings'    => array(
-              'metadata_type' => 'descriptive',
-              'read_only' => TRUE,
-              'predicates' => array('bibframe:contribution'),
-          ),
-      ),
     'field_edoweb_editor' => array(
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
       'type'        => 'edoweb_ld_reference',
@@ -1637,7 +1628,6 @@ function _edoweb_installed_instances() {
       'field_edoweb_title_alternative' => array(),
       'field_edoweb_title_short' => array(),
       'field_edoweb_creator' => array(),
-        'field_edoweb_contribution' => array(),
       'field_edoweb_creator_label' => array(),
       'field_edoweb_contributor' => array(),
       'field_edoweb_contributor_label' => array(),
@@ -1762,7 +1752,6 @@ function _edoweb_installed_instances() {
       'field_edoweb_title_alternative' => array(),
       'field_edoweb_title_short' => array(),
       'field_edoweb_creator' => array(),        
-      'field_edoweb_contribution' => array(),
       'field_edoweb_creator_label' => array(),
       'field_edoweb_contributor' => array(),
       'field_edoweb_contributor_label' => array(),
@@ -1999,7 +1988,6 @@ function _edoweb_installed_instances() {
     'article' => array(
       'field_edoweb_title' => array(),
       'field_edoweb_creator' => array(),
-       'field_edoweb_contribution' => array(),
       'field_edoweb_creator_label' => array(),
       'field_edoweb_contributor' => array(),
       'field_edoweb_contributor_label' => array(),
@@ -2112,7 +2100,6 @@ function _edoweb_installed_instances() {
       'field_edoweb_title_alternative' => array(),
       'field_edoweb_title_short' => array(),
       'field_edoweb_creator' => array(),
-       'field_edoweb_contribution' => array(),
       'field_edoweb_creator_label' => array(),
       'field_edoweb_contributor' => array(),
       'field_edoweb_contributor_label' => array(),
@@ -2363,7 +2350,6 @@ function _edoweb_installed_instances() {
       'field_edoweb_title_alternative' => array(),
       'field_edoweb_title_short' => array(),
       'field_edoweb_creator' => array(),
-      'field_edoweb_contribution' => array(),
       'field_edoweb_creator_label' => array(),
       'field_edoweb_contributor' => array(),
       'field_edoweb_contributor_label' => array(),
@@ -2540,7 +2526,6 @@ function _edoweb_installed_instances() {
       'field_edoweb_title_alternative' => array('required' => TRUE),
       'field_edoweb_title_short' => array(),
       'field_edoweb_creator' => array('required' => TRUE),
-        'field_edoweb_contribution' => array('required' => TRUE),
       'field_edoweb_creator_label' => array(),
       'field_edoweb_contributor' => array('required' => TRUE),
       'field_edoweb_contributor_label' => array(),
@@ -2673,7 +2658,6 @@ function _edoweb_installed_instances() {
 				'field_edoweb_title_language' => array(),
   				'field_edoweb_title_short' => array(),
   				'field_edoweb_creator' => array('required' => TRUE),
-                'field_edoweb_contribution' => array('required' => TRUE),
   				'field_edoweb_creator_label' => array(),
   				'field_edoweb_contributor' => array('required' => TRUE),
   				'field_edoweb_contributor_label' => array(),
@@ -2859,13 +2843,6 @@ function _edoweb_field_instance_defaults($field_name) {
       ),
       'display' => array('compact' => array()),
     ),
-      'field_edoweb_contribution' => array(
-          'label' => $t('Autor'),
-          'settings' => array(
-              'default' => TRUE,
-          ),
-          'display' => array('compact' => array()),
-      ),
       'field_edoweb_contributor' => array(
           'label' => $t('Beteiligung'),
           'settings' => array(
