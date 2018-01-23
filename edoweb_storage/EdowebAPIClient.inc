@@ -643,9 +643,9 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
       $field_info = field_info_field($field_name);
       $json_ld_property = _field_name_to_jsonld_key($field_name);
       $field_value = $field_condition['value'];
-      if($json_ld_property == "contribution"){
+    /*  if($json_ld_property == "contribution"){
           $json_ld_property ="contribution.agent.prefLabel";
-      }
+      }*/
       if ($bool_op == 'and') {
         $query['query']['filtered']['filter']['bool']['must'][]['term'][$json_ld_property] = "$field_value";
       } else if ($bool_op == 'or') {
@@ -665,7 +665,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
           if ($property_name == 'updated') {
             $jsonld_property = 'modified';
           } else if ($property_name == 'objectTimestamp') {
-            $jsonld_property = 'objectTimestamp';
+            $jsonld_property = 'isDescribedBy.objectTimestamp';
           }
           break;
         case 'field':
