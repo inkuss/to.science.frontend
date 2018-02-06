@@ -305,7 +305,6 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     $efq->pager_num = $query_count;
 
     if (isset($efq->tags['elasticsearch'])) {
-      console_log('edoweb_storage: elasticsearch in use');
       $results = $this->_query_elasticsearch($efq, $page);
     } else if (isset($efq->tags['lobid'])) {
       $results = $this->_query_lobid($efq, $page);
@@ -540,7 +539,6 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     $index = user_access('edit any edoweb_basic entity')
       ? variable_get('edoweb_api_namespace')
       : 'public_' . variable_get('edoweb_api_namespace');
-    console_log('edoweb_storage: index='.$index);
 
     if (isset($efq->tags['fulltext'])) {
       $index .= ',fulltext_' . variable_get('edoweb_api_namespace');
@@ -552,7 +550,6 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
       $this->__edoweb_api_host,
       $index
     );
-    console_log('edoweb_storage: http_url='.$http_url);
 
     $query = $this->_efq_to_es($efq, $page);
    
@@ -561,7 +558,6 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     );
 
     if (200 != $http_response->code || !isset($http_response->data)) {
-      console_log('edoweb_storage: invalid or empty http response!');
       return array();
     }
 

@@ -507,16 +507,6 @@ function edoweb_menu() {
     'type' => MENU_LOCAL_TASK,
   );
 
-  // 'UrlHist' tab for an individual webpage.
-  $items['resource/%edoweb_basic/urlHist'] = array(
-    'title' => 'UrlHist',
-    'page callback' => 'edoweb_basic_urlHist',
-    'page arguments' => array(1),
-    'access callback' => '_edoweb_is_webpage_entity',
-    'access arguments' => array(1, 'edit any edoweb_basic entity'),
-    'type' => MENU_LOCAL_TASK,
-  );
-
   // 'Admin' tab for an individual entity page.
   $items['resource/%edoweb_basic/admin'] = array(
     'title' => 'Admin',
@@ -1624,7 +1614,6 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
 
   // Start setting up the content.
   if (!('compact' == $view_mode)) {
-        console_log('view mode is not compact, page url ='.$page_url);
   	$entity->content = array(
   			'#view_mode' => $view_mode,
   			'#prefix' => "<div class=\"edoweb entity $view_mode\" $attr_bundle $attr_rdf_resource $attr_rdf_typeof>",
@@ -1677,32 +1666,28 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
   
   }
   else {
-        console_log('view mode is compact, page url ='.$page_url);
 	$prefix = "<div class=\"edoweb entity $view_mode\" $attr_bundle $attr_rdf_resource $attr_rdf_typeof>"
   			. '<div class="compact-header">' . _full_title($entity->label(), $entity);
  	$api = new EdowebAPIClient();
 	if (!$conf = $api->getCrawlerConfiguration($entity)) {
 		$conf = array();
 	}
-        console_log('invalid_url='.@$conf['invalidUrl']);
 	if( @$conf['invalidUrl'] != null && @$conf['invalidUrl'] == true ) {
         	$url = $entity->url() . '/crawler';
 		if( @$conf['urlNew'] != null ) {
-			$img = '<img src="/public/images/icon_lastwagen.jpeg" title="de Sick is umjetrocke noh ' . @$conf['urlNew'] . ' (Bitte bestätigen!)" />';
+			$img = '<img src="/public/images/icon_lastwagen.jpeg" title="Die Site ist umgezogen nach ' . @$conf['urlNew'] . ' (Bitte bestätigen!)" />';
 	 		$prefix .=  '&nbsp;<span><a href="'.$url.'">'.$img.'</a></span>';
 		} else {
-			$img = '<img src="/public/images/icon_lastwagen.jpeg" title="de Sick is umjetrocke !" />';
+			$img = '<img src="/public/images/icon_lastwagen.jpeg" title="Die Site ist umgezogen !" />';
 	 		$prefix .=  '&nbsp;<span><a href="'.$url.'">'.$img.'</a></span>&nbsp;<span class="octicon octicon-alert" title="Website unbekannt verzogen !"></span>';
 		}
 	}
-        console_log('prefix='.$prefix);
 	$prefix .= '</div>';
   	$entity->content = array(
   			'#prefix' => $prefix,
   			'#suffix' => "</div>",
   	);
   }
-  console_log('und weiter gehts');
   if (isset($entity->remote_id)) {
     // OK, Field API done, now we can set up some of our own data.
     if ('default' == $view_mode) {
@@ -2435,45 +2420,6 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
   }
 }
 
-/**
- * Provides URL historical information for a single webpage
- */
-function edoweb_basic_urlHist($entity) {
-
-  $api = new EdowebAPIClient();
-  if (!$urlHist = $api->getUrlHist($entity)) {
-    $urlHist = array();
-  }
-
-  $content = array();
-
-  for($i = sizeof(@$urlHist['urlHistEntries']) -1; $i >=0; $i-- ) {
-      $content['url '.$i] = array(
-        '#type' => 'fieldset',
-        '#title' => t('URL '.$i),
-      );
-      $content['url '.$i]['_url'] = array(
-        '#prefix' => '<div class="field field-label-above"><div class="field-label">'
-                      . t('URL')
-                      . ':</div><div class="field-items"><div class="field-item even">',
-        '#suffix' => '</div></div></div>',
-        '#markup' => @$urlHist['urlHistEntries'][$i]['url'],
-        '#weight' => 999,
-      );
-      if( @$urlHist['urlHistEntries'][$i]['endDate'] ) {
-          $content['url '.$i]['_endDate'] = array(
-            '#prefix' => '<div class="field field-label-above"><div class="field-label">'
-                          . t('Gültig bis')
-                          . ':</div><div class="field-items"><div class="field-item even">',
-            '#suffix' => '</div></div></div>',
-            '#markup' => @$urlHist['urlHistEntries'][$i]['endDate'],
-            '#weight' => 999,
-          );
-      }
-  }
-
-  return $content;
-}
 /**
  * Provides API status information for a single entity.
  */
@@ -3454,7 +3400,6 @@ function _edoweb_http_request($request_url, $http_options) {
         $code = $http_response->code;
       } else {
         $data = json_decode($http_response->data);
-        // drupal_set_message("http_response->data: " . $http_response->data, 'debug');
         $message = $data->text;
         $code = $data->code;
       }
