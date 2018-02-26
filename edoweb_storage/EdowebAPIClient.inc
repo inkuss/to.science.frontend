@@ -380,6 +380,19 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
 
   }
 
+  public function getUrlHist($entity) {
+
+    $http_url = sprintf(
+      '%s/resource/%s/urlHist',
+      $this->__edoweb_api_host,
+      $entity->remote_id
+    );
+
+    $http_response = $this->_http_get($http_url);
+    return json_decode($http_response->data, TRUE);
+
+  }
+
   public function triggerCrawl($entity) {
 
     $http_url = sprintf(
@@ -390,6 +403,19 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     return $this->_http_post($http_url);
     
   }
+
+  public function confirmNewUrl($entity) {
+
+    $http_url = sprintf(
+      '%s/resource/%s/confirmNewUrl',
+      $this->__edoweb_api_host,
+      $entity->remote_id
+    );
+    console_log('confirmNewUrl: http_url='.$http_url);
+    return $this->_http_post($http_url);
+    
+  }
+
   public function getView($entity,$style) {
     	      $http_url = sprintf(
   		  	      		'%s/resource/%s/all?design=%s',
