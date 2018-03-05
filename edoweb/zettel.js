@@ -116,9 +116,9 @@
 				});
 	}
 	function onFail(data) {
-		jQuery('#warningBox').html(data);
+/*		jQuery('#warningBox').html(data);
 		jQuery('#warningBox').css('visibility', 'visible');
-		jQuery('#successBox').css('visibility', 'hidden');
+		jQuery('#successBox').css('visibility', 'hidden');*/
 	}
 	function getMessage(e) {
 		var obj = JSON.parse(e);
