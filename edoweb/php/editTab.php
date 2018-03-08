@@ -3,10 +3,10 @@
 function edoweb_basic_edit($entity, $view_mode = 'edit') {
     
     drupal_add_js(
-        drupal_get_path('module', 'edoweb' , 'js') . '/edoweb_edit.js'
+        drupal_get_path('module', 'edoweb') . '/js/edoweb_edit.js'
         );
     drupal_add_js(
-        drupal_get_path('module', 'edoweb' , 'js') . '/zettel.js'
+        drupal_get_path('module', 'edoweb') . '/js/zettel.js'
         );
     
     global $base_url;
