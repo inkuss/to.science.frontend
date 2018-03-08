@@ -15,4 +15,5 @@ files[] = edoweb.test
 files[] = EdowebBasicEntity.inc
 files[] = EdowebBasicController.inc
 files[] = LinkedDataClient.inc
+files[] = css/edoweb.css
 configure = admin/structure/edoweb_basic/manage

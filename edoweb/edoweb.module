@@ -25,23 +25,23 @@
 
 require_once dirname(__FILE__) . '/lib/LibRDF/LibRDF/LibRDF.php';
 require_once dirname(__FILE__) . '/lib/php-json-ld/jsonld.php';
-include_once('logging.php');
-include_once('updateScripts.php');
-include_once('facets.php');
-include_once('breadcrumb.php');
-include_once('tree.php');
-include_once('configFunctions.php');
-include_once('edowebEntityInfo.php');
-include_once('searchResult.php');// edoweb/search
-include_once('search.php');//browse/%
-include_once('adminForm.php'); //resource/%edoweb_basic/admin
-include_once('accessForm.php');//resource/%edoweb_basic/access
-include_once('statusTab.php');//resource/%edoweb_basic/status'
-include_once('crawlerForm.php'); //resource/%edoweb_basic/crawler
-include_once('viewTab.php');    //resource/%edoweb_basic
-include_once('editTab.php'); //resource/%edoweb_basic/structure, resource/%edoweb_basic/edit
-include_once('moduleSettings.php'); //edoweb/config/settings
-include_once('edowebMenu.php');
+include_once dirname(__FILE__) . '/php/logging.php';
+include_once dirname(__FILE__) . '/php/updateScripts.php';
+include_once dirname(__FILE__) . '/php/facets.php';
+include_once dirname(__FILE__) . '/php/breadcrumb.php';
+include_once dirname(__FILE__) . '/php/tree.php';
+include_once dirname(__FILE__) . '/php/configFunctions.php';
+include_once dirname(__FILE__) . '/php/edowebEntityInfo.php';
+include_once dirname(__FILE__) . '/php/searchResult.php';// edoweb/search
+include_once dirname(__FILE__) . '/php/search.php';//browse/%
+include_once dirname(__FILE__) . '/php/adminForm.php'; //resource/%edoweb_basic/admin
+include_once dirname(__FILE__) . '/php/accessForm.php';//resource/%edoweb_basic/access
+include_once dirname(__FILE__) . '/php/statusTab.php';//resource/%edoweb_basic/status'
+include_once dirname(__FILE__) . '/php/crawlerForm.php'; //resource/%edoweb_basic/crawler
+include_once dirname(__FILE__) . '/php/viewTab.php';    //resource/%edoweb_basic
+include_once dirname(__FILE__) . '/php/editTab.php'; //resource/%edoweb_basic/structure, resource/%edoweb_basic/edit
+include_once dirname(__FILE__) . '/php/moduleSettings.php'; //edoweb/config/settings
+include_once dirname(__FILE__) . '/php/edowebMenu.php';
 
 /*****
  * 
@@ -96,21 +96,22 @@ function edoweb_init() {
     );
     drupal_add_js(array('edoweb' => $settings), 'setting');
     drupal_add_js(
-      drupal_get_path('module', 'edoweb') . '/edoweb.js'
+      drupal_get_path('module', 'edoweb') . '/js/edoweb.js'
     );
     drupal_add_js(
-      drupal_get_path('module', 'edoweb') . '/edoweb_view.js'
+        drupal_get_path('module', 'edoweb') . '/js/edoweb_view.js'
     );
     drupal_add_js(
-      drupal_get_path('module', 'edoweb') . '/jquery.tablesorter.min.js'
+        drupal_get_path('module', 'edoweb') . '/js/jquery.tablesorter.min.js'
     );
     drupal_add_js(
-      drupal_get_path('module', 'edoweb') . '/jquery.blockUI.js'
+        drupal_get_path('module', 'edoweb') . '/js/jquery.blockUI.js'
     );
-    drupal_add_js(drupal_get_path('module', 'edoweb') . '/jquery.rdfquery.rdfa.min-1.0.js');
-    drupal_add_js(drupal_get_path('module', 'edoweb') . '/jquery.url.js');
-    drupal_add_js(drupal_get_path('module', 'edoweb') . '/jquery-listnav.js');
-    drupal_add_css(drupal_get_path('module', 'edoweb') . '/listnav.css');
+    drupal_add_js(drupal_get_path('module', 'edoweb') . '/js/jquery.rdfquery.rdfa.min-1.0.js');
+    drupal_add_js(drupal_get_path('module', 'edoweb') . '/js/jquery.url.js');
+    drupal_add_js(drupal_get_path('module', 'edoweb') . '/js/jquery-listnav.js');
+    drupal_add_css(drupal_get_path('module', 'edoweb') . '/css/listnav.css');
+    drupal_add_css(drupal_get_path('module', 'edoweb') . '/css/edoweb.css');
     drupal_add_css('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', array('type' => 'external'));
   }
 }
@@ -539,13 +540,13 @@ function edoweb_block_view($delta = '') {
     case 'edoweb_tree_navigation':
       if ($entity = menu_get_object(EDOWEB_ENTITY_TYPE)) {
         drupal_add_js(
-          drupal_get_path('module', 'edoweb') . '/edoweb_edit.js'
+            drupal_get_path('module', 'edoweb') . '/js/edoweb_edit.js'
         );
         drupal_add_js(
-        		drupal_get_path('module', 'edoweb') . '/zettel.js'
+            drupal_get_path('module', 'edoweb') . '/js/zettel.js'
         );
         drupal_add_js(
-          drupal_get_path('module', 'edoweb') . '/edoweb_tree.js'
+            drupal_get_path('module', 'edoweb') . '/js/edoweb_tree.js'
         );
         $top_level_parent = _edoweb_find_top_level_parent($entity);
         if (_edoweb_is_editable_entity($top_level_parent) &&
