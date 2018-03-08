@@ -5,6 +5,13 @@
  */
 function edoweb_menu() {
     
+    /**
+     * edoweb/config/settings moduleSettings.php
+     * resource/add/%  edoweb.module#edoweb_basic_add
+     * resource edoweb.module#edoweb_info_page
+     * 
+     */
+    
     // Configuration section for Edoweb modules
     $items['edoweb/config'] = array(
         'title' => 'Configuration',
@@ -22,38 +29,16 @@ function edoweb_menu() {
         'title' => 'Einstellungen',
         'description' => 'Configuration for the repository.',
         'page callback' => 'drupal_get_form',
-        'page arguments' => array('edoweb_repository_configuration_form'),
+        'page arguments' => array('edoweb_repository_configuration_form'), //moduleSettings.php
         'access arguments' => array('administer edoweb repository'),
         'type' => MENU_NORMAL_ITEM,
     );
-    
-    // Paged search result listing for AJAX retrieval
-    $items['edoweb/search'] = array(
-        'page callback' => '_edoweb_search',
-        'access arguments' => array('view any edoweb_basic entity'),
-        'type' => MENU_CALLBACK
-    );
-    
-    // List of templates
-    $items['edoweb/templates'] = array(
-        'page callback' => '_edoweb_templates',
-        'access arguments' => array('view any edoweb_basic entity'),
-        'type' => MENU_CALLBACK
-    );
-    
-    // Returns last modified entity in tree
-    $items['edoweb/lastmodified/%'] = array(
-        'page callback' => '_edoweb_lastmodified',
-        'page arguments' => array(2),
-        'access arguments' => array('view any edoweb_basic entity'),
-        'type' => MENU_CALLBACK
-    );
-    
+   
     // Add new resources
     $items['resource/add/%'] = array(
         'title callback' => 'edoweb_basic_bundle_name',
         'title arguments' => array(2),
-        'page callback' => 'edoweb_basic_add',
+        'page callback' => 'edoweb_basic_add', //edoweb.module
         'page arguments' => array(2),
         'access arguments' => array('create edoweb_basic entities'),
         'type' => MENU_CALLBACK,
@@ -62,7 +47,7 @@ function edoweb_menu() {
     // Resource landing page, list entities
     $items['resource'] = array(
         'title' => 'Edoweb',
-        'page callback' => 'edoweb_info_page',
+        'page callback' => 'edoweb_info_page', //edoweb.module
         'page arguments' => array('0'),
         'access arguments' => array('view any edoweb_basic entity'),
     );
@@ -73,7 +58,7 @@ function edoweb_menu() {
     $items['resource/%edoweb_basic'] = array(
         'title callback' => 'entity_label',
         'title arguments' => array(EDOWEB_ENTITY_TYPE, 1),
-        'page callback' => 'edoweb_basic_view',
+        'page callback' => 'edoweb_basic_view', //viewTab.php
         'page arguments' => array(1),
         // Access control handled by API
         'access callback' => TRUE,
@@ -86,58 +71,19 @@ function edoweb_menu() {
         'weight' => -10,
     );
     
-    // 'Edit' tab for an individual entity page.
-    $items['resource/%edoweb_basic/edit'] = array(
-        'title' => 'Edit',
-        'page callback' => 'edoweb_basic_edit',
-        'page arguments' => array(1),
-        'access callback' => '_edoweb_is_editable_entity',
-        'access arguments' => array(1, 'edit any edoweb_basic entity'),
-        'type' => MENU_LOCAL_TASK,
-    );
-    
-    // 'Status' tab.
-    $items['resource/%edoweb_basic/status'] = array(
-        'title' => 'Status',
-        'page callback' => 'edoweb_basic_status',
-        'page arguments' => array(1),
-        'access callback' => '_edoweb_is_editable_entity',
-        'access arguments' => array(1, 'edit any edoweb_basic entity'),
-        'type' => MENU_LOCAL_TASK,
-    );
-    
-    // 'Crawler settings' tab for an individual webpage.
-    $items['resource/%edoweb_basic/crawler'] = array(
-        'title' => 'Crawler settings',
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array('edoweb_basic_crawler_form', 1),
-        'access callback' => '_edoweb_is_webpage_entity',
-        'access arguments' => array(1, 'edit any edoweb_basic entity'),
-        'type' => MENU_LOCAL_TASK,
-    );
-    
     // 'Admin' tab for an individual entity page.
     $items['resource/%edoweb_basic/admin'] = array(
         'title' => 'Admin',
         'page callback' => 'drupal_get_form',
-        'page arguments' => array('edoweb_basic_admin', 1),
+        'page arguments' => array('edoweb_basic_admin', 1),//adminForm.php
         'access arguments' => array('edit any edoweb_basic entity'),
         'type' => MENU_LOCAL_TASK,
     );
     
-    // 'Access' tab for an individual entity page.
-    $items['resource/%edoweb_basic/access'] = array(
-        'title' => 'Access',
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array('edoweb_basic_access_form', 1),
-        'access callback' => '_edoweb_is_editable_entity',
-        'access arguments' => array(1, 'edit any edoweb_basic entity'),
-        'type' => MENU_LOCAL_TASK,
-    );
-    
+   
     // 'Data' callback for entities' datastreams
     $items['resource/%edoweb_basic/data'] = array(
-        'page callback' => 'edoweb_basic_data',
+        'page callback' => 'edoweb_basic_data', //edoweb.module
         'page arguments' => array(1),
         // Access control handled by API
         'access callback' => TRUE,
@@ -146,7 +92,15 @@ function edoweb_menu() {
     
     // 'Structure' callback for entities.
     $items['resource/%edoweb_basic/structure'] = array(
-        'page callback' => 'edoweb_basic_structure',
+        'page callback' => 'edoweb_basic_structure', //editTab.php
+        'page arguments' => array(1),
+        'access arguments' => array('view any edoweb_basic entity'),
+        'type' => MENU_CALLBACK,
+    );
+    
+    // Facet browsing
+    $items['browse/%'] = array(
+        'page callback' => 'edoweb_basic_browse', //search.php
         'page arguments' => array(1),
         'access arguments' => array('view any edoweb_basic entity'),
         'type' => MENU_CALLBACK,
@@ -158,24 +112,78 @@ function edoweb_menu() {
         'title arguments' => array(4),
         'page callback' => 'edoweb_basic_add',
         'page arguments' => array(4, 1),
-        'access callback' => '_edoweb_field_access',
+        'access callback' => '_edoweb_field_access', //edoweb.module
         'access arguments' => array(1, array('field_edoweb_struct_child'), 'create edoweb_basic entities'),
         'type' => MENU_CALLBACK,
     );
     
+    // 'Crawler settings' tab for an individual webpage.
+    $items['resource/%edoweb_basic/crawler'] = array(
+        'title' => 'Crawler settings',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('edoweb_basic_crawler_form', 1),//crawlerTab.php
+        'access callback' => '_edoweb_is_webpage_entity', //edoweb.module
+        'access arguments' => array(1, 'edit any edoweb_basic entity'),
+        'type' => MENU_LOCAL_TASK,
+    );
+    
     // GND Autocompletion
     $items['edoweb/autocomplete'] = array(
-        'page callback' => '_edoweb_autocomplete',
+        'page callback' => '_edoweb_autocomplete', //edoweb.module
         'access arguments' => array('edit any edoweb_basic entity'),
         'type' => MENU_CALLBACK
     );
     
-    // Facet browsing
-    $items['browse/%'] = array(
-        'page callback' => 'edoweb_basic_browse',
+    // 'Access' tab for an individual entity page.
+    $items['resource/%edoweb_basic/access'] = array(
+        'title' => 'Access',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('edoweb_basic_access_form', 1),//accessTab.php
+        'access callback' => '_edoweb_is_editable_entity', //edoweb.module
+        'access arguments' => array(1, 'edit any edoweb_basic entity'),
+        'type' => MENU_LOCAL_TASK,
+    );
+    
+    // 'Edit' tab for an individual entity page.
+    $items['resource/%edoweb_basic/edit'] = array(
+        'title' => 'Edit',
+        'page callback' => 'edoweb_basic_edit',
         'page arguments' => array(1),
+        'access callback' => '_edoweb_is_editable_entity',//edoweb.module
+        'access arguments' => array(1, 'edit any edoweb_basic entity'),
+        'type' => MENU_LOCAL_TASK,
+    );
+    
+    // 'Status' tab.
+    $items['resource/%edoweb_basic/status'] = array(
+        'title' => 'Status',
+        'page callback' => 'edoweb_basic_status', //statusTab.php
+        'page arguments' => array(1),
+        'access callback' => '_edoweb_is_editable_entity',
+        'access arguments' => array(1, 'edit any edoweb_basic entity'),
+        'type' => MENU_LOCAL_TASK,
+    );
+    
+    // Paged search result listing for AJAX retrieval
+    $items['edoweb/search'] = array(
+        'page callback' => '_edoweb_search',//searchResult.php
         'access arguments' => array('view any edoweb_basic entity'),
-        'type' => MENU_CALLBACK,
+        'type' => MENU_CALLBACK
+    );
+    
+    // List of templates
+    $items['edoweb/templates'] = array(
+        'page callback' => '_edoweb_templates',//edoweb.module
+        'access arguments' => array('view any edoweb_basic entity'),
+        'type' => MENU_CALLBACK
+    );
+    
+    // Returns last modified entity in tree
+    $items['edoweb/lastmodified/%'] = array(
+        'page callback' => '_edoweb_lastmodified',//edoweb.module
+        'page arguments' => array(2),
+        'access arguments' => array('view any edoweb_basic entity'),
+        'type' => MENU_CALLBACK
     );
     
     return $items;

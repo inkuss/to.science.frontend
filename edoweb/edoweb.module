@@ -25,23 +25,33 @@
 
 require_once dirname(__FILE__) . '/lib/LibRDF/LibRDF/LibRDF.php';
 require_once dirname(__FILE__) . '/lib/php-json-ld/jsonld.php';
-include_once('search.php');
-include_once('adminForm.php');
-include_once('updateScripts.php');
-include_once('accessForm.php');
-include_once('statusTab.php');
-include_once('crawlerForm.php');
-include_once('viewTab.php');
 include_once('logging.php');
-include_once('editTab.php');
+include_once('updateScripts.php');
 include_once('facets.php');
 include_once('breadcrumb.php');
 include_once('tree.php');
 include_once('configFunctions.php');
-include_once('searchResult.php');
 include_once('edowebEntityInfo.php');
+include_once('searchResult.php');// edoweb/search
+include_once('search.php');//browse/%
+include_once('adminForm.php'); //resource/%edoweb_basic/admin
+include_once('accessForm.php');//resource/%edoweb_basic/access
+include_once('statusTab.php');//resource/%edoweb_basic/status'
+include_once('crawlerForm.php'); //resource/%edoweb_basic/crawler
+include_once('viewTab.php');    //resource/%edoweb_basic
+include_once('editTab.php'); //resource/%edoweb_basic/structure, resource/%edoweb_basic/edit
+include_once('moduleSettings.php'); //edoweb/config/settings
 include_once('edowebMenu.php');
-include_once('moduleSettings.php');
+
+/*****
+ * 
+ * What is where?
+ * 
+ * Start with edowebMenu.php
+ * There you will find all routes associated with their respective controller 
+ * functions (callbacks).
+ * 
+ */
 /**
  * Implements hook_init().
  */
