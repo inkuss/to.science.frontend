@@ -41,6 +41,7 @@ include_once('configFunctions.php');
 include_once('searchResult.php');
 include_once('edowebEntityInfo.php');
 include_once('edowebMenu.php');
+include_once('moduleSettings.php');
 /**
  * Implements hook_init().
  */
@@ -194,124 +195,6 @@ function edoweb_basic_load_multiple($remote_ids = FALSE, $conditions = array(), 
 
 
 /**
- * Repository settings form
- */
-function edoweb_repository_configuration_form() {
-
-  $access_options = array(
-    'public' => t('Public'),
-    'private' => t('Private'),
-  );
-
-  $form = array();
-
-  $form['urn_namespace'] = array(
-    '#type' => 'textfield',
-    '#title' => t('URN Namensraum'),
-    '#default_value' => variable_get('urn_namespace'),
-  );
-
-  $form['access_md_default'] = array(
-    '#type' => 'radios',
-    '#title' => t('Standardsichtbarkeit von Metadaten'),
-    '#options' => $access_options,
-    '#default_value' => variable_get('access_md_default', 'public'),
-  );
-
-  $form['access_data_default'] = array(
-    '#type' => 'radios',
-    '#title' => t('Standardsichtbarkeit von Dateien'),
-    '#options' => $access_options,
-    '#default_value' => variable_get('access_data_default', 'private'),
-  );
-
-  $form['sub_title_config'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Untertitel'),
-  );
-
-  $form['sub_title_config']['sub_title_fields'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Felder'),
-    '#options' => array(
-      'field_edoweb_creator' => t('Autor'),
-      'field_edoweb_contributor' => t('Bearbeiter'),
-      'field_edoweb_issued' => t('Erschienen'),
-    ),
-    '#default_value' => variable_get('sub_title_fields', array('field_edoweb_creator')),
-  );
-
-  $form['sub_title_config']['sub_title_field_separator'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Trennzeichen zwischen Feldern'),
-    '#default_value' => variable_get('sub_title_field_separator', '.'),
-  );
-
-  $form['sub_title_config']['sub_title_field_value_separator'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Trennzeichen zwischen einzelnen Felderwerten'),
-    '#default_value' => variable_get('sub_title_field_value_separator', '|'),
-  );
-
-  $form['available_facets'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Verfügbare Facetten'),
-    '#options' => array(
-      'subject.@id' => t('Sacherschließung'),
-      'rpbSubject.@id' => t('RPB Erchließung'),
-      'contentType' => t('Objektart'),
-      'rdftype.@id' => t('Typ'),
-      'medium.@id' => t('Medium'),
-      'issued' => t('Erscheinungsjahr'),
-'creator.@id' => t('Autor'),
-      'institution.@id' => t('Institution'),
-    ),
-    '#default_value' => variable_get('available_facets', array('creator.@id')),
-  );
-  
-  $entity_table_headers = array();
-  foreach (_edoweb_entity_table_headers() as $field => $column) {
-    $entity_table_headers[$field] = $column['data'];
-  }
-  
-  $form['editor_entity_table_headers'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Dokument-Tabellenheader für Bearbeiter'),
-    '#options' => $entity_table_headers,
-    '#default_value' => variable_get('editor_entity_table_headers', _edoweb_entity_table_headers_defaults()),
-  );
-  
-  $form['user_entity_table_headers'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Dokument-Tabellenheader für Endnutzer'),
-    '#options' => $entity_table_headers,
-    '#default_value' => variable_get('user_entity_table_headers',  _edoweb_entity_table_headers_defaults()),
-  );
-  
-  $authority_table_headers = array();
-  foreach (_edoweb_authority_table_headers() as $field => $column) {
-    $authority_table_headers[$field] = $column['data'];
-  }
-  
-  $form['editor_authority_table_headers'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Normdaten-Tabellenheader für Bearbeiter'),
-    '#options' => $authority_table_headers,
-    '#default_value' => variable_get('editor_authority_table_headers',  _edoweb_authority_table_headers_defaults()),
-  );
-  
-  $form['user_authority_table_headers'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Normdaten-Tabellenheader für Endnutzer'),
-    '#options' => $authority_table_headers,
-    '#default_value' => variable_get('user_authority_table_headers', _edoweb_authority_table_headers_defaults()),
-  );
-
-  return system_settings_form($form);
-
-}
-
-/**
  * Basic information for the page.
  */
 function edoweb_info_page() {
@@ -421,49 +304,6 @@ function edoweb_basic_add($bundle_type, $parent = NULL) {
   return edoweb_basic_edit($entity);
 }
 
-/**
- * Provides a wrapper on the edit form to add a new child to an entity.
- */
-function edoweb_basic_structure($entity) {
-  $api = new EdowebAPIClient();
-  if ('POST' == $_SERVER['REQUEST_METHOD'] && user_access('edit any edoweb_basic entity')) {
-    $new_parent_id = isset($_POST['parent_id']) ? $_POST['parent_id'] : FALSE;
-    $parts = isset($_POST['parts']) ? $_POST['parts'] : FALSE;
-
-    if ($new_parent_id) {
-      $wrapper = entity_metadata_wrapper('edoweb_basic', $entity);
-      $prev_parent = $wrapper->field_edoweb_struct_parent->value();
-      $prev_parent_id = $prev_parent['value'];
-      $wrapper->field_edoweb_struct_parent = array(
-        'value' => $new_parent_id,
-        'label' => '',
-      );
-      //TODO: How to add response text by AJAX?
-      if ($api->saveResource($entity)) {
-        echo "Moving {$entity->remote_id} from $prev_parent_id to $new_parent_id\n";
-      } else if ($new_parent_id) {
-        echo "Failed moving {$entity->remote_id} from $prev_parent_id to $new_parent_id\n";
-      }
-    }
-    //TODO: How to add response text by AJAX?
-    if ($parts && $api->setParts($entity, $parts)) {
-      echo "Settings parts for {$entity->remote_id}\n";
-    } else if ($parts) {
-      echo "Failed settings parts for {$entity->remote_id}\n";
-    }
-    die;
-  } else if ('POST' == $_SERVER['REQUEST_METHOD']) {
-    return MENU_ACCESS_DENIED;
-  } else {
-    $subtree = _edoweb_build_tree($api->getTree($entity));
-    die(theme_item_list(array(
-      'items' => array($subtree),
-      'title' => null,
-      'type' => 'ul',
-      'attributes' => array('class' => array('edoweb-tree')),
-    )));
-  }
-}
 
 
 function edoweb_basic_data($entity) {

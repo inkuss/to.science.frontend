@@ -51,3 +51,48 @@ function edoweb_basic_edit($entity, $view_mode = 'edit') {
     return edoweb_basic_view($entity, $view_mode);
     
 }
+
+
+/**
+ * Provides a wrapper on the edit form to add a new child to an entity.
+ */
+function edoweb_basic_structure($entity) {
+    $api = new EdowebAPIClient();
+    if ('POST' == $_SERVER['REQUEST_METHOD'] && user_access('edit any edoweb_basic entity')) {
+        $new_parent_id = isset($_POST['parent_id']) ? $_POST['parent_id'] : FALSE;
+        $parts = isset($_POST['parts']) ? $_POST['parts'] : FALSE;
+        
+        if ($new_parent_id) {
+            $wrapper = entity_metadata_wrapper('edoweb_basic', $entity);
+            $prev_parent = $wrapper->field_edoweb_struct_parent->value();
+            $prev_parent_id = $prev_parent['value'];
+            $wrapper->field_edoweb_struct_parent = array(
+                'value' => $new_parent_id,
+                'label' => '',
+            );
+            //TODO: How to add response text by AJAX?
+            if ($api->saveResource($entity)) {
+                echo "Moving {$entity->remote_id} from $prev_parent_id to $new_parent_id\n";
+            } else if ($new_parent_id) {
+                echo "Failed moving {$entity->remote_id} from $prev_parent_id to $new_parent_id\n";
+            }
+        }
+        //TODO: How to add response text by AJAX?
+        if ($parts && $api->setParts($entity, $parts)) {
+            echo "Settings parts for {$entity->remote_id}\n";
+        } else if ($parts) {
+            echo "Failed settings parts for {$entity->remote_id}\n";
+        }
+        die;
+    } else if ('POST' == $_SERVER['REQUEST_METHOD']) {
+        return MENU_ACCESS_DENIED;
+    } else {
+        $subtree = _edoweb_build_tree($api->getTree($entity));
+        die(theme_item_list(array(
+            'items' => array($subtree),
+            'title' => null,
+            'type' => 'ul',
+            'attributes' => array('class' => array('edoweb-tree')),
+        )));
+    }
+}
