@@ -400,3 +400,39 @@ function edoweb_rdf_types($bundle = null) {
     );
     return $bundle ? $rdf_types[$bundle] : $rdf_types;
 }
+
+function _edoweb_format_access_icons($entity) {
+    
+    if (!_is_edoweb_entity($entity)) {
+        return '';
+    }
+    
+    $icons = '';
+    switch ($entity->access_data) {
+        case 'private':
+            $icons .= '<i class="fa fa-lock" title="' . t($entity->access_data) . '" style="color:red;"></i>';
+            break;
+        case 'subscriber':
+        case 'restricted':
+            $icons .= '<i class="fa fa-lock" title="' . t($entity->access_data) . '"style="color:orange;"></i>';
+            break;
+        case 'remote':
+            $icons .= '<i class="fa fa-lock" title="' . t($entity->access_data) . '"style="color:yellow;"></i>';
+            break;
+        case 'public':
+            $icons .= '<i class="fa fa-unlock" title="' . t($entity->access_data) . '"style="color:green;"></i>';
+            break;
+    }
+    
+    switch ($entity->access_md) {
+        case 'private':
+            $icons .= '&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-circle-o" title="' . t($entity->access_md) . '"style="color:red;"></i>';
+            break;
+        case 'public':
+            $icons .= '&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-circle-o" title="' . t($entity->access_md) . '"style="color:green;"></i>';
+            break;
+    }
+    
+    return $icons;
+    
+}
