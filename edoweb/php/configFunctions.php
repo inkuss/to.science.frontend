@@ -361,6 +361,7 @@ function edoweb_rdf_namespaces() {
         'rda' => 'http://rdaregistry.info/Elements/u/',
         'rda-media' => 'http://rdaregistry.info/termList/RDAMediaType/',
         'bibframe' => 'http://id.loc.gov/ontologies/bibframe/',
+        'zettel' =>'info:regal/zettel/',
     );
 }
 
