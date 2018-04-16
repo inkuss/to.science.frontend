@@ -44,7 +44,7 @@
 			}
 		}
 	}
-	function loadZettel(bundle, entity, context) {
+	function loadZettel(bundle, entity, context) {	
 		var rid = $(entity).attr("resource");
 		var url = Drupal.settings.edoweb.zettelServiceUrl + '/forms'
 				+ '?id=katalog:'+bundle + '&format=xml' + '&documentId=' + rid
