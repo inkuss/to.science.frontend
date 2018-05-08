@@ -87,7 +87,7 @@
         additional_fields.change(function() {
           var instance = Drupal.settings.edoweb.fields[bundle][$(this).val()].instance;
           var field = createField(instance);
-          if(bundle=="researchData" || bundle=="article"){
+          if(bundle=='researchData' || bundle=='article' || bundle== 'monograph' ){
         	 Drupal.zettel.useZettel(bundle,entity,context); 
           }else{
         	  activateFields(field, bundle, context);
@@ -152,7 +152,7 @@
               var entity_content = $(this.responseText).find('.content');
               var page_title = $(this.responseText).find('h2').text();
               Drupal.attachBehaviors(entity_content);
-              if(bundle=="researchData" || bundle=='article'){
+              if(bundle=="researchData" || bundle=='article' || bundle=='monograph'){
              	 Drupal.edoweb.Drupal.zettel.useZettel(bundle,entity,context); 
                }else{
                   activateFields(entity_content.find('.field'), bundle, context);
@@ -203,7 +203,7 @@
                 });
                 var page_title = $(this.responseText).find('h2').text();
                 Drupal.attachBehaviors(entity_content);
-                if(bundle=='researchData' || bundle=='article'){
+                if(bundle=='researchData' || bundle=='article' || bundle=='monograph'){
                 	Drupal.zettel.useZettel(bundle,entity,context);
                 }else{
                 	activateFields(entity_content.find('.field'), bundle, context);
@@ -218,7 +218,7 @@
             return false;
           });
           additional_fields.before(import_button);
-        if(bundle=='researchData' || bundle =='article'){
+        if(bundle=='researchData' || bundle =='article' || bundle=='monograph'){
         	activateFields(entity.find('.field'), bundle, context);
         	Drupal.zettel.useZettel(bundle,entity,context);
         }else{
@@ -258,7 +258,7 @@
           // and a real redirect is triggered.
           if (subject.type == 'bnode') {
             entity_load_json('edoweb_basic', resource_uri).onload = function() {
-              if (bundle == 'monograph' || bundle == 'journal' || bundle=='proceeding'|| bundle=='researchData' || bundle=='article') {
+              if (bundle == 'monograph' || bundle == 'journal' || bundle=='proceeding'|| bundle=='researchData' || bundle=='article' || bundle== 'monograph') {
             	 window.location = href;
               } else {
                 localStorage.setItem('cut_entity', this.responseText);

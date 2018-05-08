@@ -416,6 +416,16 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
     
   }
 
+  public function getBrowsingPage($facetName){
+             $http_url=sprintf('%s/browse/%s?design=frl',
+                     $this->__edoweb_api_host,
+                     $facetName);
+             $http_response = $this->_http_get($http_url,'text/html');
+             return $http_response->data;
+  }
+  
+  
+  
   public function getView($entity,$style) {
     	      $http_url = sprintf(
   		  	      		'%s/resource/%s/all?design=%s',
@@ -537,8 +547,8 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
   protected function _query_elasticsearch(EntityFieldQuery $efq, $page = 0) {
 
     $index = user_access('edit any edoweb_basic entity')
-      ? variable_get('edoweb_api_namespace')
-      : 'public_' . variable_get('edoweb_api_namespace');
+      ? variable_get('edoweb_api_namespace').'2'
+      : 'public_' . variable_get('edoweb_api_namespace').'2';
 
     if (isset($efq->tags['fulltext'])) {
       $index .= ',fulltext_' . variable_get('edoweb_api_namespace');

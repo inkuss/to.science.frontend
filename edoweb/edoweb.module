@@ -33,7 +33,8 @@ include_once dirname(__FILE__) . '/php/tree.php';
 include_once dirname(__FILE__) . '/php/configFunctions.php';
 include_once dirname(__FILE__) . '/php/edowebEntityInfo.php';
 include_once dirname(__FILE__) . '/php/searchResult.php';// edoweb/search
-include_once dirname(__FILE__) . '/php/search.php';//browse/%
+include_once dirname(__FILE__) . '/php/search.php';
+include_once dirname(__FILE__) . '/php/browse.php';//browse/%
 include_once dirname(__FILE__) . '/php/adminForm.php'; //resource/%edoweb_basic/admin
 include_once dirname(__FILE__) . '/php/accessForm.php';//resource/%edoweb_basic/access
 include_once dirname(__FILE__) . '/php/statusTab.php';//resource/%edoweb_basic/status'

@@ -393,7 +393,6 @@ function _edoweb_search($bundle_name = null, $field_name = null) {
 
 
 function _edoweb_lookup($bundle_name, $field_name, $term, $page = null) {
-    
     $query = new EntityFieldQuery();
     $query->entityCondition('entity_type', 'edoweb_basic');
     $query->addMetaData('term', $term);
@@ -437,3 +436,7 @@ function _edoweb_lookup($bundle_name, $field_name, $term, $page = null) {
     }
     return $entities;
 }
+
+
+
+   
