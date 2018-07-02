@@ -90,6 +90,13 @@ function _edoweb_installed_fields() {
         			'predicates' => array('regal:titleLanguage'),
       			),
   		),
+      'field_edoweb_title_of_sub_series'=> array('cardinality' => 1,
+  				'type'        => 'text',
+  				'settings'    => array(
+  					'metadata_type' => 'descriptive',
+        			'predicates' => array('rda:P60517'),
+      			),
+  		),
  		'field_edoweb_project_id'=> array('cardinality' => 1,
       			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
   				'type'        => 'text',
@@ -1623,7 +1630,8 @@ function _edoweb_installed_instances() {
      * Field instances in monograph bundle
      */
     'monograph' => array(
-      'field_edoweb_title' => array(),
+       'field_edoweb_title' => array(), 
+      'field_edoweb_title_of_sub_series' => array(),
       'field_edoweb_title_other' => array(),
       'field_edoweb_title_alternative' => array(),
       'field_edoweb_title_short' => array(),
@@ -1748,6 +1756,7 @@ function _edoweb_installed_instances() {
      */
     'journal' => array(
       'field_edoweb_title' => array(),
+      'field_edoweb_title_of_sub_series' => array(),
       'field_edoweb_title_other' => array(),
       'field_edoweb_title_alternative' => array(),
       'field_edoweb_title_short' => array(),
@@ -1875,7 +1884,8 @@ function _edoweb_installed_instances() {
      * Field instances in volume bundle
      */
     'volume' => array(
-      'field_edoweb_title' => array(),
+      'field_edoweb_title' => array(),  
+      'field_edoweb_title_of_sub_series' => array(),
       'field_edoweb_volume' => array(),
       'field_edoweb_issued' => array(),
       'field_edoweb_urn' => array(),
@@ -1933,6 +1943,7 @@ function _edoweb_installed_instances() {
      */
     'issue' => array(
       'field_edoweb_title' => array(),
+      'field_edoweb_title_of_sub_series' => array(),
       'field_edoweb_issued' => array(),
       'field_edoweb_urn' => array(),
       'field_edoweb_doi' => array(),
@@ -1987,6 +1998,7 @@ function _edoweb_installed_instances() {
      */
     'article' => array(
       'field_edoweb_title' => array(),
+      'field_edoweb_title_of_sub_series' => array(),
       'field_edoweb_creator' => array(),
       'field_edoweb_creator_label' => array(),
       'field_edoweb_contributor' => array(),
@@ -2052,6 +2064,7 @@ function _edoweb_installed_instances() {
     'file' => array(
       'field_edoweb_datastream' => array('required' => TRUE),
       'field_edoweb_title' => array(),
+      'field_edoweb_title_of_sub_series' => array(),
       'field_edoweb_label' => array(),
       'field_edoweb_filesize' => array(),
       'field_edoweb_filetype' => array(),
@@ -2096,6 +2109,7 @@ function _edoweb_installed_instances() {
      */
     'webpage' => array(
       'field_edoweb_title' => array(),
+      'field_edoweb_title_of_sub_series' => array(),
       'field_edoweb_title_other' => array(),
       'field_edoweb_title_alternative' => array(),
       'field_edoweb_title_short' => array(),
@@ -2220,6 +2234,7 @@ function _edoweb_installed_instances() {
      */
     'version' => array(
       'field_edoweb_title' => array(),
+      'field_edoweb_title_of_sub_series' => array(),
       'field_edoweb_label' => array(),
       'field_edoweb_filesize' => array(),
       'field_edoweb_filetype' => array(),
@@ -2469,6 +2484,7 @@ function _edoweb_installed_instances() {
      */
     'part' => array(
       'field_edoweb_title' => array(),
+       'field_edoweb_title_of_sub_series' => array(),
       'field_mab_710' => array(),
       'field_edoweb_struct_child' => array(
         'settings'    => array(
@@ -2522,6 +2538,7 @@ function _edoweb_installed_instances() {
      */
     'proceeding' => array(
       'field_edoweb_title' => array('required' => TRUE),
+      'field_edoweb_title_of_sub_series' => array(),
       'field_edoweb_title_other' => array(),
       'field_edoweb_title_alternative' => array('required' => TRUE),
       'field_edoweb_title_short' => array(),
@@ -2653,6 +2670,7 @@ function _edoweb_installed_instances() {
   		 */
   		'researchData' => array(
   				'field_edoweb_title' => array('required' => TRUE),
+  		        'field_edoweb_title_of_sub_series' => array(),
   				'field_edoweb_title_other' => array(),
   				'field_edoweb_title_alternative' => array(),
 				'field_edoweb_title_language' => array(),
@@ -2796,6 +2814,10 @@ function _edoweb_field_instance_defaults($field_name) {
     'field_edoweb_ht_with_link' => array(
       'label' => $t('Verbund-Id'),
     ),
+      
+      'field_edoweb_title_of_sub_series' => array(
+          'label' => $t('Unterreihe'),
+      ),
     'field_edoweb_identifier_ht' => array(
       'label' => $t('HT Nummer'),
     ),

@@ -138,7 +138,7 @@ class EdowebBasicEntity extends Entity {
   
         if ($title_value) $title_values[] = implode(' ' . variable_get('sub_title_field_value_separator') . ' ', $values);
       } catch (EntityMetadataWrapperException $e) {
-        // Field not available, ignore
+         //drupal_set_message($e);
       }
     }
     return $title_values;
