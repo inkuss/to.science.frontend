@@ -38,7 +38,7 @@
 						+ '/resource/add/'
 						+ bundle
 						+ '"'
-						+ ' width="800px" style="border: none;" id="iFrame">'
+						+ ' width="800px" height="1024px" style="border: none;position:relative;" id="iFrame">'
 						+ '<p>iframes are not supported by your browser.</p></iframe>';
 				$('.region.region-content').html(zettel_form);
 			}
@@ -54,7 +54,7 @@
 		var zettel_form = '<div id="successBox" class="success"></div>'
 				+ '<div id="warningBox" class="warning"></div>'
 				+ '<iframe class="'+bundle+'" name="'+Date.now()+'" src="' + url + '"'
-		                + ' width="800px" style="border: none;" id="iFrame">'
+		                + ' width="800px" height="1024px" style="border: none;position:relative;" id="iFrame">'
 				+ '<p>iframes are not supported by your browser.</p></iframe>';
 
 		var rdf = getRdfFromApi(entity);
