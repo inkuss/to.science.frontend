@@ -41,6 +41,7 @@ function edoweb_repository_configuration_form() {
         '#type' => 'checkboxes',
         '#title' => t('Felder'),
         '#options' => array(
+            'field_edoweb_title_other'=> t('Titelzusatz'),
             'field_edoweb_title_of_sub_series' => t('Unterreihe'),
             'field_edoweb_creator' => t('Autor'),
             'field_edoweb_contributor' => t('Bearbeiter'),
