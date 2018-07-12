@@ -190,7 +190,7 @@ function edoweb_update_7179(){
 /**
  * Update all
  */
-function edoweb_update_7213(){
+function edoweb_update_7214(){
     _update_edoweb_installed_fields();
     _update_edoweb_installed_instances();
     _update_rdf_mapping();

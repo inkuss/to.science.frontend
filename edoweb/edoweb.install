@@ -324,7 +324,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text_long',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('rdvocab:otherTitleInformation'),
+        'predicates' => array('rda:P60493'),
       ),
     ),
     'field_edoweb_title_alternative' => array(
