@@ -43,9 +43,11 @@ function edoweb_repository_configuration_form() {
         '#options' => array(
             'field_edoweb_title_other'=> t('Titelzusatz'),
             'field_edoweb_title_of_sub_series' => t('Unterreihe'),
+            'field_edoweb_edition'  => t('Ausgabe'),
+            'field_edoweb_issued' => t('Erschienen'),
             'field_edoweb_creator' => t('Autor'),
             'field_edoweb_contributor' => t('Bearbeiter'),
-            'field_edoweb_issued' => t('Erschienen'),
+   
         ),
         '#default_value' => variable_get('sub_title_fields', array('field_edoweb_creator')),
     );
