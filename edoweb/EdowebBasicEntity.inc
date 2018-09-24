@@ -70,6 +70,7 @@ class EdowebBasicEntity extends Entity {
       case 'volume':
       case 'file':
       case 'webpage':
+      case 'proceeding':
       case 'version':
       case 'part':
         $label_fields[] = 'field_edoweb_title';
