@@ -267,6 +267,10 @@ function _edoweb_map_string($string) {
             return t('article');
         case 'webpage':
             return t('webpage');
+        case 'researchData':
+            return t('researchData');
+        case 'proceeding':
+            return t('proceeding');
         case 'version':
             return t('version');
         case 'part':
@@ -287,6 +291,10 @@ function _edoweb_map_string($string) {
             return t('Add part');
         case 'Add webpage':
             return t('Add webpage');
+        case 'Add researchData':
+            return t('Add researchData');
+        case 'Add proceeding':
+            return t('Add proceeding');
         case 'Add version':
             return t('Add version');
         case 'createdBy':
