@@ -143,7 +143,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             'heritrix' => t('heritrix'),
             'wpull' => t('wpull'),
         ),
-        '#default_value' => @$conf['crawlerSelection'] == null ? 'heritrix' : @$conf['crawlerSelection'],
+        '#default_value' => @$conf['crawlerSelection'] == null ? 'wpull' : @$conf['crawlerSelection'],
         '#required' => FALSE,
         '#weight' => 60,
     );
