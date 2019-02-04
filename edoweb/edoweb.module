@@ -88,7 +88,7 @@ function edoweb_init() {
       'fields' => $instances,
       'namespaces' => rdf_get_namespaces(),
       'primary_bundles' => array(
-        'monograph', 'journal', 'volume', 'issue', 'article','proceeding','researchData',
+        'monograph', 'journal', 'volume', 'issue', 'article','researchData',
       ),
       'site_frontpage' => variable_get('site_frontpage', '/'),
       'deepzoomServiceUrl' => variable_get('edoweb_deepzoom_url') ,
@@ -229,7 +229,7 @@ function edoweb_info_page() {
   $query->addTag('elasticsearch');
   $query->entityCondition('entity_type', 'edoweb_basic');
   $query->entityCondition('bundle', array(
-    'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'webpage', 'version', 'part', 'proceeding','researchData'
+    'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'webpage', 'version', 'part','researchData'
   ));
   $content['resource_list'] = edoweb_basic_search_entities(
     $query, TRUE, array(), TRUE, user_access('edit any edoweb_basic entity'), TRUE, 'compact', TRUE
@@ -303,7 +303,6 @@ function edoweb_field_extra_fields() {
   $extra_fields['edoweb_basic']['monograph']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['journal']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['volume']['display'] = $display_elements;
-  $extra_fields['edoweb_basic']['proceeding']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['researchData']['display'] = $display_elements;
   $extra_fields['edoweb_basic']['article']['display'] = $display_elements;
 
@@ -565,7 +564,7 @@ function edoweb_block_view($delta = '') {
         );
         $top_level_parent = _edoweb_find_top_level_parent($entity);
         if (_edoweb_is_editable_entity($top_level_parent) &&
-            in_array($top_level_parent->bundle_type, array('monograph', 'journal','proceeding','researchData','article'))) {
+            in_array($top_level_parent->bundle_type, array('monograph', 'journal','researchData','article'))) {
           $api = new EdowebAPIClient();
           $subtree = _edoweb_build_tree($api->getTree($top_level_parent));
           $block['content'] = theme_item_list(array(
@@ -588,7 +587,7 @@ function edoweb_block_view($delta = '') {
       $entity  = menu_get_object();
       $query = new EntityFieldQuery();
       $query->entityCondition('bundle', array(
-      'monograph', 'journal', 'volume', 'issue', 'file', 'webpage', 'version', 'part', 'proceeding', 'researchData')); 
+      'monograph', 'journal', 'volume', 'issue', 'file', 'webpage', 'version', 'part','article', 'researchData')); 
   //    $query->addMetaData('term', $entity->title);
       $active_facets = 'institution';
       $query->addTag('elasticsearch');

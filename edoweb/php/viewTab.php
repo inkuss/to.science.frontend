@@ -114,7 +114,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
                 }
                 if ($has_inverse) {
                     $inverse_query->entityCondition('bundle', array(
-                        'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'part','proceeding','researchData'
+                        'monograph', 'journal', 'volume', 'issue', 'article', 'file', 'part','researchData'
                     ));
                     $entity->content['related'] = edoweb_basic_search_entities(
                         $inverse_query

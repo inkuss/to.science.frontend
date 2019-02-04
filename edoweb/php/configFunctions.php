@@ -269,22 +269,22 @@ function _edoweb_map_string($string) {
             return t('webpage');
         case 'researchData':
             return t('researchData');
-        case 'proceeding':
-            return t('proceeding');
         case 'version':
             return t('version');
         case 'part':
             return t('part');
         case 'Add monograph':
             return t('Add monograph');
+        case 'Add article':
+            return t('Add article');
         case 'Add journal':
             return t('Add journal');
         case 'Add volume':
             return t('Add volume');
         case 'Add issue':
             return t('Add issue');
-        case 'Add article':
-            return t('Add article');
+        case 'Add Publication':
+            return t('Add Publication');
         case 'Add file':
             return t('Add file');
         case 'Add part':
@@ -293,8 +293,6 @@ function _edoweb_map_string($string) {
             return t('Add webpage');
         case 'Add researchData':
             return t('Add researchData');
-        case 'Add proceeding':
-            return t('Add proceeding');
         case 'Add version':
             return t('Add version');
         case 'createdBy':
@@ -396,7 +394,6 @@ function edoweb_rdf_types($bundle = null) {
         //FIXME: dummy RDF type for version
         'version' => array('lv:ArchivedWebPageVersion'),
         'generic' => array('dc:BibliographicResource'),
-        'proceeding' => array('bibo:Proceedings'),
         'researchData' => array('regal:ResearchData'),
         //FIXME: do we need an RDF type mapping for the 'part' bundle?
         'part' => array('dc:BibliographicResource'),

@@ -26,7 +26,6 @@ function edoweb_basic_table_header($bundle_type = 'generic', $init_sort = false)
         case 'webpage':
         case 'version':
         case 'generic':
-        case 'proceeding':
         case 'researchData':
         case 'part':
             foreach (_edoweb_entity_table_headers($init_sort) as $field => $column) {
