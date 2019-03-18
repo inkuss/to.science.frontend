@@ -96,8 +96,8 @@
 										|| bundle == 'article') {
 									window.location = href;
 								} else {
-									localStorage.setItem('cut_entity',
-											this.responseText);
+/*									localStorage.setItem('cut_entity',
+											this.responseText);*/
 									history.pushState({
 										tree : true
 									}, null, href);
