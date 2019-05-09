@@ -196,13 +196,7 @@ function edoweb_entity_info() {
                     'access arguments' => array('administer edoweb_basic entities'),
                 ),
             ),
-            'proceeding' => array(
-                'label' => t('Konferenzbeitrag'),
-                'admin' => array(
-                    'path' => 'admin/structure/edoweb_basic/proceeding/manage',
-                    'access arguments' => array('administer edoweb_basic entities'),
-                ),
-            ),
+           
         ),
         'view modes' => array(
             'compact' => array(

@@ -255,7 +255,7 @@ msgstr "Version"
 
 #: edoweb/edoweb.module:1167
 msgid "Add monograph"
-msgstr "Neue Monografie"
+msgstr "Neuer Katalogimport"
 
 #: edoweb/edoweb.module:1169
 msgid "Add journal"
@@ -271,7 +271,7 @@ msgstr "Neues Heft"
 
 #: edoweb/edoweb.module:1175
 msgid "Add article"
-msgstr "Neuer Artikel"
+msgstr "Neue Publikation"
 
 #: edoweb/edoweb.module:1177
 msgid "Add file"

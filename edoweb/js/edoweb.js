@@ -68,7 +68,6 @@
        * in order for Drupal.t to pick them up.
        */
       translations['Add researchData'] = Drupal.t('Add researchData');
-      translations['Add proceeding'] = Drupal.t('Add proceeding');
       translations['Add monograph'] = Drupal.t('Add monograph');
       translations['Add journal'] = Drupal.t('Add journal');
       translations['Add volume'] = Drupal.t('Add volume');
