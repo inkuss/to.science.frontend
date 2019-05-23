@@ -70,6 +70,20 @@ function edoweb_storage_configuration_form($form, &$form_state) {
     '#required' => TRUE,
   );
 
+  // Text field for elasticsearch.
+  $form['es_api_host'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get(
+      'es_api_host',
+      'http://api.localhost/search'
+    ),
+    '#title' => t('Elasticsearch'),
+    '#description' => t('The hostname or IP address of the Elasticsearch'),
+    '#size' => 40,
+    '#maxlength' => 120,
+    '#required' => TRUE,
+  );
+
   // Text field for api namespace.
   $form['edoweb_api_namespace'] = array(
     '#type' => 'textfield',

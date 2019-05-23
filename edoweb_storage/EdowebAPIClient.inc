@@ -22,6 +22,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
 
   public function __construct() {
     $this->__edoweb_api_host = variable_get('edoweb_api_host');
+    $this->__es_api_host = variable_get('es_api_host');
   }
 
   /*
@@ -556,11 +557,10 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
 
     // Search resources
     $http_url = sprintf(
-      '%s/search/%s/_search',
-      $this->__edoweb_api_host,
+      '%s/%s/_search',
+      $this->__es_api_host,
       $index
     );
-
     $query = $this->_efq_to_es($efq, $page);
    
     $http_response = $this->_http_post(

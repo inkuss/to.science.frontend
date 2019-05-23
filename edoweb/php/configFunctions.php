@@ -353,7 +353,6 @@ function edoweb_rdf_namespaces() {
         'lr' => "$edoweb_lobid_host/resource/",
         'skos' => 'http://www.w3.org/2004/02/skos/core#',
         'ddc' => 'http://dewey.info/class/',
-        'regal' => 'http://hbz-nrw.de/regal#',
         'rdvocab' => 'http://rdvocab.info/Elements/',
         'file' => 'http://downlode.org/Code/RDF/File_Properties/schema#',
         'marcrel' => 'http://id.loc.gov/vocabulary/relators/',
