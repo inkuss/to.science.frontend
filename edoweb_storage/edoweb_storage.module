@@ -542,7 +542,7 @@ function _edoweb_storage_entity_serialize_rdf(
   if (empty($rdf_mapping)) {
     return $rdf_model;
   }
-  // First element contains the rdf:type definitions
+  // First element contains the rd_rdf:type definitions
   $rdf_type_predicate = new LibRDF_URINode(
     'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
   );
@@ -664,7 +664,7 @@ function _edoweb_storage_entity_deserialize_rdf($entity, $rdf_model) {
     EDOWEB_ENTITY_TYPE, $entity->bundle_type
   );
 
-  // Skip first element, these are the rdf:type definitions
+  // Skip first element, these are the rd_rdf:type definitions
   unset($rdf_mapping['type']);
   $wrapper = entity_metadata_wrapper(EDOWEB_ENTITY_TYPE, $entity);
   foreach ($rdf_mapping as $field_name => $mapping) {
@@ -695,7 +695,7 @@ function _edoweb_storage_entity_deserialize_rdf($entity, $rdf_model) {
   $rdf_subject = new LibRDF_URINode($entity->identifier());
   try {
     $entity->access_data = $rdf_model->getTarget($rdf_subject,
-        new LibRDF_URINode(_edoweb_expand_curie('regal:accessScheme'))
+        new LibRDF_URINode(_edoweb_expand_curie('rd_regal:accessScheme'))
     )->getValue();
   } catch (LibRDF_LookupError $e) {
     // No accessScheme available, default to private
@@ -703,7 +703,7 @@ function _edoweb_storage_entity_deserialize_rdf($entity, $rdf_model) {
   }
   try {
     $entity->access_md = $rdf_model->getTarget($rdf_subject,
-        new LibRDF_URINode(_edoweb_expand_curie('regal:publishScheme'))
+        new LibRDF_URINode(_edoweb_expand_curie('rd_regal:publishScheme'))
     )->getValue();
   } catch (LibRDF_LookupError $e) {
     // No publishScheme available, default to public for external and
@@ -723,7 +723,7 @@ function _edoweb_storage_entity_deserialize_rdf($entity, $rdf_model) {
   try {
     $entity->objectTimestamp = strtotime($rdf_model->getTarget(
         $rdf_about_subject,
-        new LibRDF_URINode(_edoweb_expand_curie('regal:objectTimestamp'))
+        new LibRDF_URINode(_edoweb_expand_curie('rd_regal:objectTimestamp'))
     )->getValue());
   } catch (LibRDF_LookupError $e) {
     //$entity->objectTimestamp = time();
@@ -739,7 +739,7 @@ function _edoweb_storage_entity_deserialize_rdf($entity, $rdf_model) {
   try {
     $entity->uid = $rdf_model->getTarget(
         $rdf_about_subject,
-        new LibRDF_URINode(_edoweb_expand_curie('regal:createdBy'))
+        new LibRDF_URINode(_edoweb_expand_curie('rd_regal:createdBy'))
     )->getValue();
   } catch (LibRDF_LookupError $e) {
     $entity->uid = 0;
@@ -747,7 +747,7 @@ function _edoweb_storage_entity_deserialize_rdf($entity, $rdf_model) {
   try {
     $entity->mid = $rdf_model->getTarget(
         $rdf_about_subject,
-        new LibRDF_URINode(_edoweb_expand_curie('regal:lastModifiedBy'))
+        new LibRDF_URINode(_edoweb_expand_curie('rd_regal:lastModifiedBy'))
     )->getValue();
   } catch (LibRDF_LookupError $e) {
     $entity->mid = $entity->uid;
@@ -755,7 +755,7 @@ function _edoweb_storage_entity_deserialize_rdf($entity, $rdf_model) {
   try {
     $entity->name = $rdf_model->getTarget(
         $rdf_about_subject,
-        new LibRDF_URINode(_edoweb_expand_curie('regal:name'))
+        new LibRDF_URINode(_edoweb_expand_curie('rd_regal:name'))
     )->getValue();
   } catch (LibRDF_LookupError $e) {
     $entity->name = $entity->remote_id;
@@ -784,13 +784,13 @@ function _entity_set_value($wrapper, $field_info, $value, $rdf_model) {
       // Check if SKOS label is available
       try {
         $label = $rdf_model->getTarget($value,
-            new LibRDF_URINode(_edoweb_expand_curie('skos:prefLabel'))
+            new LibRDF_URINode(_edoweb_expand_curie('rd_skos:prefLabel'))
         )->getValue();
       } catch (LibRDF_LookupError $e) {
         // If not, check if GND label is available
         try {
           $label = $rdf_model->getTarget($value,
-              new LibRDF_URINode(_edoweb_expand_curie('gnd:preferredName'))
+              new LibRDF_URINode(_edoweb_expand_curie('rd_gnd:preferredName'))
           )->getValue();
         } catch (LibRDF_LookupError $e) {
           $label = $value;
@@ -986,8 +986,8 @@ function _is_edoweb_entity($entity) {
   }
   $namespace = variable_get('edoweb_api_namespace');
   return ("$namespace:" === substr($remote_id, 0, strlen($namespace) + 1)
-      || "template:" === substr($remote_id, 0, 9)
-      || "local:" === substr($remote_id, 0, 6)
+      || "rd_template:" === substr($remote_id, 0, 9)
+      || "rd_local:" === substr($remote_id, 0, 6)
       || "_:" === substr($remote_id, 0, 2)
   );
 }

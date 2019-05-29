@@ -639,6 +639,6 @@ function edoweb_field_update_7100() {
 /**
  * Drop cache table for linked data labels
  */
-function edoweb_field_update_7101() {
+function edoweb_field_update_7110() {
   db_drop_table('edoweb_ld_reference_label_cache');
 }
