@@ -87,7 +87,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'edoweb_ld_reference',
   				'settings'    => array(
   					'metadata_type' => 'descriptive',
-        			'predicates' => array('regal:titleLanguage'),
+        			'predicates' => array('rd_regal:titleLanguage'),
       			),
   		),
       'field_edoweb_title_of_sub_series'=> array('cardinality' => 1,
@@ -102,7 +102,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   					'metadata_type' => 'descriptive',
-        			'predicates' => array('regal:projectId'),
+        			'predicates' => array('rd_regal:projectId'),
       			),
   		),
  		'field_edoweb_funding_program'=> array('cardinality' => 1,
@@ -110,7 +110,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   					'metadata_type' => 'descriptive',
-        			'predicates' => array('regal:fundingProgram'),
+        			'predicates' => array('rd_regal:fundingProgram'),
       			),
   		),
  		'field_edoweb_assoc_publication'=> array('cardinality' => 1,
@@ -118,7 +118,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   					'metadata_type' => 'descriptive',
-        			'predicates' => array('regal:associatedPublication'),
+        			'predicates' => array('rd_regal:associatedPublication'),
       			),
   		),
  		'field_edoweb_assoc_dataset'=> array('cardinality' => 1,
@@ -126,7 +126,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   					'metadata_type' => 'descriptive',
-        			'predicates' => array('regal:associatedDataset'),
+        			'predicates' => array('rd_regal:associatedDataset'),
       			),
   		),
  		'field_edoweb_references'=> array('cardinality' => 1,
@@ -134,7 +134,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   					'metadata_type' => 'descriptive',
-        			'predicates' => array('regal:reference'),
+        			'predicates' => array('rd_regal:reference'),
       			),
   		),
   		'field_edoweb_data_origin'=> array('cardinality' => 1,
@@ -142,7 +142,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'edoweb_ld_reference',
   				'settings'    => array(
   					'metadata_type' => 'descriptive',
-        			'predicates' => array('regal:dataOrigin'),
+        			'predicates' => array('rd_regal:dataOrigin'),
       			),
   		),
   		'field_edoweb_congress_title' => array(
@@ -150,7 +150,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:congressTitle'),
+  						'predicates' => array('rd_regal:congressTitle'),
   				),
   		),
   		'field_edoweb_congress_location' => array(
@@ -158,7 +158,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:congressLocation'),
+  						'predicates' => array('rd_regal:congressLocation'),
   				),
   		),
   		'field_edoweb_congress_duration' => array(
@@ -166,7 +166,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:congressDuration'),
+  						'predicates' => array('rd_regal:congressDuration'),
   				),
   		),
   		'field_edoweb_embargo_time' => array(
@@ -174,7 +174,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:embargoTime'),
+  						'predicates' => array('rd_regal:embargoTime'),
   				),
   		),
   		'field_edoweb_year_of_copyright' => array(
@@ -182,7 +182,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:yearOfCopyright'),
+  						'predicates' => array('rd_regal:yearOfCopyright'),
   				),
   		),
   		'field_edoweb_license' => array(
@@ -190,7 +190,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'edoweb_ld_reference',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:license'),
+  						'predicates' => array('rd_regal:license'),
   				),
   		),
   		'field_edoweb_professional_group' => array(
@@ -198,7 +198,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'edoweb_ld_reference',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-        			'predicates' => array('regal:professionalGroup'),
+        			'predicates' => array('rd_regal:professionalGroup'),
   				),
   		),
   		'field_edoweb_related_resource' => array(
@@ -206,7 +206,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:relatedResource'),
+  						'predicates' => array('rd_regal:relatedResource'),
   				),
   		),
   		'field_mab_710' => array(
@@ -214,7 +214,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('lv:subjectLabel'),
+  						'predicates' => array('rd_lv:subjectLabel'),
   				),
   		),
   		'field_edoweb_recording_period' => array(
@@ -222,7 +222,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:recordingPeriod'),
+  						'predicates' => array('rd_regal:recordingPeriod'),
   				),
   		),  		
   		'field_edoweb_recording_location' => array(
@@ -230,7 +230,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'edoweb_ld_reference',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:recordingLocation'),
+  						'predicates' => array('rd_regal:recordingLocation'),
   				),
   		),
   		'field_edoweb_recording_coord' => array(
@@ -238,7 +238,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'edoweb_ld_reference',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:recordingCoordinates'),
+  						'predicates' => array('rd_regal:recordingCoordinates'),
   				),
 		),		
   		'field_edoweb_funding' => array(
@@ -246,7 +246,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:funding'),
+  						'predicates' => array('rd_regal:funding'),
   				),
   		),
   		'field_edoweb_previous_version' => array(
@@ -254,7 +254,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:previousVersion'),
+  						'predicates' => array('rd_regal:previousVersion'),
   				),
   		),
   		'field_edoweb_next_version' => array(
@@ -262,7 +262,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'text',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('regal:nextVersion'),
+  						'predicates' => array('rd_regal:nextVersion'),
   				),
   		),
   	  'field_edoweb_ht_with_link' => array(
@@ -270,7 +270,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('regal:catalogLink'),
+        'predicates' => array('rd_regal:catalogLink'),
       	'parameter' => 'name',
         'endpoint' => 'resource',
       ),
@@ -281,7 +281,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('lv:hbzID'),
+        'predicates' => array('rd_lv:hbzID'),
       ),
     ),
     'field_edoweb_identifier_zdb' => array(
@@ -290,7 +290,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('lv:zdbID'),
+        'predicates' => array('rd_lv:zdbID'),
       ),
     ),
     'field_edoweb_parent' => array(
@@ -308,7 +308,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('bibo:volume'),
+        'predicates' => array('rd_bibo:volume'),
       ),
     ),
     'field_edoweb_title' => array(
@@ -340,7 +340,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('bibo:shortTitle'),
+        'predicates' => array('rd_bibo:shortTitle'),
       ),
     ),
     'field_edoweb_creator' => array(
@@ -377,7 +377,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('dce:creator'),
+        'predicates' => array('rd_dce:creator'),
       ),
     ),
     'field_edoweb_contributor' => array(
@@ -414,7 +414,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('dce:contributor'),
+        'predicates' => array('rd_dce:contributor'),
       ),
     ),
     'field_edoweb_editor' => array(
@@ -422,7 +422,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('bibo:editor'),
+        'predicates' => array('rd_bibo:editor'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -450,7 +450,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:edt'),
+        'predicates' => array('rd_marcrel:edt'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -478,7 +478,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('bibo:translator'),
+        'predicates' => array('rd_bibo:translator'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -506,7 +506,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:ill'),
+        'predicates' => array('rd_marcrel:ill'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -534,7 +534,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:act'),
+        'predicates' => array('rd_marcrel:act'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -562,7 +562,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:drt'),
+        'predicates' => array('rd_marcrel:drt'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -590,7 +590,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:clb'),
+        'predicates' => array('rd_marcrel:clb'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -618,7 +618,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:pht'),
+        'predicates' => array('rd_marcrel:pht'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -646,7 +646,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:cnd'),
+        'predicates' => array('rd_marcrel:cnd'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -674,7 +674,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:cmp'),
+        'predicates' => array('rd_marcrel:cmp'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -702,7 +702,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:aui'),
+        'predicates' => array('rd_marcrel:aui'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -730,7 +730,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:aus'),
+        'predicates' => array('rd_marcrel:aus'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -758,7 +758,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:col'),
+        'predicates' => array('rd_marcrel:col'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -786,7 +786,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:ctb'),
+        'predicates' => array('rd_marcrel:ctb'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -814,7 +814,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:prf'),
+        'predicates' => array('rd_marcrel:prf'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -842,7 +842,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:cng'),
+        'predicates' => array('rd_marcrel:cng'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -870,7 +870,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:ant'),
+        'predicates' => array('rd_marcrel:ant'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -898,7 +898,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:voc'),
+        'predicates' => array('rd_marcrel:voc'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -926,7 +926,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:ivr'),
+        'predicates' => array('rd_marcrel:ivr'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -954,7 +954,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:ive'),
+        'predicates' => array('rd_marcrel:ive'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -982,7 +982,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:ctg'),
+        'predicates' => array('rd_marcrel:ctg'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -1010,7 +1010,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:mus'),
+        'predicates' => array('rd_marcrel:mus'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -1038,7 +1038,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:aft'),
+        'predicates' => array('rd_marcrel:aft'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -1066,7 +1066,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:pro'),
+        'predicates' => array('rd_marcrel:pro'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -1094,7 +1094,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:egr'),
+        'predicates' => array('rd_marcrel:egr'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -1122,7 +1122,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:dte'),
+        'predicates' => array('rd_marcrel:dte'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -1150,7 +1150,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('marcrel:red'),
+        'predicates' => array('rd_marcrel:red'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -1178,7 +1178,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('bibo:edition'),
+        'predicates' => array('rd_bibo:edition'),
       ),
     ),
     'field_edoweb_publication_place' => array(
@@ -1186,7 +1186,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('rdvocab:placeOfPublication'),
+        'predicates' => array('rd_rdvocab:placeOfPublication'),
       ),
     ),
     'field_edoweb_publisher' => array(
@@ -1194,7 +1194,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('dce:publisher'),
+        'predicates' => array('rd_dce:publisher'),
       ),
     ),
     'field_edoweb_issued' => array(
@@ -1238,7 +1238,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('lv:urn'),
+        'predicates' => array('rd_lv:urn'),
       ),
     ),
     'field_edoweb_isbn10' => array(
@@ -1246,7 +1246,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('bibo:isbn'),
+        'predicates' => array('rd_bibo:isbn'),
       ),
     ),
     'field_edoweb_isbn13' => array(
@@ -1254,7 +1254,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('bibo:isbn13'),
+        'predicates' => array('rd_bibo:isbn13'),
       ),
     ),
     'field_edoweb_issn' => array(
@@ -1262,7 +1262,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('bibo:issn'),
+        'predicates' => array('rd_bibo:issn'),
       ),
     ),
     'field_edoweb_doi' => array(
@@ -1271,7 +1271,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('regal:doi', 'bibo:doi'),
+        'predicates' => array('rd_regal:doi', 'rd_bibo:doi'),
       ),
     ),
     'field_edoweb_language' => array(
@@ -1289,7 +1289,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('isbd:P1053'),
+        'predicates' => array('rd_isbd:P1053'),
       ),
     ),
     'field_edoweb_description' => array(
@@ -1305,7 +1305,7 @@ function _edoweb_installed_fields() {
   				'type'        => 'edoweb_ld_reference',
   				'settings'    => array(
   						'metadata_type' => 'descriptive',
-  						'predicates' => array('lv:rpbSubject'),
+  						'predicates' => array('rd_lv:rpbSubject'),
   						'parameter' => 'name',
   						'endpoint' => 'resource',
   				),
@@ -1349,7 +1349,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('dce:subject'),
+        'predicates' => array('rd_dce:subject'),
       ),
     ),
     'field_edoweb_abstract' => array(
@@ -1365,7 +1365,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('regal:parallelEdition'),
+        'predicates' => array('rd_regal:parallelEdition'),
         'parameter' => 'name',
         'endpoint' => 'resource',
       ),
@@ -1375,7 +1375,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('regal:isPartOf'),
+        'predicates' => array('rd_regal:isPartOf'),
         'parameter' => 'name',
         'endpoint' => 'resource',
       ),
@@ -1385,7 +1385,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('foaf:homepage'),
+        'predicates' => array('rd_foaf:homepage'),
       ),
     ),
     'field_edoweb_label' => array(
@@ -1394,7 +1394,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('rdfs:label'),
+        'predicates' => array('rd_rdfs:label'),
       ),
     ),
     'field_edoweb_datastream' => array(
@@ -1402,7 +1402,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_datastream',
       'settings'    => array(
         'metadata_type' => 'structural',
-        'predicates' => array('regal:hasData'),
+        'predicates' => array('rd_regal:hasData'),
       ),
     ),
     'field_edoweb_filesize' => array(
@@ -1410,7 +1410,7 @@ function _edoweb_installed_fields() {
       'type'        => 'number_integer',
       'settings'    => array(
         'metadata_type' => 'technical',
-        'predicates' => array('file:size'),
+        'predicates' => array('rd_file:size'),
         'read_only' => TRUE,
       ),
     ),
@@ -1452,7 +1452,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('gnd:preferredName', 'skos:prefLabel'),
+        'predicates' => array('rd_gnd:preferredName', 'rd_skos:prefLabel'),
       ),
     ),
     'field_gnd_identifier' => array(
@@ -1460,7 +1460,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('gnd:gndIdentifier', 'skos:notation'),
+        'predicates' => array('rd_gnd:gndIdentifier', 'rd_skos:notation'),
       ),
     ),
     'field_gnd_date_of_birth' => array(
@@ -1468,7 +1468,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('gnd:dateOfBirth'),
+        'predicates' => array('rd_gnd:dateOfBirth'),
       ),
     ),
     'field_gnd_date_of_death' => array(
@@ -1476,7 +1476,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('gnd:dateOfDeath'),
+        'predicates' => array('rd_gnd:dateOfDeath'),
       ),
     ),
     'field_gnd_profession' => array(
@@ -1484,7 +1484,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('gnd:professionOrOccupation'),
+        'predicates' => array('rd_gnd:professionOrOccupation'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -1500,7 +1500,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('gnd:dateOfEstablishment'),
+        'predicates' => array('rd_gnd:dateOfEstablishment'),
       ),
     ),
     'field_gnd_date_of_termination' => array(
@@ -1508,7 +1508,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('gnd:dateOfTermination'),
+        'predicates' => array('rd_gnd:dateOfTermination'),
       ),
     ),
     'field_edoweb_collected_by' => array(
@@ -1517,7 +1517,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('holding:collectedBy'),
+        'predicates' => array('rd_holding:collectedBy'),
         'parameter' => 'name',
         'endpoint' => 'resource',
       ),
@@ -1528,7 +1528,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('lv:subjectChain'),
+        'predicates' => array('rd_lv:subjectChain'),
       ),
     ),
     'field_edoweb_catalog_link' => array(
@@ -1537,7 +1537,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('foaf:isPrimaryTopicOf'),
+        'predicates' => array('rd_foaf:isPrimaryTopicOf'),
       ),
     ),
     'field_edoweb_webpage_archived' => array(
@@ -1546,7 +1546,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('lv:webPageArchived'),
+        'predicates' => array('rd_lv:webPageArchived'),
       ),
     ),
     'field_edoweb_type' => array(
@@ -1555,7 +1555,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => TRUE,
-        'predicates' => array('rdf:type'),
+        'predicates' => array('rd_rdf:type'),
       ),
     ),
     'field_edoweb_medium' => array(
@@ -1574,7 +1574,7 @@ function _edoweb_installed_fields() {
       'settings'    => array(
         'metadata_type' => 'descriptive',
         'read_only' => FALSE,
-        'predicates' => array('dbpedia:institution'),
+        'predicates' => array('rd_dbpedia:institution'),
         'parameter' => 'name',
         'endpoint' => 'subject',
         'target_type' => 'edoweb_basic',
@@ -1598,7 +1598,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('regal:ddc'),
+        'predicates' => array('rd_regal:ddc'),
       ),
     ),
     'field_edoweb_agrovoc' => array(
@@ -1606,7 +1606,7 @@ function _edoweb_installed_fields() {
       'type'        => 'edoweb_ld_reference',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('regal:agrovoc'),
+        'predicates' => array('rd_regal:agrovoc'),
       ),
     ),
     'field_edoweb_manual' => array(
@@ -1614,7 +1614,7 @@ function _edoweb_installed_fields() {
       'type'        => 'text',
       'settings'    => array(
         'metadata_type' => 'descriptive',
-        'predicates' => array('regal:usageManual'),
+        'predicates' => array('rd_regal:usageManual'),
       ),
     ),
   );
