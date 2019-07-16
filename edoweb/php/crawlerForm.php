@@ -91,7 +91,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     $form['active'] = array(
         '#type' => 'checkbox',
         '#title' => t('Active'),
-        '#default_value' => @$conf['active'],
+        '#default_value' => @$conf['active'] == null ? 'true' : @$conf['active'],
         '#weight' => 20,
     );
     
@@ -129,7 +129,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             'ignore' => t('Ignore'),
             'obey' => t('Obey'),
         ),
-        '#default_value' => @$conf['robotsPolicy'] == null ? 'obey' : @$conf['robotsPolicy'] == 'classic' ? 'obey' : @$conf['robotsPolicy'],
+        '#default_value' => @$conf['robotsPolicy'] == null ? 'ignore' : @$conf['robotsPolicy'] == 'classic' ? 'ignore' : @$conf['robotsPolicy'],
         '#required' => TRUE,
         '#weight' => 50,
     );
