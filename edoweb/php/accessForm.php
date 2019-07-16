@@ -34,6 +34,7 @@ function edoweb_basic_access_form($form, &$form_state, $entity) {
     );
     
     $children = field_get_items('edoweb_basic', $entity, 'field_edoweb_struct_child');
+    console_log('children='.$children);
     if (FALSE !== $children) {
         $form['subtree_apply'] = array(
             '#type' => 'checkbox',
