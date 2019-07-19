@@ -88,16 +88,17 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
         );
     }
     
+    console_log('active='.@$conf['active']);
     $form['active'] = array(
         '#type' => 'checkbox',
         '#title' => t('Active'),
-        '#default_value' => @$conf['active'],
+        '#default_value' => @$conf['active'] == null ? true : @$conf['active'],
         '#weight' => 20,
     );
     
     $form['startDate'] = array(
         '#type' => 'date',
-        '#title' => t('Start date'),
+        '#title' => t('Start Date'),
         '#default_value' => isset($conf['startDate'])
         ?  date_parse($conf['startDate'])
         : array(),
@@ -129,7 +130,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             'ignore' => t('Ignore'),
             'obey' => t('Obey'),
         ),
-        '#default_value' => @$conf['robotsPolicy'] == null ? 'obey' : @$conf['robotsPolicy'] == 'classic' ? 'obey' : @$conf['robotsPolicy'],
+        '#default_value' => @$conf['robotsPolicy'] == null ? 'ignore' : @$conf['robotsPolicy'] == 'classic' ? 'ignore' : @$conf['robotsPolicy'],
         '#required' => TRUE,
         '#weight' => 50,
     );
