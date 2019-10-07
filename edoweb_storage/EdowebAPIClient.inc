@@ -720,34 +720,38 @@ class EdowebAPIClient implements EdowebAPIClientInterface {
       }
     }
 
-    $facet_size = array_key_exists('facet_size', $efq->metaData) ? $efq->metaData['facet_size'] : 10;
-    $facet_order = array_key_exists('facet_order', $efq->metaData) ? $efq->metaData['facet_order'] : 'count';
-    foreach (variable_get('available_facets') as $available_facet => $enabled) {
-      if ($enabled) {
-        $facet_field = explode('.', $available_facet);
-        $field_name = current($facet_field);
-        if (next($facet_field) == '@id') {
-          $query['facets'][$field_name]['terms']['field'] = $field_name.'.prefLabel';
-        } else {
-          $query['facets'][$field_name]['terms']['field'] = $available_facet;
-        }
-        $query['facets'][$field_name]['terms']['size'] = $facet_size;
-        $query['facets'][$field_name]['terms']['order'] = $facet_order;
-      }
-    }
-
+    $available_facets = variable_get('user_available_facets');
     global $user;
     if (in_array('edoweb_backend_admin', $user->roles)
         || in_array('edoweb_backend_user', $user->roles)) {
-      $query['facets']['createdBy']['terms'] = array(
-        'field' => 'isDescribedBy.createdBy',
-        'size' => 99,
-      );
-      $query['facets']['lastModifiedBy']['terms'] = array(
-        'field' => 'isDescribedBy.lastModifiedBy',
-        'size' => 99,
-      );
-    }
+            $available_facets = variable_get('editor_available_facets');
+        }
+        
+        $facet_size = array_key_exists('facet_size', $efq->metaData) ? $efq->metaData['facet_size'] : 10;
+        $facet_order = array_key_exists('facet_order', $efq->metaData) ? $efq->metaData['facet_order'] : 'count';
+        foreach ($available_facets as $available_facet => $enabled) {
+            if ($enabled) {
+                $facet_field = explode('.', $available_facet);
+                $field_name = current($facet_field);
+                if (next($facet_field) == '@id') {
+                    $query['facets'][$field_name]['terms']['field'] = $field_name.'.prefLabel';
+                } else {
+                    $query['facets'][$field_name]['terms']['field'] = $available_facet;
+                }
+                $query['facets'][$field_name]['terms']['size'] = $facet_size;
+                $query['facets'][$field_name]['terms']['order'] = $facet_order;
+            }
+        }
+        
+        global $user;
+        if (in_array('edoweb_backend_admin', $user->roles)
+            || in_array('edoweb_backend_user', $user->roles)) {
+            $query['facets']['lastModifiedBy']['terms'] = array(
+              'field' => 'isDescribedBy.lastModifiedBy',
+              'size' => 99,
+            );
+        }
+        
     return json_encode($query);
   }
 

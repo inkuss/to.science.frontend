@@ -64,9 +64,10 @@ function edoweb_repository_configuration_form() {
         '#default_value' => variable_get('sub_title_field_value_separator', '|'),
     );
     
-    $form['available_facets'] = array(
+    
+    $form['editor_available_facets'] = array(
         '#type' => 'checkboxes',
-        '#title' => t('Verfügbare Facetten'),
+        '#title' => t('Verfügbare Facetten Bearbeiter'),
         '#options' => array(
             'subject.@id' => t('Sacherschließung'),
             'rpbSubject.@id' => t('RPB Erchließung'),
@@ -77,7 +78,23 @@ function edoweb_repository_configuration_form() {
             'creator.@id' => t('Autor'),
             'institution.@id' => t('Institution'),
         ),
-        '#default_value' => variable_get('available_facets', array('creator.@id')),
+        '#default_value' => variable_get('editor_available_facets', array('creator.@id')),
+    );
+    
+    $form['user_available_facets'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Verfügbare Facetten Endnutzer'),
+        '#options' => array(
+            'subject.@id' => t('Sacherschließung'),
+            'rpbSubject.@id' => t('RPB Erchließung'),
+            'contentType' => t('Objektart'),
+            'rdftype.@id' => t('Typ'),
+            'medium.@id' => t('Medium'),
+            'issued' => t('Erscheinungsjahr'),
+            'creator.@id' => t('Autor'),
+            'institution.@id' => t('Institution'),
+        ),
+        '#default_value' => variable_get('user_available_facets', array('creator.@id')),
     );
     
     $entity_table_headers = array();
