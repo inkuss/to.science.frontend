@@ -67,7 +67,7 @@ function edoweb_repository_configuration_form() {
     
     $form['admin_available_facets'] = array(
         '#type' => 'checkboxes',
-        '#title' => t('Verfügbare Facetten Bearbeiter'),
+        '#title' => t('Verfügbare Facetten FRL-Admin'),
         '#options' => array(
             'subject.@id' => t('Sacherschließung'),
             'rpbSubject.@id' => t('RPB Erschließung'),
@@ -141,7 +141,6 @@ function edoweb_repository_configuration_form() {
 
 
 
-    
     $authority_table_headers = array();
     foreach (_edoweb_authority_table_headers() as $field => $column) {
         $authority_table_headers[$field] = $column['data'];

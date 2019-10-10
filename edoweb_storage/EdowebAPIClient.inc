@@ -613,13 +613,19 @@ class EdowebAPIClient implements EdowebAPIClientInterface
         }
 
         global $user;
-        if (in_array('edoweb_backend_admin', $user->roles) || in_array('edoweb_backend_user', $user->roles)) {
+        if (in_array('edoweb_backend_user', $user->roles)) {
             $query['facets']['lastModifiedBy']['terms'] = array(
                 'field' => 'isDescribedBy.lastModifiedBy',
                 'size' => 99
             );
+        }
+        if (in_array('edoweb_backend_admin', $user->roles)) {
             $query['facets']['lastModifiedBy']['terms'] = array(
                 'field' => 'isDescribedBy.createdBy',
+                'size' => 99
+            );
+            $query['facets']['lastModifiedBy']['terms'] = array(
+                'field' => 'isDescribedBy.lastModifiedBy',
                 'size' => 99
             );
         }
