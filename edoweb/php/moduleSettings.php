@@ -76,7 +76,7 @@ function edoweb_repository_configuration_form() {
             'medium.@id' => t('Medium'),
             'issued' => t('Erscheinungsjahr'),
             'creator.@id' => t('Autor'),
-            'institution.@id' => t('Institution'),
+            'institution.@id' => t('Sammlung'),
         ),
         '#default_value' => variable_get('admin_available_facets', array('creator.@id')),
     );
@@ -92,7 +92,7 @@ function edoweb_repository_configuration_form() {
             'medium.@id' => t('Medium'),
             'issued' => t('Erscheinungsjahr'),
             'creator.@id' => t('Autor'),
-            'institution.@id' => t('Institution'),
+            'institution.@id' => t('Sammlung'),
         ),
         '#default_value' => variable_get('editor_available_facets', array('creator.@id')),
     );
@@ -108,7 +108,7 @@ function edoweb_repository_configuration_form() {
             'medium.@id' => t('Medium'),
             'issued' => t('Erscheinungsjahr'),
             'creator.@id' => t('Autor'),
-            'institution.@id' => t('Institution'),
+            'institution.@id' => t('Sammlung'),
         ),
         '#default_value' => variable_get('user_available_facets', array('creator.@id')),
     );
