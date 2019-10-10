@@ -10,8 +10,8 @@ Willkommen zur Regal-Drupal Dokumentation!
    :maxdepth: 2
    :caption: Inhalt:
 
-   configureFacets
-   developFacets
+   user-docs/configureFacets
+   developer-docs/developFacets
 
 
 Index und Tabellen

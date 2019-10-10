@@ -65,12 +65,28 @@ function edoweb_repository_configuration_form() {
     );
     
     
+    $form['admin_available_facets'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Verfügbare Facetten Bearbeiter'),
+        '#options' => array(
+            'subject.@id' => t('Sacherschließung'),
+            'rpbSubject.@id' => t('RPB Erschließung'),
+            'contentType' => t('Objektart'),
+            'rdftype.@id' => t('Typ'),
+            'medium.@id' => t('Medium'),
+            'issued' => t('Erscheinungsjahr'),
+            'creator.@id' => t('Autor'),
+            'institution.@id' => t('Institution'),
+        ),
+        '#default_value' => variable_get('admin_available_facets', array('creator.@id')),
+    );
+    
     $form['editor_available_facets'] = array(
         '#type' => 'checkboxes',
         '#title' => t('Verfügbare Facetten Bearbeiter'),
         '#options' => array(
             'subject.@id' => t('Sacherschließung'),
-            'rpbSubject.@id' => t('RPB Erchließung'),
+            'rpbSubject.@id' => t('RPB Erschließung'),
             'contentType' => t('Objektart'),
             'rdftype.@id' => t('Typ'),
             'medium.@id' => t('Medium'),
@@ -86,7 +102,7 @@ function edoweb_repository_configuration_form() {
         '#title' => t('Verfügbare Facetten Endnutzer'),
         '#options' => array(
             'subject.@id' => t('Sacherschließung'),
-            'rpbSubject.@id' => t('RPB Erchließung'),
+            'rpbSubject.@id' => t('RPB Erschließung'),
             'contentType' => t('Objektart'),
             'rdftype.@id' => t('Typ'),
             'medium.@id' => t('Medium'),
@@ -115,6 +131,16 @@ function edoweb_repository_configuration_form() {
         '#options' => $entity_table_headers,
         '#default_value' => variable_get('user_entity_table_headers',  _edoweb_entity_table_headers_defaults()),
     );
+
+    $form['user_table_headers_sort'] = array(
+        '#type' => 'radioboxes',
+        '#title' => t('Dokument-Tabellenheader für Endnutzer'),
+        '#options' => $user_table_headers_sort,
+        '#default_value' => variable_get('user_table_headers_sort'),
+    );
+
+
+
     
     $authority_table_headers = array();
     foreach (_edoweb_authority_table_headers() as $field => $column) {
