@@ -59,15 +59,15 @@
       });
       
       // Sort & load listnav
-      $('#issued', context).each(function() {
-        var listnav = $(this);
-        var listitems = listnav.children('li').get();
-        listitems.sort(function(b, a) {
-           return $(a).text().toUpperCase().localeCompare($(b).text().toUpperCase());
-        })
-        $.each(listitems, function(idx, itm) { listnav.append(itm); });
-        //$(this).listnav();
-      });
+      //$('#issued', context).each(function() {
+      //  var listnav = $(this);
+      //  var listitems = listnav.children('li').get();
+      //  listitems.sort(function(b, a) {
+      //     return $(a).text().toUpperCase().localeCompare($(b).text().toUpperCase());
+      //  })
+      //  $.each(listitems, function(idx, itm) { listnav.append(itm); });
+      //  //$(this).listnav();
+      //});
 
     }
 
