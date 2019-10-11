@@ -6,22 +6,22 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Willkommen zur Regal-Drupal Dokumentation! &#8212; Regal-Drupal  Dokumentation</title>
-    <link rel="stylesheet" href="_static/hbz.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/translations.js"></script>
+    <title>Facetten im Sourcecode anpassen &#8212; Regal-Drupal  Dokumentation</title>
+    <link rel="stylesheet" href="../_static/hbz.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
-    <link rel="search" title="Suche" href="search.html" />
-    <link rel="next" title="Facetten einrichten" href="user-docs/configureFacets.html" />
+    <link rel="index" title="Stichwortverzeichnis" href="../genindex.html" />
+    <link rel="search" title="Suche" href="../search.html" />
+    <link rel="prev" title="Facetten einrichten" href="../user-docs/configureFacets.html" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
 <!--[if lte IE 6]>
-<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
 <![endif]-->
 
   </head><body>
@@ -37,12 +37,12 @@
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="Stichwortverzeichnis"
+          <a href="../genindex.html" title="Stichwortverzeichnis"
              accesskey="I">Index</a></li>
         <li class="right" >
-          <a href="user-docs/configureFacets.html" title="Facetten einrichten"
-             accesskey="N">weiter</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">Regal-Drupal  Dokumentation</a> &#187;</li> 
+          <a href="../user-docs/configureFacets.html" title="Facetten einrichten"
+             accesskey="P">zurück</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Regal-Drupal  Dokumentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -51,23 +51,25 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="willkommen-zur-regal-drupal-dokumentation">
-<h1>Willkommen zur Regal-Drupal Dokumentation!<a class="headerlink" href="#willkommen-zur-regal-drupal-dokumentation" title="Link zu dieser Überschrift">¶</a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Inhalt:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="user-docs/configureFacets.html">Facetten einrichten</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developer-docs/developFacets.html">Facetten im Sourcecode anpassen</a></li>
-</ul>
-</div>
-</div>
-<div class="section" id="index-und-tabellen">
-<h1>Index und Tabellen<a class="headerlink" href="#index-und-tabellen" title="Link zu dieser Überschrift">¶</a></h1>
+  <div class="section" id="facetten-im-sourcecode-anpassen">
+<h1>Facetten im Sourcecode anpassen<a class="headerlink" href="#facetten-im-sourcecode-anpassen" title="Link zu dieser Überschrift">¶</a></h1>
+<p>Für die Anpassung der Facetten im Quellcode kommen besonders die Dateien</p>
 <ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Stichwortverzeichnis</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Modulindex</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Suche</span></a></li>
+<li>edoweb_storage/EdowebAPIClient.inc</li>
+<li>edoweb/php/moduleSettings.php</li>
+<li>edoweb/js/edoweb_view.js</li>
 </ul>
+<p>infrage.</p>
+<p>In der ersten Datei werden die Anfragen an an den Elasticsearch-Index generiert, die die für die Facetten benötigten Daten verwenden. Die derzeit verwendete
+Elasticsearch 1.1 kennt für die Abfrage von Facetten ein mit „facets“ bezeichnetes Array, mit dem die entsprechende Abfrage generiert wird. In späteren Elasicsearch-Versionen
+gibt es dieses Atrray nicht mehr. Im Unterschied zu dem „query“ genannten Array funktioniert hier die Sortierung der Ergebnisliste deutlich anders.</p>
+<p>query kennt ein inneres Array namens „sort“, dass als weiteres Element „order“ enthält. „sort enthält die Information welches Feld sortiert werden soll, „order“ kann z.B. „desc“ oder „asc“ sein.</p>
+<p>facet kennt nur „order“ mit den Begriffen „count“ [default], „term“ und „reverse_term“. Während count nach der Anzahl der treffer sortiert, sortieren term und reverse_term auf- und absteigend
+nach dem Feldnamen.</p>
+<p><a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/0.90/search-facets-terms-facet.html">https://www.elastic.co/guide/en/elasticsearch/reference/0.90/search-facets-terms-facet.html</a></p>
+<p>gibt eine genaue Übersicht.</p>
+<p>Hier habe ich z.B. die Formulare angelegt, die eine rollenspezifische Auswahl der Facetten ermöglichen. In der Datei EdowebAPIClient.inc erfolgt die rollenspezifische Vorbereitung
+der Facetten.</p>
 </div>
 
 
@@ -76,26 +78,20 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Inhalt</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Willkommen zur Regal-Drupal Dokumentation!</a></li>
-<li><a class="reference internal" href="#index-und-tabellen">Index und Tabellen</a></li>
-</ul>
-
-  <h4>Nächstes Thema</h4>
-  <p class="topless"><a href="user-docs/configureFacets.html"
-                        title="nächstes Kapitel">Facetten einrichten</a></p>
+  <h4>Vorheriges Thema</h4>
+  <p class="topless"><a href="../user-docs/configureFacets.html"
+                        title="vorheriges Kapitel">Facetten einrichten</a></p>
   <div role="note" aria-label="source link">
     <h3>Diese Seite</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
+      <li><a href="../_sources/developer-docs/developFacets.rst.txt"
             rel="nofollow">Quellcode anzeigen</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Schnellsuche</h3>
     <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
+    <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Los" />
       <input type="hidden" name="check_keywords" value="yes" />
@@ -112,12 +108,12 @@
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="Stichwortverzeichnis"
+          <a href="../genindex.html" title="Stichwortverzeichnis"
              >Index</a></li>
         <li class="right" >
-          <a href="user-docs/configureFacets.html" title="Facetten einrichten"
-             >weiter</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">Regal-Drupal  Dokumentation</a> &#187;</li> 
+          <a href="../user-docs/configureFacets.html" title="Facetten einrichten"
+             >zurück</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Regal-Drupal  Dokumentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
