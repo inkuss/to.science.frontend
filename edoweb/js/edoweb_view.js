@@ -51,7 +51,7 @@
       $('#facetList', context).each(function() {
         var listnav = $(this);
         var listitems = listnav.children('li').get();
-        listitems.sort(function(a, b) {
+        listitems.sort(function(b, a) {
            return $(a).text().toUpperCase().localeCompare($(b).text().toUpperCase());
         })
         $.each(listitems, function(idx, itm) { listnav.append(itm); });
