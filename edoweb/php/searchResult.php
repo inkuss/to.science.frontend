@@ -274,6 +274,7 @@ function edoweb_basic_list_entities(EntityFieldQuery $efq, $operations = array()
                 '#type' => 'ul',
                 '#attributes' => array(
                     'class' => array('edoweb-facets-available'),
+                    'id' => $jsonld_property,
                 ),
                 '#title' => l(_edoweb_map_string($jsonld_property), 'browse/' . $jsonld_property),
             );
