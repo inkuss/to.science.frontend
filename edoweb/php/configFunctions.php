@@ -113,14 +113,83 @@ function _edoweb_entity_table_headers($init_sort = null) {
             'specifier' => array (
                 'field' => 'field_edoweb_issued',
                 'column' => 'value'
-            )
+            ),
+            'sort' => ($init_sort == 'issued') ? 'desc' : null
         ),
         'objectTimestamp' => array (
             'data' => t ( 'Updated' ),
             'type' => 'property',
             'specifier' => 'objectTimestamp',
             'format' => '_edoweb_format_date',
-            'sort' => $init_sort ? 'desc' : null
+            'sort' => ($init_sort == 'objectTimestamp') ? 'desc' : null
+        ),
+        '_edoweb_format_access_icons' => array (
+            'data' => t ( 'Zugriff' ),
+            'type' => 'generated',
+            'format' => '_edoweb_format_access_icons'
+        ),
+        '_edoweb_link_lastmodified' => array (
+            'data' => t ( 'Zuletzt hinzugefügtes Label' ),
+            'type' => 'generated',
+            'format' => '_edoweb_link_lastmodified'
+        ),
+        'bundle_type' => array (
+            'data' => t ( 'Objektart' ),
+            'type' => 'property',
+            'specifier' => 'bundle_type',
+            'format' => '_edoweb_format_bundle_name'
+        ),
+        'type' => array (
+            'data' => t ( 'Typ' ),
+            'type' => 'field',
+            'specifier' => array (
+                'field' => 'field_edoweb_type',
+                'column' => 'value'
+            )
+        )
+    );
+}
+
+function _edoweb_entity_table_headers($init_sort = null) {
+    return array (
+        'field_edoweb_title' => array (
+            'data' => 'Titel',
+            'type' => 'field',
+            'specifier' => array (
+                'field' => 'field_edoweb_title',
+                'column' => 'value'
+            ),
+            'format' => '_full_title'
+        ),
+        'field_edoweb_identifier_ht' => array (
+            'data' => t ( 'ID' ),
+            'type' => 'field',
+            'specifier' => array (
+                'field' => 'field_edoweb_identifier_ht',
+                'column' => 'value'
+            ),
+            'format' => '_get_link'
+        ),
+        '_edoweb_compact_view' => array (
+            'data' => t ( 'Kurzansicht' ),
+            'type' => 'generated',
+            'format' => '_edoweb_compact_view'
+        ),
+        'field_edoweb_issued' => array (
+            'data' => t ( 'Issued' ),
+            'type' => 'field',
+            'specifier' => array (
+                'field' => 'field_edoweb_issued',
+                'column' => 'value'
+            ),
+            'sort' => ($init_sort == 'issued') ? 'desc' : null
+        ),
+        'objectTimestamp' => array (
+            'data' => t ( 'Updated' ),
+            'type' => 'property',
+            'specifier' => 'objectTimestamp',
+            'format' => '_edoweb_format_date',
+            'sort' => ($init_sort == 'objectTimestamp') ? 'desc' : null
         ),
         '_edoweb_format_access_icons' => array (
             'data' => t ( 'Zugriff' ),
