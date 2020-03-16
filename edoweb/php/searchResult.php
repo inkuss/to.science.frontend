@@ -10,9 +10,11 @@ function edoweb_basic_table_header($bundle_type = 'generic', $init_sort = false)
     if (user_access('edit any edoweb_basic entity')) {
         $entity_table_headers = variable_get('editor_entity_table_headers', _edoweb_entity_table_headers_defaults());
         $authority_table_headers = variable_get('editor_authority_table_headers', _edoweb_authority_table_headers_defaults());
+        $init_sort = 'objectTimestamp';
     } else {
         $entity_table_headers = variable_get('user_entity_table_headers', _edoweb_entity_table_headers_defaults());
         $authority_table_headers = variable_get('user_authority_table_headers', _edoweb_authority_table_headers_defaults());
+        $init_sort = 'issued';
     }
     
     switch ($bundle_type) {
