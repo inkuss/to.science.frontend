@@ -188,8 +188,9 @@ function edoweb_basic_search_entities(
             
             if (@$term = $query['term']) {
                 
-                $term = str_replace('"https://', '', $term);
-                $term = str_replace('"http://', '', $term);
+                // Replace "http:// or "https: with " to prevent protocol dependend results    
+                $term = str_replace('"https://', '"', $term);
+                $term = str_replace('"http://', '"', $term);
                 $efq->addMetaData('term', $term);
             }
             
