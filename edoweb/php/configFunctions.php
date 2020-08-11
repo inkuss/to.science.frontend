@@ -113,14 +113,15 @@ function _edoweb_entity_table_headers($init_sort = null) {
             'specifier' => array (
                 'field' => 'field_edoweb_issued',
                 'column' => 'value'
-            )
+            ),
+            'sort' => ($init_sort == 'issued') ? 'desc' : null
         ),
         'objectTimestamp' => array (
             'data' => t ( 'Updated' ),
             'type' => 'property',
             'specifier' => 'objectTimestamp',
             'format' => '_edoweb_format_date',
-            'sort' => $init_sort ? 'desc' : null
+            'sort' => ($init_sort == 'objectTimestamp') ? 'desc' : null
         ),
         '_edoweb_format_access_icons' => array (
             'data' => t ( 'Zugriff' ),

@@ -64,20 +64,53 @@ function edoweb_repository_configuration_form() {
         '#default_value' => variable_get('sub_title_field_value_separator', '|'),
     );
     
-    $form['available_facets'] = array(
+    
+    $form['admin_available_facets'] = array(
         '#type' => 'checkboxes',
-        '#title' => t('Verfügbare Facetten'),
+        '#title' => t('Verfügbare Facetten FRL-Admin'),
         '#options' => array(
             'subject.@id' => t('Sacherschließung'),
-            'rpbSubject.@id' => t('RPB Erchließung'),
+            'rpbSubject.@id' => t('RPB Erschließung'),
             'contentType' => t('Objektart'),
             'rdftype.@id' => t('Typ'),
             'medium.@id' => t('Medium'),
             'issued' => t('Erscheinungsjahr'),
             'creator.@id' => t('Autor'),
-            'institution.@id' => t('Institution'),
+            'institution.@id' => t('Sammlung'),
         ),
-        '#default_value' => variable_get('available_facets', array('creator.@id')),
+        '#default_value' => variable_get('admin_available_facets', array('creator.@id')),
+    );
+    
+    $form['editor_available_facets'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Verfügbare Facetten Bearbeiter'),
+        '#options' => array(
+            'subject.@id' => t('Sacherschließung'),
+            'rpbSubject.@id' => t('RPB Erschließung'),
+            'contentType' => t('Objektart'),
+            'rdftype.@id' => t('Typ'),
+            'medium.@id' => t('Medium'),
+            'issued' => t('Erscheinungsjahr'),
+            'creator.@id' => t('Autor'),
+            'institution.@id' => t('Sammlung'),
+        ),
+        '#default_value' => variable_get('editor_available_facets', array('creator.@id')),
+    );
+    
+    $form['user_available_facets'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Verfügbare Facetten Endnutzer'),
+        '#options' => array(
+            'subject.@id' => t('Sacherschließung'),
+            'rpbSubject.@id' => t('RPB Erschließung'),
+            'contentType' => t('Objektart'),
+            'rdftype.@id' => t('Typ'),
+            'medium.@id' => t('Medium'),
+            'issued' => t('Erscheinungsjahr'),
+            'creator.@id' => t('Autor'),
+            'institution.@id' => t('Sammlung'),
+        ),
+        '#default_value' => variable_get('user_available_facets', array('creator.@id')),
     );
     
     $entity_table_headers = array();
@@ -98,7 +131,16 @@ function edoweb_repository_configuration_form() {
         '#options' => $entity_table_headers,
         '#default_value' => variable_get('user_entity_table_headers',  _edoweb_entity_table_headers_defaults()),
     );
-    
+
+    $form['user_table_headers_sort'] = array(
+        '#type' => 'radioboxes',
+        '#title' => t('Dokument-Tabellenheader für Endnutzer'),
+        '#options' => $user_table_headers_sort,
+        '#default_value' => variable_get('user_table_headers_sort'),
+    );
+
+
+
     $authority_table_headers = array();
     foreach (_edoweb_authority_table_headers() as $field => $column) {
         $authority_table_headers[$field] = $column['data'];

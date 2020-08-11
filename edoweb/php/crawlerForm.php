@@ -194,6 +194,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
                 'IE' => t('Microsoft IE 11'),
                 'Firefox' => t('Mozilla Firefox'),
                 'Safari' => t('Apple Safari'),
+                'Googlebot' => t('Google Crawler'),
             ),
             '#default_value' => @$conf['agentIdSelection'] == null ? 'Chrome' : @$conf['agentIdSelection'],
             '#required' => FALSE,

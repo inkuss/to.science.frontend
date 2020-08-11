@@ -1,4 +1,16 @@
 <?php
+
+/** 
+ * Function creates HTML-FORM for searching via elasticsearch
+ * 
+ * @param array $form
+ * @param unknown $form_state
+ * @param unknown $advanced
+ * @param integer $search_count
+ * @param unknown $query
+ * @param boolean $fulltext_option
+ * @return string[]|NULL[]|unknown[]|unknown[][]
+ */  
 function edoweb_basic_search_entities_form($form, &$form_state, $advanced, $search_count, $query, $fulltext_option = false) {
     
     $form['#method'] = 'get';
@@ -90,6 +102,19 @@ function edoweb_basic_search_entities_form($form, &$form_state, $advanced, $sear
     return $form;
 }
 
+
+/** Prepare Request for Elasticsearch via creating EntityFieldQuery Object
+ * 
+ * @param EntityFieldQuery $efq
+ * @param boolean $advanced
+ * @param array $operations
+ * @param boolean $list_noterm
+ * @param boolean $add_links
+ * @param boolean $sortable
+ * @param string $view_mode
+ * @param boolean $fulltext_option
+ * @return NULL[]|string[][]|unknown[][]
+ */
 function edoweb_basic_search_entities(
     EntityFieldQuery $efq, $advanced = FALSE, $operations = array(),
     $list_noterm = TRUE, $add_links = FALSE, $sortable = TRUE,
@@ -156,12 +181,16 @@ function edoweb_basic_search_entities(
                 if (!is_array($type)) {
                     $type = array($type);
                 } else {
-                    $type = array_keys($type);
+                    $type == array_keys($type);
                 }
                 $efq->addMetaData('type', $type);
             }
             
             if (@$term = $query['term']) {
+                
+                // Replace "http:// or "https: with " to prevent protocol dependend results    
+                $term = str_replace('"https://', '"', $term);
+                $term = str_replace('"http://', '"', $term);
                 $efq->addMetaData('term', $term);
             }
             
