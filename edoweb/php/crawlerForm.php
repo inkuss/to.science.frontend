@@ -92,7 +92,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     $form['active'] = array(
         '#type' => 'checkbox',
         '#title' => t('Active'),
-        '#default_value' => @$conf['active'] == null ? true : @$conf['active'],
+        '#default_value' => @$conf['active'] == false ? 0 : 1,
         '#weight' => 20,
     );
     
