@@ -16,8 +16,8 @@ Installation on Ubuntu, your distribution may vary:
 Clone the repository and submodules to Drupal's module directory:
 
     $ cd sites/all/modules
-    $ git clone https://github.com/edoweb/regal-drupal.git
-    $ cd regal-drupal
+    $ git clone https://github.com/hbz/to.science.drupal.git
+    $ cd to.science.drupal
     $ git submodule update --init
 
 Download non Drupal-core dependency modules:
