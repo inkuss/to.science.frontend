@@ -113,7 +113,7 @@ function edoweb_init() {
     drupal_add_js(drupal_get_path('module', 'edoweb') . '/js/jquery-listnav.js');
     drupal_add_css(drupal_get_path('module', 'edoweb') . '/css/listnav.css');
     drupal_add_css(drupal_get_path('module', 'edoweb') . '/css/edoweb.css');
-    drupal_add_css('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', array('type' => 'external'));
+    drupal_add_css(drupal_get_path('module', 'edoweb') . '/css/font-awesome.min.css');
     // Setup IE meta tag to force IE rendering mode
     $meta_ie_render_engine = array(
         '#type' => 'html_tag',
