@@ -702,9 +702,12 @@ function _edoweb_http_request($request_url, $http_options) {
     'timeout' => 60,
   );
 
+  // drupal_set_message("Request-URL: $request_url", 'debug');
   $http_response = drupal_http_request($request_url, $http_options);
 
   $request = explode(' ', $http_response->request);
+  // drupal_set_message("Response->Request: $request", 'debug');
+  // drupal_set_message("Response Code: $http_response->code", 'debug');
   $is_search_request = $is_api_request && (substr(ltrim(next($request), '/'), 0, 6) == 'search');
   if ($modifying && !$is_search_request) {
     console_log($http_response);
@@ -745,8 +748,14 @@ function _edoweb_http_request($request_url, $http_options) {
         $code = $http_response->code;
       } else {
         $data = json_decode($http_response->data);
-        $message = $data->text;
-        $code = $data->code;
+	if( $data ) {
+            $message = $data->text;
+            $code = $data->code;
+	}
+	else {
+	    $message = "Allgemeiner Server-Fehler";
+            $code = 500;
+	}
       }
       drupal_set_message("$code: $message", $status_type);
     }

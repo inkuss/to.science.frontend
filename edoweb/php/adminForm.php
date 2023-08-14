@@ -66,7 +66,8 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
         '#attributes' => array('disabled' => 'disabled'),
         '#options' => array(
             'epicur' => t('Register Urn'),
-            'aleph' => t('Copy to Catalog'),
+            'aleph' => t('Copy to Aleph-Katalog'),
+            'alma' => t('Copy to Alma-Katalog'),
             'oaidc' => t('Support OAI-PMH'),
             'mets' => t('OAI-PMH METS'),
             'rdf' => t('OAI-PMH RDF'),
