@@ -25,6 +25,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
         : 'resource="[_:foo]"';
         
         // Start setting up the content.
+	// drupal_set_message("Beginne Aufsetzen des Inhalts");
         if (!('compact' == $view_mode)) {
             $entity->content = array(
                 '#view_mode' => $view_mode,
@@ -217,6 +218,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
         // And now invoke hook_entity_view().
         module_invoke_all('entity_view', $entity, $entity_type, $view_mode, $langcode);
         // Now invoke hook_entity_view_alter().
+	#drupal_set_message(htmlentities(_edoweb_storage_entity_serialize_jsonld($entity)));
         drupal_alter(array('edoweb_basic_view', 'entity_view'), $entity->content, $entity_type);
         
         if (!('compact' == $view_mode)) {

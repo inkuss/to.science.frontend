@@ -289,6 +289,8 @@ class EdowebAPIClient implements EdowebAPIClientInterface
             $data['contentType'] = $entity->bundle_type;
         }
 
+        // drupal_set_message('setAccessRights: http_url=' . $http_url);
+        // drupal_set_message('setAccessRights: json_encode(\$data)=' . json_encode($data));
         return $this->_http_patch($http_url, json_encode($data), 'application/json');
     }
 

@@ -4,6 +4,7 @@
  * Provides a form to configure access for entities.
  */
 function edoweb_basic_access_form($form, &$form_state, $entity) {
+    // drupal_set_message("access_md : $entity->access_md", 'debug');
     
     $form['basic_entity'] = array(
         '#type' => 'value',

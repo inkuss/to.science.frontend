@@ -99,6 +99,10 @@ class EdowebBasicEntity extends Entity {
 
   public function subLabel($view_mode = 'compact') {
     $label_fields = array();
+    if( variable_get('sub_title_fields') == null ) {
+	drupal_set_message("WARN: sub_title_fields sind leer !");
+        return null;
+    }
     foreach (variable_get('sub_title_fields') as $field => $enabled) {
       if ($enabled) {
         $label_fields[] = $field;

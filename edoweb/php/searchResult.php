@@ -88,6 +88,7 @@ function edoweb_basic_entity_table($header, $entities, $operations = array(), $t
     
     foreach ($entities as $i => $entity) {
         
+        // drupal_set_message("Entität gefunden", 'debug');
         // Render embedded operations form
         $operation_elements = '';
         foreach ($operations as $operation) {
@@ -105,6 +106,7 @@ function edoweb_basic_entity_table($header, $entities, $operations = array(), $t
         );
         
         foreach ($columns as $column) {
+            // drupal_set_message("Spalte: " .$column, 'debug');
             $property = null;
             $value = null;
             $is_ref = false;
