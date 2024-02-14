@@ -43,28 +43,49 @@ Alle Befehle werden als Root oder mit sudo ausgeführt.
 
     ### hier weiter
 
-    $ sudo apt-get install php5-librdf
-    $ sudo apt-get install php5-curl
-    $ sudo apt-get install php5-intl
+    # php5-intl mit Yast2 installieren. Wie auf hoerkaen/paideia von Hand. Ist evtl. im PHP schon mit drin.
+sudo service php56-fpm restart
 
+# Installiere to.science.drupal
 Clone the repository and submodules to Drupal's module directory:
-
-    $ cd sites/all/modules
-    $ git clone https://github.com/hbz/to.science.drupal.git
-    $ cd to.science.drupal
-    $ git submodule update --init
-
+$ cd sites/all/modules
+$ git clone https://github.com/hbz/to.science.drupal.git
+$ cd to.science.drupal
+$ git submodule update --init
 Download non Drupal-core dependency modules:
+$ cd sites/all/modules
+$ curl https://ftp.drupal.org/files/projects/entity-7.x-1.1.tar.gz | tar xz
+$ curl https://ftp.drupal.org/files/projects/entity_js-7.x-1.0-alpha3.tar.gz | tar xz
+$ curl https://ftp.drupal.org/files/projects/ctools-7.x-1.3.tar.gz | tar xz
 
-    $ cd sites/all/modules
-    $ curl https://ftp.drupal.org/files/projects/entity-7.x-1.1.tar.gz | tar xz
-    $ curl https://ftp.drupal.org/files/projects/entity_js-7.x-1.0-alpha3.tar.gz | tar xz
-    $ curl https://ftp.drupal.org/files/projects/ctools-7.x-1.3.tar.gz | tar xz
+# Installiere ORCA drupal-theme
+cd /opt/toscience/drupal/sites/all/themes
+git clone https://github.com/hbz/edoweb-drupal-theme.git
 
-Activate "Edoweb Entities" module at (e.g. at
-<http://localhost/drupal/?q=admin/modules>) and confirm activation of
-dependency modules. Finally, set the host, user and password for the API
-at <http://localhost/drupal/?q=admin/config/edoweb/storage>.
+  
+ 
+Activate "Edoweb Entities" module (e.g. at <http://localhost/drupal/?q=admin/modules>) and confirm activation of dependency modules. Also activate the modules "chaos tools" and "entity tokens".
+
+
+Make sure the "Local" module has been activated if you need to localize your installation. If you have not yet localized your installation, navigate to http://localhost/drupal?q=admin/config/regional/translate/import, choose your language file and the language to import it into.  Clear the cache to make sure all field instance labels are updated.
+
+Finally, set the host, user and password for the API at <http://localhost/?q=edoweb/config/storage>  and <http://localhost/?q=edoweb/config/account>s.  Man gelangt auch über Startseite - Konfiguration - APIs bzw. Accounts zu diesen Seiten.
+
+Activate "Edoweb" theme (e.g. at http://localhost/drupal/?q=admin/appearance).
+
+Navigate to http://localhost/resource . This will show you the start page of edoweb.
+
+# Connect to to.science.api
+*****************************
+Configuration against to.science.api takes place at
+
+http://localhost/edoweb/config/storage  and  http://localhost/edoweb/config/accounts .
+
+Please set the api host to the full url of your to.science.api installation, e.g. https://api.localhost.
+
+If you have installed to.science.api as is, it will come with a faked user authentication that provides three users: edoweb-admin, edoweb-editor and edoweb-reader. With fake user authentication, the api will accept any password for the three users, so you can set all three passwords to an arbitrary string.
+
+Drupal läuft über http://localhost/user
 
 # Localization
 
