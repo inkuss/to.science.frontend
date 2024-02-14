@@ -20,59 +20,69 @@ Install libraptor2-0 and raptor with YaST2.
 
 Then install librasqal3 (RDF Parser Toolkit for Redland), librdf0, rasqal und redland with YaST2.
 
-    # Install required packages:
+Install required packages:
+
     zypper in -t pattern devel_basis
     zypper in libredland-devel raptor re2c gdb valgrind swig libxml2-devel sqlite3-devel php56-devel librasqal-devel
 
-    Download Redland bindings, replace Makefile in the subfolder "php":
-    # download redland bindings
+Download Redland bindings, replace Makefile in the subfolder "php":
+
     wget wget https://download.librdf.org/source/redland-bindings-1.0.17.1.tar.gz
     tar xf redland-bindings-1.0.17.1.tar.gz
     cd redland-bindings-1.0.17.1/
     ./autogen.sh --with-php=php56
     cd php/
      
-    Replace Makefile by [This file](https://github.com/hbz/to.science.drupal/blob/master/makefile_changed_redland_sles_php56.Makefile).
+Replace Makefile by [this file](https://github.com/hbz/to.science.drupal/blob/master/makefile_changed_redland_sles_php56.Makefile).
      
     make
     make install
 
-Finally, instal redland.so :
+Finally, install redland.so :
+
     cp redland.so /usr/lib64/php56/extensions/
     cd /etc/php56/conf.d
     cp tokenizer.ini redland.ini
     vim redland.ini
-        Replace tokenizer.so by redland.so
+    # replace tokenizer.so by redland.so
+    wq
 
 Install php5-intl with Yast2 
-sudo service php56-fpm restart
+
+    sudo service php56-fpm restart
 
 # Install to.science.drupal
 ## Clone the repository and submodules to Drupal's module directory:
-$ cd sites/all/modules
-$ git clone https://github.com/hbz/to.science.drupal.git
-$ cd to.science.drupal
-$ git submodule update --init
+
+    cd sites/all/modules
+    git clone https://github.com/hbz/to.science.drupal.git
+    cd to.science.drupal
+    git submodule update --init
+    
 ## Download non Drupal-core dependency modules:
-$ cd sites/all/modules
-$ curl https://ftp.drupal.org/files/projects/entity-7.x-1.1.tar.gz | tar xz
-$ curl https://ftp.drupal.org/files/projects/entity_js-7.x-1.0-alpha3.tar.gz | tar xz
-$ curl https://ftp.drupal.org/files/projects/ctools-7.x-1.3.tar.gz | tar xz
 
-# Install drupal theme
-cd /opt/toscience/drupal/sites/all/themes
-git clone https://github.com/hbz/edoweb-drupal-theme.git
+    cd sites/all/modules
+    curl https://ftp.drupal.org/files/projects/entity-7.x-1.1.tar.gz | tar xz
+    curl https://ftp.drupal.org/files/projects/entity_js-7.x-1.0-alpha3.tar.gz | tar xz
+    curl https://ftp.drupal.org/files/projects/ctools-7.x-1.3.tar.gz | tar xz
 
-  
-Activate "Edoweb Entities" module (e.g. at <http://localhost/drupal/?q=admin/modules>) and confirm activation of dependency modules. Also activate the modules "chaos tools" and "entity tokens".
+# Install Drupal theme
 
-Make sure the "Local" module has been activated if you need to localize your installation. If you have not yet localized your installation, navigate to http://localhost/drupal?q=admin/config/regional/translate/import, choose your language file and the language to import it into.  Clear the cache to make sure all field instance labels are updated.
+    cd /opt/toscience/drupal/sites/all/themes
+    git clone https://github.com/hbz/edoweb-drupal-theme.git
 
-Finally, set the host, user and password for the API at <http://localhost/?q=edoweb/config/storage>  and <http://localhost/?q=edoweb/config/account>s.  Man gelangt auch über Startseite - Konfiguration - APIs bzw. Accounts zu diesen Seiten.
+"Edoweb" is one theme for toscience. Create your own theme.
+
+# Activate Drupal modules
+Activate "Edoweb Entities" module (e.g. at <http://localhost/drupal/?q=admin/modules>) and confirm activation of dependency modules. Also activate the modules "Chaos Tools" and "Entity Tokens".
+
+Make sure the "Local" module has been activated if you need to localize your installation. If you have not yet localized your installation, navigate to <http://localhost/drupal?q=admin/config/regional/translate/import>, choose your language file and the language to import it into.  Clear the cache to make sure all field instance labels are updated.
+
+Finally, set the host, user and password for the API at <http://localhost/?q=edoweb/config/storage>  and <http://localhost/?q=edoweb/config/account>s.  You will also reach these pages via Start Page - Configuration - APIs  or Accounts, respectively.
 
 Activate "Edoweb" theme (e.g. at http://localhost/drupal/?q=admin/appearance).
 
-Navigate to http://localhost/resource . This will show you the start page of edoweb.
+Navigate to http://localhost/resource . This will show you the start page of toscience (using the chosen theme).
 
 # Connect to a to.science.api
 
@@ -82,17 +92,20 @@ http://localhost/edoweb/config/storage  and  http://localhost/edoweb/config/acco
 
 Please set the api host to the full url of your to.science.api installation, e.g. https://api.localhost.
 
-If you have installed to.science.api as is, it will come with a faked user authentication that provides three users: edoweb-admin, edoweb-editor and edoweb-reader. With fake user authentication, the api will accept any password for the three users, so you can set all three passwords to an arbitrary string.
+If you have installed to.science.api as is, it will come with a faked user authentication that provides three users: 
+
+edoweb-admin, edoweb-editor and edoweb-reader. 
+
+With fake user authentication, the api will accept any password for the three users, so you can set all three passwords to an arbitrary string.
 
 Drupal is accessible at http://localhost/user
 
 # Localization
 
-To localize your Drupal installation, first activate the "Localize"
-module. Then download your preffered language from
-<https://localize.drupal.org/translate/languages/>. Navigate to
-<http://localhost/drupal?q=admin/config/regional/translate/import>,
-choose your language file and the language to import it into. To
-localize regal-drupal (German file available [here](german.po), proceed
-as describe above. Clear the cache to make sure all field instance
-labels are updated.
+To localize your Drupal installation, first activate the "Localize" module. 
+
+Then download your preffered language from <https://localize.drupal.org/translate/languages/>. 
+
+Navigate to <http://localhost/drupal?q=admin/config/regional/translate/import>, choose your language file and the language to import it into. 
+
+To localize to.science.drupal (German file available [here](german.po), proceed as describe above. Clear the cache to make sure all field instance labels are updated.
