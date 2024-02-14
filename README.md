@@ -1,9 +1,9 @@
-h1. About
+# About
 
 to.science.drupal is a collection of Drupal 7 modules that provide a front end for [toscience](https://github.com/hbz/to.science) (repository and
 graph-based api for library data).
 
-h1. Install redland bindings
+## Install redland bindings
 
 to.science.drupal depends on the redland bindings and curl modules for php5.
 Installation on SLES SP4:
