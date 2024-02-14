@@ -5,7 +5,7 @@ graph-based api for library data).
 
 # Install redland bindings
 
-to.science.drupal depends on the redland bindings and curl modules for php5.
+to.science.drupal depends on the Redland rdf bindings and on curl modules for php5. 
 Install redland bindings for php56 on SLES.
 
 *Installation on SLES SP4:*
