@@ -8,7 +8,7 @@ graph-based api for library data).
 to.science.drupal depends on the redland bindings and curl modules for php5.
 Installation on SLES SP4:
 
-libraptor2-0 und raptor mit YaST2 installieren.
+Install libraptor2-0 and raptor with YaST2:
 
 zypper addrepo https://download.opensuse.org/repositories/X11:common:Factory/SLE_15_SP2/X11:common:Factory.repo
 zypper refresh
