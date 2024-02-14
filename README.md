@@ -47,8 +47,6 @@ Finally, install redland.so :
     # replace tokenizer.so by redland.so
     wq
 
-Install php5-intl with Yast2 
-
     sudo service php56-fpm restart
 
 # Install to.science.drupal
