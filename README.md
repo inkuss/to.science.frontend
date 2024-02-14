@@ -80,23 +80,10 @@ Finally, set the host, user and password for the API at <http://localhost/?q=edo
 
 Activate "Edoweb" theme (e.g. at http://localhost/drupal/?q=admin/appearance).
 
+Log in at http://localhost/user .
+
 Navigate to http://localhost/resource . This will show you the start page of toscience (using the chosen theme).
 
-# Connect to a to.science.api
-
-Configuration against to.science.api takes place at
-
-http://localhost/edoweb/config/storage  and  http://localhost/edoweb/config/accounts .
-
-Please set the api host to the full url of your to.science.api installation, e.g. https://api.localhost.
-
-If you have installed to.science.api as is, it will come with a faked user authentication that provides three users: 
-
-edoweb-admin, edoweb-editor and edoweb-reader. 
-
-With fake user authentication, the api will accept any password for the three users, so you can set all three passwords to an arbitrary string.
-
-Drupal is accessible at http://localhost/user
 
 # Localization
 
