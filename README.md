@@ -3,25 +3,27 @@
 to.science.drupal is a collection of Drupal 7 modules that provide a front end for [toscience](https://github.com/hbz/to.science) (repository and
 graph-based api for library data).
 
-## Install redland bindings
+# Install redland bindings
 
 to.science.drupal depends on the redland bindings and curl modules for php5.
-Installation on SLES SP4:
+Install redland bindings for php56 on SLES.
 
-Install libraptor2-0 and raptor with YaST2:
+*Installation on SLES SP4:*
+
+Execute all commands as *root* or with *sudo su*.
+
+Install libraptor2-0 and raptor with YaST2.
 
 zypper addrepo https://download.opensuse.org/repositories/X11:common:Factory/SLE_15_SP2/X11:common:Factory.repo
 zypper refresh
-Dann librasqal3 (RDF Parser Toolkit for Redland), librdf0, rasqal und redland mit YaST2 installieren.
 
-Install redland bindings on SLES for php56:
-Alle Befehle werden als Root oder mit sudo ausgeführt.
+Then install librasqal3 (RDF Parser Toolkit for Redland), librdf0, rasqal und redland with YaST2.
 
-    Zuerst notwendige Pakete installieren
+    # Install required packages:
     zypper in -t pattern devel_basis
     zypper in libredland-devel raptor re2c gdb valgrind swig libxml2-devel sqlite3-devel php56-devel librasqal-devel
 
-    Redland-Bindings runterladen, und Makefile im php Unterordner austauschen
+    Download Redland bindings, replace Makefile in the subfolder "php":
     # download redland bindings
     wget wget https://download.librdf.org/source/redland-bindings-1.0.17.1.tar.gz
     tar xf redland-bindings-1.0.17.1.tar.gz
@@ -29,7 +31,7 @@ Alle Befehle werden als Root oder mit sudo ausgeführt.
     ./autogen.sh --with-php=php56
     cd php/
      
-    >> Makefile durch Inhalt von "makefile_changed_redland_sles_php56.Makefile" ersetzen (im Anhang)
+    Replace Makefile by "makefile_changed_redland_sles_php56.Makefile".
      
     make
     make install
@@ -46,7 +48,7 @@ Alle Befehle werden als Root oder mit sudo ausgeführt.
     # php5-intl mit Yast2 installieren. Wie auf hoerkaen/paideia von Hand. Ist evtl. im PHP schon mit drin.
 sudo service php56-fpm restart
 
-h1. Install to.science.drupal
+# Install to.science.drupal
 Clone the repository and submodules to Drupal's module directory:
 $ cd sites/all/modules
 $ git clone https://github.com/hbz/to.science.drupal.git
@@ -58,7 +60,7 @@ $ curl https://ftp.drupal.org/files/projects/entity-7.x-1.1.tar.gz | tar xz
 $ curl https://ftp.drupal.org/files/projects/entity_js-7.x-1.0-alpha3.tar.gz | tar xz
 $ curl https://ftp.drupal.org/files/projects/ctools-7.x-1.3.tar.gz | tar xz
 
-h1. Install drupal theme
+# Install drupal theme
 cd /opt/toscience/drupal/sites/all/themes
 git clone https://github.com/hbz/edoweb-drupal-theme.git
 
@@ -75,7 +77,7 @@ Activate "Edoweb" theme (e.g. at http://localhost/drupal/?q=admin/appearance).
 
 Navigate to http://localhost/resource . This will show you the start page of edoweb.
 
-h1. Connect to a to.science.api
+# Connect to a to.science.api
 
 Configuration against to.science.api takes place at
 
@@ -87,7 +89,7 @@ If you have installed to.science.api as is, it will come with a faked user authe
 
 Drupal läuft über http://localhost/user
 
-h1. Localization
+# Localization
 
 To localize your Drupal installation, first activate the "Localize"
 module. Then download your preffered language from
