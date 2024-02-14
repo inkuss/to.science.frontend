@@ -5,17 +5,18 @@ graph-based api for library data).
 
 # Install redland bindings
 
-to.science.drupal depends on the Redland rdf bindings and on curl modules for php5. 
+to.science.drupal depends on the Redland rdf bindings and on curl modules for php5.
+
 Install redland bindings for php56 on SLES.
 
-*Installation on SLES SP4:*
+*Installation on SLES 15 SP4:*
 
 Execute all commands as *root* or with *sudo su*.
 
 Install libraptor2-0 and raptor with YaST2.
 
-zypper addrepo https://download.opensuse.org/repositories/X11:common:Factory/SLE_15_SP2/X11:common:Factory.repo
-zypper refresh
+    zypper addrepo https://download.opensuse.org/repositories/X11:common:Factory/SLE_15_SP2/X11:common:Factory.repo
+    zypper refresh
 
 Then install librasqal3 (RDF Parser Toolkit for Redland), librdf0, rasqal und redland with YaST2.
 
