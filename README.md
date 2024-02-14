@@ -1,13 +1,47 @@
 # About
 
-regal-drupal is a collection of Drupal 7 modules that provide a front
-end for [regal](https://github.com/edoweb/regal) (repository and
+to.science.drupal is a collection of Drupal 7 modules that provide a front end for [toscience](https://github.com/hbz/to.science) (repository and
 graph-based api for library data).
 
 # Installation
 
-regal-drupal depends on the librdf and curl modules for php5.
-Installation on Ubuntu, your distribution may vary:
+to.science.drupal depends on the redland bindings and curl modules for php5.
+Installation on SLES SP4:
+
+libraptor2-0 und raptor mit YaST2 installieren.
+
+zypper addrepo https://download.opensuse.org/repositories/X11:common:Factory/SLE_15_SP2/X11:common:Factory.repo
+zypper refresh
+Dann librasqal3 (RDF Parser Toolkit for Redland), librdf0, rasqal und redland mit YaST2 installieren.
+
+Install redland bindings on SLES for php56:
+Alle Befehle werden als Root oder mit sudo ausgeführt.
+
+    Zuerst notwendige Pakete installieren
+    zypper in -t pattern devel_basis
+    zypper in libredland-devel raptor re2c gdb valgrind swig libxml2-devel sqlite3-devel php56-devel librasqal-devel
+
+    Redland-Bindings runterladen, und Makefile im php Unterordner austauschen
+    # download redland bindings
+    wget wget https://download.librdf.org/source/redland-bindings-1.0.17.1.tar.gz
+    tar xf redland-bindings-1.0.17.1.tar.gz
+    cd redland-bindings-1.0.17.1/
+    ./autogen.sh --with-php=php56
+    cd php/
+     
+    >> Makefile durch Inhalt von "makefile_changed_redland_sles_php56.Makefile" ersetzen (im Anhang)
+     
+    make
+    make install
+
+    Zum Schluss noch die redland.so installieren
+    cp redland.so /usr/lib64/php56/extensions/
+    cd /etc/php56/conf.d
+    cp tokenizer.ini redland.ini
+    vim redland.ini
+    tokenizer.so durch redland.so ersetzen
+
+    ### hier weiter
 
     $ sudo apt-get install php5-librdf
     $ sudo apt-get install php5-curl
