@@ -1,9 +1,9 @@
-# About
+h1. About
 
 to.science.drupal is a collection of Drupal 7 modules that provide a front end for [toscience](https://github.com/hbz/to.science) (repository and
 graph-based api for library data).
 
-# Installation
+h1. Install redland bindings
 
 to.science.drupal depends on the redland bindings and curl modules for php5.
 Installation on SLES SP4:
@@ -46,7 +46,7 @@ Alle Befehle werden als Root oder mit sudo ausgeführt.
     # php5-intl mit Yast2 installieren. Wie auf hoerkaen/paideia von Hand. Ist evtl. im PHP schon mit drin.
 sudo service php56-fpm restart
 
-# Installiere to.science.drupal
+h1. Install to.science.drupal
 Clone the repository and submodules to Drupal's module directory:
 $ cd sites/all/modules
 $ git clone https://github.com/hbz/to.science.drupal.git
@@ -58,7 +58,7 @@ $ curl https://ftp.drupal.org/files/projects/entity-7.x-1.1.tar.gz | tar xz
 $ curl https://ftp.drupal.org/files/projects/entity_js-7.x-1.0-alpha3.tar.gz | tar xz
 $ curl https://ftp.drupal.org/files/projects/ctools-7.x-1.3.tar.gz | tar xz
 
-# Installiere ORCA drupal-theme
+h1. Install drupal theme
 cd /opt/toscience/drupal/sites/all/themes
 git clone https://github.com/hbz/edoweb-drupal-theme.git
 
@@ -75,8 +75,8 @@ Activate "Edoweb" theme (e.g. at http://localhost/drupal/?q=admin/appearance).
 
 Navigate to http://localhost/resource . This will show you the start page of edoweb.
 
-# Connect to to.science.api
-*****************************
+h1. Connect to a to.science.api
+
 Configuration against to.science.api takes place at
 
 http://localhost/edoweb/config/storage  and  http://localhost/edoweb/config/accounts .
@@ -87,7 +87,7 @@ If you have installed to.science.api as is, it will come with a faked user authe
 
 Drupal läuft über http://localhost/user
 
-# Localization
+h1. Localization
 
 To localize your Drupal installation, first activate the "Localize"
 module. Then download your preffered language from
