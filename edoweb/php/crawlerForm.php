@@ -88,6 +88,14 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
         );
     }
     
+    $form['cookie'] = array(
+        '#type' => 'textfield',
+        '#default_value' => @$conf['cookie'],
+        '#weight' => 15,
+        '#title' => t('Cookie'),
+        '#required' => FALSE,
+    );
+
     console_log('active='.@$conf['active']);
     $form['active'] = array(
         '#type' => 'checkbox',
@@ -349,6 +357,7 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
         array_push($conf['domains'], $form_state['values'][sprintf('domain%02d',$i)]);
         $i++;
     }
+    $conf['cookie'] = $form_state['values']['cookie'];
     $conf['active'] = $form_state['values']['active'];
     $conf['startDate'] = date("Y-m-d", strtotime($form_state['values']['startDate']['year']
         . '-' . $form_state['values']['startDate']['month']
