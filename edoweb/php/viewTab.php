@@ -38,6 +38,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
                 
                 $api = new EdowebAPIClient();
                 $htmlString=$api->getView($entity,"frl");
+		// drupal_set_message("HTML-String:" . $htmlString);
                 $userInfo="";$viewSource="";$mabSource="";
                 if (user_access('edit any edoweb_basic entity')) {
                     
@@ -218,7 +219,7 @@ function edoweb_basic_view($entity, $view_mode = 'default') {
         // And now invoke hook_entity_view().
         module_invoke_all('entity_view', $entity, $entity_type, $view_mode, $langcode);
         // Now invoke hook_entity_view_alter().
-	#drupal_set_message(htmlentities(_edoweb_storage_entity_serialize_jsonld($entity)));
+	// drupal_set_message(htmlentities(_edoweb_storage_entity_serialize_jsonld($entity)));
         drupal_alter(array('edoweb_basic_view', 'entity_view'), $entity->content, $entity_type);
         
         if (!('compact' == $view_mode)) {
