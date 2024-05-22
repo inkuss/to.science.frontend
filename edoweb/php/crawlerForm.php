@@ -89,7 +89,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     }
     
     $form['cookie'] = array(
-        '#type' => 'textfield',
+        '#type' => 'textarea',
         '#default_value' => @$conf['cookie'],
         '#weight' => 15,
         '#title' => t('Cookie'),
@@ -203,7 +203,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
                 'Firefox' => t('Mozilla Firefox'),
                 'Safari' => t('Apple Safari'),
                 'Googlebot' => t('Google Crawler'),
-                'toscience' => t('to.science Crawler'),
+                'Toscience' => t('to.science Crawler'),
             ),
             '#default_value' => @$conf['agentIdSelection'] == null ? 'Chrome' : @$conf['agentIdSelection'],
             '#required' => FALSE,
