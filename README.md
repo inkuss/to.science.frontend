@@ -76,7 +76,7 @@ Finally, install redland.so :
 # Activate Drupal modules
 Activate "Edoweb Entities" module (e.g. at <http://localhost/drupal/?q=admin/modules>) and confirm activation of dependency modules. Also activate the modules "Chaos Tools" and "Entity Tokens".
 
-Make sure the "Local" module has been activated if you need to localize your installation. If you have not yet localized your installation, navigate to <http://localhost/drupal?q=admin/config/regional/translate/import>, choose your language file and the language to import it into.  Clear the cache to make sure all field instance labels are updated.
+Make sure the "Locale" module has been activated if you need to localize your installation. If you have not yet localized your installation, navigate to <http://localhost/drupal?q=admin/config/regional/translate/import>, choose your language file and the language to import it into.  Clear the cache to make sure all field instance labels are updated.
 
 Finally, set the host, user and password for the API at <http://localhost/?q=edoweb/config/storage>  and <http://localhost/?q=edoweb/config/account>s.  You will also reach these pages via Start Page - Configuration - APIs  or Accounts, respectively.
 
