@@ -9,7 +9,7 @@ to.science.drupal depends on the Redland rdf bindings and on curl modules for ph
 
 Install redland bindings for php56 on SLES.
 
-*Installation on SLES 15 SP4:*
+*Installation on SLES 15 SP5:*
 
 Execute all commands as *root* or with *sudo su*.
 
@@ -26,8 +26,10 @@ Install required packages:
     zypper in libredland-devel raptor re2c gdb valgrind swig libxml2-devel sqlite3-devel php56-devel librasqal-devel
 
 Download Redland bindings, replace Makefile in the subfolder "php":
+Execute as user toscience
 
-    wget wget https://download.librdf.org/source/redland-bindings-1.0.17.1.tar.gz
+    cd /opt/toscience
+    wget https://download.librdf.org/source/redland-bindings-1.0.17.1.tar.gz
     tar xf redland-bindings-1.0.17.1.tar.gz
     cd redland-bindings-1.0.17.1/
     ./autogen.sh --with-php=php56
