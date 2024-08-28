@@ -9,7 +9,7 @@ to.science.drupal depends on the Redland rdf bindings and on curl modules for ph
 
 Install redland bindings for php56 on SLES.
 
-*Installation on SLES 15 SP5:*
+*Installation on SLES 15 SP6:*
 
 Execute all commands as *root* or with *sudo su*.
 
