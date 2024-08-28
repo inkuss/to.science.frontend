@@ -37,7 +37,9 @@ Execute as user toscience
     cd php/
      
 Replace Makefile by [this file](https://github.com/hbz/to.science.drupal/blob/master/makefile_changed_redland_sles_php56.Makefile).
-     
+
+    sudo su; cd /usr/include; ln -s php5 php56; exit;
+    cd /opt/toscience/redland-bindings-1.0.17.1/php
     make
     make install
 
