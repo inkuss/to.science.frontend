@@ -23,7 +23,8 @@ Then install librasqal3 (RDF Parser Toolkit for Redland), librdf0, rasqal und re
 Install required packages:
 
     zypper in -t pattern devel_basis
-    zypper in libredland-devel raptor re2c gdb valgrind swig libxml2-devel sqlite3-devel php56-devel librasqal-devel
+
+Install libredland-devel, raptor, re2c, gdb, valgrind, swig, libxml2-devel, sqlite3-devel, php56-devel and librasqal-devel with YaST2.
 
 Download Redland bindings, replace Makefile in the subfolder "php":
 Execute as user toscience
