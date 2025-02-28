@@ -38,7 +38,7 @@
 				})
 				
 				if(emimin >= 1){
-					$('.edit').attr('href', Drupal.settings.edoweb.formsServiceUrl +'/researchdataktbl/' + resourceId);	
+					$('.edit').attr('href', Drupal.settings.edoweb.formsServiceUrl +'/ktbldata/' + resourceId);	
 				}
 			})
 
@@ -226,7 +226,7 @@
 							});
 							var page_title = $(this.responseText).find('h2').text();
 							Drupal.attachBehaviors(entity_content);
-							if (bundle == 'researchData' || bundle == 'article' || bundle == 'monograph' || bundle == 'journal' || bundle == 'webpage' || bundle == 'ktblData') {
+							if (bundle == 'researchData' || bundle == 'article' || bundle == 'monograph' || bundle == 'journal' || bundle == 'webpage') {
 								Drupal.zettel.useZettel(bundle, entity, context);
 							} else {
 								activateFields(entity_content.find('.field'), bundle, context);

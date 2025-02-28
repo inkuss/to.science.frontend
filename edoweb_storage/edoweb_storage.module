@@ -158,7 +158,7 @@ function edoweb_storage_configuration_form($form, &$form_state) {
       '#type' => 'textfield',
       '#default_value' => variable_get(
           'edoweb_forms_url',
-          variable_get('edoweb_api_host') . '/researchdataktbl'
+          variable_get('edoweb_api_host') . '/ktbldata'
           ),
       '#title' => t('ktbl Data Form URL'),
       '#description' => t('The full URL to the new forms service'),
