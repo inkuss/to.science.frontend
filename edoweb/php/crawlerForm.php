@@ -87,6 +87,18 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             '#required' => FALSE,
         );
     }
+
+    $form['domains']['subdomains'] = array(
+        '#type' => 'radios',
+        '#title' => t('Crawl Subdomains'),
+        '#options' => array(
+            'domains' => t('mit Subdomains'),
+            'hostnames' => t('ohne Subdomains'),
+        ),
+        '#default_value' => @$conf['crawlSubdomains'] == null ? 'hostnames' : @$conf['crawlSubdomains'],
+        '#required' => TRUE,
+        '#weight' => 12,
+    );
     
     $form['cookie'] = array(
         '#type' => 'textarea',
@@ -358,6 +370,7 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
         array_push($conf['domains'], $form_state['values'][sprintf('domain%02d',$i)]);
         $i++;
     }
+    $conf['crawlSubdomains'] = $form_state['values']['subdomains'];
     $conf['cookie'] = $form_state['values']['cookie'];
     $conf['active'] = $form_state['values']['active'];
     $conf['startDate'] = date("Y-m-d", strtotime($form_state['values']['startDate']['year']
