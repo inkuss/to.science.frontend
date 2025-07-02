@@ -15,7 +15,7 @@ Execute all commands as *root* or with *sudo su*.
 
 Install libraptor2-0 and raptor with YaST2.
 
-    zypper addrepo https://download.opensuse.org/repositories/X11:common:Factory/SLE_15_SP2/X11:common:Factory.repo
+    zypper addrepo https://download.opensuse.org/repositories/X11:common:Factory/15.6/X11:common:Factory.repo
     zypper refresh
 
 Then install librasqal3 (RDF Parser Toolkit for Redland), librdf0, rasqal und redland with YaST2.
