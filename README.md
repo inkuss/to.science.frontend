@@ -13,18 +13,18 @@ Install redland bindings for php56 on SLES.
 
 Execute all commands as *root* or with *sudo su*.
 
-Install libraptor2-0 and raptor with YaST2.
+Install raptor and libraptor2-0 with YaST2.
 
     zypper addrepo https://download.opensuse.org/repositories/X11:common:Factory/15.6/X11:common:Factory.repo
     zypper refresh
 
-Then install librasqal3 (RDF Parser Toolkit for Redland), librdf0, rasqal und redland with YaST2.
+Then install rasqal, librasqal3 (RDF Parser Toolkit for Redland), librasqal-devel, librdf0, redland and libredland-devel  with YaST2.
 
 Install required packages:
 
     zypper in -t pattern devel_basis
 
-Install libredland-devel, raptor, re2c, gdb, valgrind, swig, libxml2-devel, sqlite3-devel, php56-devel and librasqal-devel with YaST2.
+Install re2c, gdb, valgrind, swig, libxml2-devel, sqlite3-devel, php56-devel and with YaST2.
 
 Download Redland bindings, replace Makefile in the subfolder "php":
 Execute as user toscience
