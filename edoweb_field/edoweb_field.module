@@ -96,7 +96,7 @@ function edoweb_entity_label($entity_type, $entity_id) {
   $context = stream_context_create(array(
     'http' => array('header'  => "Authorization: Basic " . base64_encode("$user:$pass"))
   ));
-  $label = file_get_contents("{$edoweb_api_host}/tools/etikett?url={$url}&column=label", false, $context);
+  $label = file_get_contents("{$edoweb_api_host}/tools/labels?url={$url}&column=label", false, $context);
   if ($label) {
     die($label);
   }
