@@ -55,9 +55,17 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
         '#submit' => array('edoweb_basic_admin_delete'),
         '#weight' => 200,
     );
+    if ($conf = $api->getCrawlerConfiguration($entity)) {
+        $form['actions']['delete_keep_webarchives'] = array(
+            '#type' => 'submit',
+            '#value' => t('Löschen, behalte Webarchive'),
+            '#submit' => array('edoweb_basic_admin_delete_keep_webarchives'),
+            '#weight' => 180,
+        );
+    }
 
     $toscience_import_server_name = variable_get('toscience_import_server_name');
-    if ($toscience_import_server_name != '' && $conf = $api->getCrawlerConfiguration($entity)) {
+    if ($toscience_import_server_name != '' && $conf ) {
     	$form['actions']['importWS'] = array(
         	'#type' => 'fieldset',
         	'#title' => t('Import Webschnitt'),
@@ -171,7 +179,26 @@ function edoweb_basic_admin_reload( $form , &$form_state ) {
  */
 function edoweb_basic_admin_delete( $form , &$form_state ) {
     $entity = $form_state['values']['basic_entity'];
-    edoweb_basic_delete($entity);
+    $purge = "false";
+    edoweb_basic_delete($entity, $purge, TRUE);
+    $parents = field_get_items('edoweb_basic', $entity, 'field_edoweb_struct_parent');
+    $parent_id = '';
+    if (FALSE !== $parents) {
+        foreach($parents as $parent) {
+            $parent_id = $parent['value'];
+        }
+    }
+    $form_state['redirect'] = "resource/$parent_id";
+}
+
+/**
+ * Form deletion handler.
+ *
+ */
+function edoweb_basic_admin_delete_keep_webarchives( $form , &$form_state ) {
+    $entity = $form_state['values']['basic_entity'];
+    $purge = "false";
+    edoweb_basic_delete($entity, $purge, FALSE);
     $parents = field_get_items('edoweb_basic', $entity, 'field_edoweb_struct_parent');
     $parent_id = '';
     if (FALSE !== $parents) {

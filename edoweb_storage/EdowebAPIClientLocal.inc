@@ -53,7 +53,7 @@ class EdowebAPIClientLocal implements EdowebAPIClientInterface {
     return TRUE;
   }
 
-  public function delete($entity) {
+  public function delete($entity, $purge, $deleteWebarchives) {
     $id = _edoweb_storage_entity_get_id($entity);
     unlink("/tmp/{$id}.ttl", $rdf);
     unlink("/tmp/{$id}.json", $json);

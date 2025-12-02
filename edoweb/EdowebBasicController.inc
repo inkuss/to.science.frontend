@@ -82,8 +82,8 @@ class EdowebBasicController extends EntityAPIController {
    *
    * Really a convenience function for delete_multiple().
    */
-  public function delete($entity) {
-    $this->delete_multiple(array($entity));
+  public function delete($entity, $purge, $deleteWebarchives) {
+    $this->delete_multiple(array($entity), $purge, $deleteWebarchives);
   }
 
   /**
@@ -92,14 +92,14 @@ class EdowebBasicController extends EntityAPIController {
    * @param $entities
    *   An array of entities
    */
-  public function delete_multiple($entities) {
+  public function delete_multiple($entities, $purge, $deleteWebarchives) {
     if (!empty($entities)) {
       try {
         foreach ($entities as $entity) {
           // Invoke hook_entity_delete().
           module_invoke_all('entity_delete', $entity, 'edoweb_basic');
           $api = new EdowebAPIClient();
-          $api->delete($entity);
+          $api->delete($entity, $purge, $deleteWebarchives);
         }
       } catch (Exception $e) {
         watchdog_exception('edoweb', $e);

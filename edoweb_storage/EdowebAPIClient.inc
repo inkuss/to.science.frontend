@@ -243,10 +243,10 @@ class EdowebAPIClient implements EdowebAPIClientInterface
      * The drupal entity to delete
      *
      */
-    public function delete($entity)
+    public function delete($entity, $purge, $deleteWebarchives)
     {
         // Delete resource
-        $http_url = sprintf('%s/resource/%s', $this->__edoweb_api_host, $entity->remote_id);
+        $http_url = sprintf('%s/resource/%s?purge=%s&deleteWebarchives=%d', $this->__edoweb_api_host, $entity->remote_id, $purge, $deleteWebarchives);
         return $this->_http_delete($http_url);
     }
 
