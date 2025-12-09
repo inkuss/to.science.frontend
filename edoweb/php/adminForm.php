@@ -54,10 +54,10 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
         '#title' => t('Delete'),
         '#weight' => 200,
     );
-    $form['delete']['keepWebarchives'] = array(
+    $form['delete']['deleteWebarchives'] = array(
         '#type' => 'checkbox',
-        '#title' => t('behalte Webarchive'),
-        '#name' => 'keepWebarchives',
+        '#title' => t('lösche auch zugehörige Webarchivdateien'),
+        '#name' => 'deleteWebarchives',
         '#default_value' => FALSE,
     );
     $parents = field_get_items('edoweb_basic', $entity, 'field_edoweb_struct_parent');
@@ -127,11 +127,17 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
         	$form['importWS']['quellwebschnitt']['#attributes'] = array('readonly' => 'readonly');
     	}
 	$form['importWS']['deleteQuellserverWebschnitt'] = array(
-        	'#type' => 'checkbox',
-        	'#title' => t('Lösche Webschnitt auf Quellserver'),
-        	'#name' => 'deleteQuellserverWebschnitt',
-        	'#default_value' => @$conf['deleteQuellserverWebschnitt'] == false ? 0 : 1,
-    	);
+            '#type' => 'radios',
+            '#title' => t('Webschnitt auf Quellserver'),
+       	    '#name' => 'deleteQuellserverWebschnitt',
+            '#default_value' => 'keep',
+            '#default_value' => @$conf['deleteQuellserverWebschnitt'] ? @$conf['deleteQuellserverWebschnitt'] : 'keep',
+            '#options' => array(
+                'keep' => t('behalten'),
+                'delete' => t('löschen, aber behalte dessen Webarchivdateien'),
+                'deleteComplete' => t('komplett löschen, lösche auch dessen Webarchivdateien'),
+            ),
+        );
     	if( $entity->bundle() == 'version') {
         	$form['importWS']['deleteQuellserverWebschnitt']['#attributes'] = array('disabled' => 'disabled');
     	}   
@@ -236,9 +242,9 @@ function edoweb_basic_admin_reload( $form , &$form_state ) {
  */
 function edoweb_basic_admin_delete( $form , &$form_state ) {
     $entity = $form_state['values']['basic_entity'];
-    $keepWebarchives = $form_state['values']['keepWebarchives'] ? $form_state['values']['keepWebarchives'] : 0;
+    $deleteWebarchives = $form_state['values']['deleteWebarchives'] ? $form_state['values']['deleteWebarchives'] : 0;
     $purge = $form_state['values']['purge'];
-    edoweb_basic_delete($entity, $keepWebarchives, $purge);
+    edoweb_basic_delete($entity, $deleteWebarchives, $purge);
     $parents = field_get_items('edoweb_basic', $entity, 'field_edoweb_struct_parent');
     $parent_id = '';
     if (FALSE !== $parents) {

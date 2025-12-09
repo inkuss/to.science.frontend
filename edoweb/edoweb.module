@@ -381,8 +381,8 @@ function edoweb_basic_save(&$entity) {
 /**
  * Use the controller to delete the entity.
  */
-function edoweb_basic_delete($entity, $keepWebarchives, $purge) {
-  $entity->keepWebarchives = $keepWebarchives;
+function edoweb_basic_delete($entity, $deleteWebarchives, $purge) {
+  $entity->deleteWebarchives = $deleteWebarchives;
   $entity->purge = $purge;
   entity_get_controller('edoweb_basic')->delete($entity);
 }
