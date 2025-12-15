@@ -157,6 +157,11 @@ function edoweb_entity_list($entity_type, $view_mode) {
 							'type' => 'generated',
 							'format' => '_edoweb_link_lastmodified'
 					),
+					'_edoweb_crawler_status' => array (
+							'data' => t ( 'Crawler Status' ),
+							'type' => 'generated',
+							'format' => '_edoweb_crawler_status'
+					),
 					'bundle_type' => array (
 							'data' => t ( 'Objektart' ),
 							'type' => 'property',

@@ -76,6 +76,20 @@ Finally, install redland.so :
 
 "Edoweb" is one theme for toscience. Create your own theme.
 
+## Translate your theme
+
+Download a language file that comes with your theme to your local computer.
+On your local computer:
+
+    cd /c/Users/<your_name>/Downloads 
+    scp -p toscience@servername:/opt/toscience/drupal/sites/all/themes/your-theme/de.po .
+
+Import the language file to your toscience Drupal installation:
+Goto to https://localhost/admin/config/regional/translate/import .
+
+Upload the file from your local computer and press "Import" .
+
+
 # Activate Drupal modules
 Activate "Edoweb Entities" module (e.g. at <http://localhost/drupal/?q=admin/modules>) and confirm activation of dependency modules. Also activate the modules "Chaos Tools" and "Entity Tokens".
 

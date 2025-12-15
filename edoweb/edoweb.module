@@ -381,7 +381,9 @@ function edoweb_basic_save(&$entity) {
 /**
  * Use the controller to delete the entity.
  */
-function edoweb_basic_delete($entity) {
+function edoweb_basic_delete($entity, $keepWebarchives, $purge) {
+  $entity->keepWebarchives = $keepWebarchives;
+  $entity->purge = $purge;
   entity_get_controller('edoweb_basic')->delete($entity);
 }
 
@@ -675,6 +677,7 @@ function _edoweb_link_lastmodified($entity) {
   }
 }
 
+
 function _edoweb_compact_view($entity) {
   $entity_view = edoweb_basic_view($entity, 'compact');
   return drupal_render($entity_view);
@@ -824,7 +827,7 @@ function _edoweb_is_editable_entity($entity, $permissions = null) {
 }
 
 function _edoweb_is_webpage_entity($entity, $permissions = null) {
-  return 'webpage' == $entity->bundle()
+  return ('webpage' == $entity->bundle() || 'version' == $entity->bundle() )
       && _edoweb_is_editable_entity($entity, $permissions);
 }
 
@@ -937,6 +940,12 @@ function _edoweb_lastmodified($remote_id) {
     $_SESSION['messages'] = $old_msg;
     return $last_modified;
 }
+
+function _edoweb_crawler_status($entity) {
+    $status = edoweb_basic_status($entity);
+    return $status['webgatherer']['_crawlControllerState']['#markup'];
+}
+
 
 
 /**

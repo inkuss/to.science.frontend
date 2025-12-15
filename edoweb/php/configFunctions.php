@@ -78,6 +78,7 @@ function _edoweb_entity_table_headers_defaults() {
         'objectTimestamp',
         '_edoweb_format_access_icons',
         '_edoweb_link_lastmodified',
+        '_edoweb_crawler_status',
         'bundle_type',
     );
 }
@@ -132,6 +133,11 @@ function _edoweb_entity_table_headers($init_sort = null) {
             'data' => t ( 'Zuletzt hinzugefügtes Label' ),
             'type' => 'generated',
             'format' => '_edoweb_link_lastmodified'
+        ),
+        '_edoweb_crawler_status' => array (
+            'data' => t ( 'Crawler Status' ),
+            'type' => 'generated',
+            'format' => '_edoweb_crawler_status'
         ),
         'bundle_type' => array (
             'data' => t ( 'Objektart' ),
