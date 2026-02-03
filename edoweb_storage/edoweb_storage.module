@@ -70,6 +70,20 @@ function edoweb_storage_configuration_form($form, &$form_state) {
     '#required' => TRUE,
   );
 
+  // Text field for import server name.
+  $form['toscience_import_server_name'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get(
+      'toscience_import_server_name',
+      ''
+    ),
+    '#title' => t('Import Server Name'),
+    '#description' => t('The name of the server from which Webarchives might be imported.'),
+    '#size' => 40,
+    '#maxlength' => 120,
+    '#required' => FALSE,
+  );
+
   // Text field for elasticsearch.
   $form['es_api_host'] = array(
     '#type' => 'textfield',

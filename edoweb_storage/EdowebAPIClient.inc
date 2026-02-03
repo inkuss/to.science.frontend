@@ -122,6 +122,18 @@ class EdowebAPIClient implements EdowebAPIClientInterface
         return $this->_http_post($http_url);
     }
 
+    public function importWS($entity, $quellwebpage, $quellwebschnitt, $deleteQuellserverWebschnitt)
+    {
+        $http_url = sprintf('%s/resource/%s/importWS?quellserverWebpagePid=%s&quellserverWebschnittPid=%s&deleteQuellserverWebschnitt=%d', $this->__edoweb_api_host, $entity->remote_id, $quellwebpage, $quellwebschnitt, $deleteQuellserverWebschnitt);
+        return $this->_http_post($http_url);
+    }
+
+    public function postVersion($entity, $webpage_pid, $version_pid, $crawlerSelection, $timestamp, $filename)
+    {
+        $http_url = sprintf('%s/resource/%s/postVersion?version_pid=%s&crawlerSelection=%s&timestamp=%s&filename=%s', $this->__edoweb_api_host, $webpage_pid, $version_pid, $crawlerSelection, $timestamp, $filename);
+        return $this->_http_post($http_url);
+    }
+
     /*
      * Save an entity to the API
      *
@@ -240,8 +252,21 @@ class EdowebAPIClient implements EdowebAPIClientInterface
     public function delete($entity)
     {
         // Delete resource
-        $http_url = sprintf('%s/resource/%s', $this->__edoweb_api_host, $entity->remote_id);
+        $http_url = sprintf('%s/resource/%s?keepWebarchives=%d&purge=%s', $this->__edoweb_api_host, $entity->remote_id, $entity->keepWebarchives, $entity->purge);
         return $this->_http_delete($http_url);
+    }
+
+    /*
+     * Re-activate an entity via the API
+     *
+     * @param $entity The drupal entity to reactivate
+     *
+     */
+    public function activate($entity)
+    {
+        // Re-activate resource
+        $http_url = sprintf('%s/resource/%s/activate', $this->__edoweb_api_host, $entity->remote_id);
+        return $this->_http_post($http_url);
     }
 
     public function index($entity)
@@ -312,6 +337,14 @@ class EdowebAPIClient implements EdowebAPIClientInterface
     public function getCrawlerConfiguration($entity)
     {
         $http_url = sprintf('%s/resource/%s/conf', $this->__edoweb_api_host, $entity->remote_id);
+
+        $http_response = $this->_http_get($http_url);
+        return json_decode($http_response->data, TRUE);
+    }
+
+    public function getCrawlerConfigurationById($remote_id)
+    {
+        $http_url = sprintf('%s/resource/%s/conf', $this->__edoweb_api_host, $remote_id);
 
         $http_response = $this->_http_get($http_url);
         return json_decode($http_response->data, TRUE);
