@@ -70,6 +70,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     
     $form['domains']['domain00'] = array(
         '#type' => 'textfield',
+        '#maxlength' => 256,
         '#title' => t('1. zusätzliche Domäne'),
         '#default_value' => @$conf['domains'][0],
         '#required' => FALSE,
@@ -80,6 +81,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     for($i = 1; $i < sizeof(@$conf['domains']); $i++) {
         $form['domains'][sprintf('domain%02d', $i)] = array(
             '#type' => 'textfield',
+            '#maxlength' => 256,
             '#title' => t(sprintf('%d. zusätzliche Domäne', $i+1)),
             '#default_value' => @$conf['domains'][$i],
             '#required' => FALSE,
@@ -91,6 +93,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     if( sizeof(@$conf['domains']) > 0 ) {
         $form['domains'][sprintf('domain%02d', sizeof(@$conf['domains']))] = array(
             '#type' => 'textfield',
+            '#maxlength' => 256,
             '#title' => t('Weitere Domäne angeben'),
             '#default_value' => '',
             '#required' => FALSE,
@@ -201,9 +204,9 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
         '#options' => array(
             'heritrix' => t('heritrix'),
             'wpull' => t('wpull'),
-            'browsertrix' => t('browsertrix'),
+            'btrix' => t('browsertrix'),
         ),
-        '#default_value' => @$conf['crawlerSelection'] == null ? 'wpull' : @$conf['crawlerSelection'],
+        '#default_value' => @$conf['crawlerSelection'] == null ? 'wpull' : @$conf['crawlerSelection'] == 'wget' ? 'wpull' : @$conf['crawlerSelection'],
         '#required' => FALSE,
         '#weight' => 60,
     );
@@ -215,7 +218,6 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
     console_log('issetDeepness='.(@$conf['deepness']!==null));
     console_log('deepness='.@$conf['deepness']);
     
-    if( @$conf['crawlerSelection'] == 'wpull' || @$conf['crawlerSelection'] == 'browsertrix' ) {
         
         $form['urlsExcluded'] = array(
             '#type' => 'fieldset',
@@ -229,7 +231,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             '#default_value' => @$conf['urlsExcluded'][0],
             '#required' => FALSE,
         );
-        if( $entity->bundle() == 'version') {
+        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
             $form['urlsExcluded']['urlExcluded00']['#attributes'] = array('readonly' => 'readonly');
         }
         for($i = 1; $i < sizeof(@$conf['urlsExcluded']); $i++) {
@@ -239,7 +241,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
                 '#default_value' => @$conf['urlsExcluded'][$i],
                 '#required' => FALSE,
             );
-            if( $entity->bundle() == 'version') {
+            if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
                 $form['urlsExcluded'][sprintf('urlExcluded%02d', $i)]['#attributes'] = array('readonly' => 'readonly');
             }
         }
@@ -250,7 +252,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
                 '#default_value' => '',
                 '#required' => FALSE,
             );
-            if( $entity->bundle() == 'version') {
+            if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
                 $form['urlsExcluded'][sprintf('urlExcluded%02d', sizeof(@$conf['urlsExcluded']))]['#attributes'] = array('readonly' => 'readonly');
             }
         }
@@ -267,12 +269,15 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
                 'Safari' => t('Apple Safari'),
                 'Googlebot' => t('Google Crawler'),
                 'Toscience' => t('to.science Crawler'),
+                'LAV_Heritrix' => t('LAV Heritrix'),
+                'Wget' => t('Wget'),
+                'LAV_Browsertrix' => t('LAV Browsertrix'),
             ),
             '#default_value' => @$conf['agentIdSelection'] == null ? 'Toscience' : @$conf['agentIdSelection'],
             '#required' => FALSE,
             '#weight' => 65,
         );
-        if( $entity->bundle() == 'version') {
+        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
             $form['agentIdSelection']['#attributes'] = array('disabled' => 'disabled');
         }
         
@@ -280,7 +285,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             '#type' => 'select',
             '#title' => t('Max. Verzeichnistiefe'),
             '#options' => array(
-                '0' => t('keine'),
+                '-1' => t('keine'),
                 '1',
                 '2',
                 '3',
@@ -290,13 +295,16 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
                 '7',
                 '8',
                 '9',
+                '10',
+                '11',
+                '12',
+                '13'
             ),
-            '#default_value' => "keine",
-            '#default_value' => @$conf['deepness'] == null ? '0' : @$conf['deepness'] == '0' ? '0' : @$conf['deepness'],
+            '#default_value' => @$conf['deepness'] == null ? '-1' : @$conf['deepness'],
             '#weight' => 80,
             '#required' => FALSE,
         );
-        if( $entity->bundle() == 'version') {
+        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
             $form['deepness']['#attributes'] = array('disabled' => 'disabled');
         }
         
@@ -307,15 +315,18 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             '#value' => array('0' => t('keine'),
                 '1' => t('1'),
                 '2' => t('2'),
+                '3' => t('3'),
+                '4' => t('4'),
                 '5' => t('5'),
                 '10' => t('10'),
                 '20' => t('20'),
                 '60' => t('60'),
+                '120' => t('120'),
                 '180' => t('180'),
                 '600' => t('600'),
             ),
         );
-        if( $entity->bundle() == 'version') {
+        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
             $form['time_options']['#attributes'] = array('disabled' => 'disabled');
         }
         
@@ -328,7 +339,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             '#weight' => 87,
             '#required' => FALSE,
         );
-        if( $entity->bundle() == 'version') {
+        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
             $form['waitSecBtRequests']['#attributes'] = array('disabled' => 'disabled');
         }
         
@@ -346,13 +357,14 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
                 '7',
                 '8',
                 '9',
+                '10'
             ),
             '#default_value' => "keine",
             '#default_value' => @$conf['tries'] == null ? '0' : @$conf['tries'] == '0' ? '0' : @$conf['tries'],
             '#weight' => 88,
             '#required' => FALSE,
         );
-        if( $entity->bundle() == 'version') {
+        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
             $form['tries']['#attributes'] = array('disabled' => 'disabled');
         }
         
@@ -365,7 +377,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             '#weight' => 89,
             '#required' => FALSE,
         );
-        if( $entity->bundle() == 'version') {
+        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
             $form['waitRetry']['#attributes'] = array('disabled' => 'disabled');
         }
         
@@ -382,7 +394,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             '#required' => FALSE,
             '#size' => 4,
         );
-        if( $entity->bundle() == 'version') {
+        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
             $form['limitCrawlSize']['maxCrawlSize']['#attributes'] = array('readonly' => 'readonly');
         }
         $form['limitCrawlSize']['quotaUnitSelection'] = array(
@@ -395,12 +407,19 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             '#default_value' => @$conf['quotaUnitSelection'] == null ? 'GB' : @$conf['quotaUnitSelection'],
             '#required' => FALSE,
         );
-        if( $entity->bundle() == 'version') {
+        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
             $form['limitCrawlSize']['quotaUnitSelection']['#attributes'] = array('disabled' => 'disabled');
         }
+
+        $form['btrixWorkflowId'] = array(
+            '#type' => 'hidden',
+            '#value' => @$conf['btrixWorkflowId'],
+        );
+        $form['lastCrawlId'] = array(
+            '#type' => 'hidden',
+            '#value' => @$conf['lastCrawlId'],
+        );
         
-        
-    }
     
     $form['save'] = array(
         '#type' => 'submit',
@@ -458,7 +477,7 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
     $conf['robotsPolicy'] = $form_state['values']['robotsPolicy'];
     $conf['notices'] = $form_state['values']['notices'];
     $conf['crawlerSelection'] = $form_state['values']['crawlerSelection'];
-    if( $conf['crawlerSelection'] == 'wpull' || $conf['crawlerSelection'] == 'browsertrix' ) {
+    if( $conf['crawlerSelection'] == 'wpull' || $conf['crawlerSelection'] == 'btrix' ) {
         if( isset($form_state['values']['urlExcluded00']) && $form_state['values']['urlExcluded00'] != '') {
             $conf['urlsExcluded'] = array($form_state['values']['urlExcluded00']);
         }
@@ -483,6 +502,10 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
         if( isset($form_state['values']['waitRetry']) && $form_state['values']['waitRetry'] != '' )
         { $conf['waitRetry'] = $form_state['values']['waitRetry']; }
         else $conf['waitRetry'] = '20';
+        if( isset($form_state['values']['btrixWorkflowId']) && $form_state['values']['btrixWorkflowId'] != '' )
+        { $conf['btrixWorkflowId'] = $form_state['values']['btrixWorkflowId']; }
+        if( isset($form_state['values']['lastCrawlId']) && $form_state['values']['lastCrawlId'] != '' )
+        { $conf['lastCrawlId'] = $form_state['values']['lastCrawlId']; }
     }
     
     $api->setCrawlerConfiguration($entity, $conf);

@@ -61,8 +61,11 @@ function edoweb_basic_structure($entity) {
     if ('POST' == $_SERVER['REQUEST_METHOD'] && user_access('edit any edoweb_basic entity')) {
         $new_parent_id = isset($_POST['parent_id']) ? $_POST['parent_id'] : FALSE;
         $parts = isset($_POST['parts']) ? $_POST['parts'] : FALSE;
+        $root_id = isset($_POST['root_id']) ? $_POST['root_id'] : FALSE;
+        $tree_html = isset($_POST['tree_html']) ? $_POST['tree_html'] : FALSE;
         
         if ($new_parent_id) {
+	    // Umhängen der Entity an einen neuen Parent.
             $wrapper = entity_metadata_wrapper('edoweb_basic', $entity);
             $prev_parent = $wrapper->field_edoweb_struct_parent->value();
             $prev_parent_id = $prev_parent['value'];
@@ -83,11 +86,23 @@ function edoweb_basic_structure($entity) {
         } else if ($parts) {
             echo "Failed settings parts for {$entity->remote_id}\n";
         }
+	// Abspeichern des Baumes am Parent (root_id = Journal oder Monograph); neu für TOSDEV-11
+	if ($root_id && $tree_html && $api->writeTree($entity, $root_id, $tree_html)) {
+            echo "Writing tree_html for {$entity->remote_id}\n";
+        } else if ($tree_html) {
+            echo "Failed writing tree_html for {$entity->remote_id}\n";
+        }
         die;
     } else if ('POST' == $_SERVER['REQUEST_METHOD']) {
         return MENU_ACCESS_DENIED;
-    } else {
+    } else { // GET-Methode
         $subtree = _edoweb_build_tree($api->getTree($entity));
+        if ( $subtree['isHtml'] ) {
+          // drupal_set_message("editTab.php: Output is html: " . $subtree['html']);
+          die('<ul class="edoweb-tree">' + $subtree['html'] + '</ul>');
+          }
+        // falls nicht HTML geliefert wurde, nimmt die Drupal-Funktiom theme_item_list ein Rendering nach HTML vor.
+        // drupal_set_message("editTab.php Rendering tree item list array to HTML for curie: " . $subtree['data-curie']);
         die(theme_item_list(array(
             'items' => array($subtree),
             'title' => null,

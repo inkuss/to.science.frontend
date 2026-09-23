@@ -2,6 +2,7 @@
 
 /**
  * Implements hook_menu().
+ * Hier werden die Routen für das Frontend definiert.
  */
 function edoweb_menu() {
     
@@ -91,13 +92,14 @@ function edoweb_menu() {
     );
     
     // 'Structure' callback for entities.
+    // Frontend Endpoint Definiton /structure
     $items['resource/%edoweb_basic/structure'] = array(
         'page callback' => 'edoweb_basic_structure', //editTab.php
         'page arguments' => array(1),
         'access arguments' => array('view any edoweb_basic entity'),
         'type' => MENU_CALLBACK,
     );
-    
+
     // Facet browsing
     $items['browse/%'] = array(
         'page callback' => 'edoweb_basic_browse', //search.php

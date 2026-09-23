@@ -571,6 +571,13 @@ function edoweb_block_view($delta = '') {
             in_array($top_level_parent->bundle_type, array('monograph', 'journal','webpage','researchData','article','ktblData'))) {
           $api = new EdowebAPIClient();
           $subtree = _edoweb_build_tree($api->getTree($top_level_parent));
+	  if ( $subtree['isHtml'] ) {
+	    // drupal_set_message("edoweb.module: Output is html: " . $subtree['html']);
+            $block['content'] = '<div class="item-list"><ul class="edoweb-tree">' . $subtree['html'] . '</ul></div>';
+	    break;
+	  }
+	  // falls nicht HTML geliefert wurde, nimmt die Drupal-Funktiom theme_item_list ein Rendering nach HTML vor.
+	  // drupal_set_message("edoweb.module: Rendering tree item list array to HTML for curie: " . $subtree['data-curie']);
           $block['content'] = theme_item_list(array(
             'items' => array($subtree),
             'title' => null,

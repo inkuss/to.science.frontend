@@ -73,6 +73,8 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
         	$form['delete']['keepWebarchives']['#attributes'] = array('disabled' => 'disabled');
         }
     }
+   // Auf Testrechnern kann diese Zeile entfernt werden:  KS, 11.02.2026
+   $form['delete']['keepWebarchives']['#attributes'] = array('disabled' => 'disabled');
    $form['delete']['purge'] = array(
      	'#type' => 'checkbox',
        	'#title' => t('endgültig löschen'),
@@ -140,6 +142,8 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
         		'#type' => 'submit',
         		'#value' => t('Importiere Webschnitt'),
         		'#submit' => array('edoweb_basic_admin_importws'),
+			// Importieren von Webschnitten deaktiviert, KS 11.02.2026
+                        '#attributes' => array('disabled' => 'disabled'),
     		);
     	}
     }
@@ -236,8 +240,10 @@ function edoweb_basic_admin_reload( $form , &$form_state ) {
  */
 function edoweb_basic_admin_delete( $form , &$form_state ) {
     $entity = $form_state['values']['basic_entity'];
-    $keepWebarchives = $form_state['values']['keepWebarchives'] ? $form_state['values']['keepWebarchives'] : 0;
+    $keepWebarchives = $form_state['values']['keepWebarchives'];
+    // drupal_set_message('keepWebarchives='.$keepWebarchives);
     $purge = $form_state['values']['purge'];
+    // drupal_set_message('purge='.$purge);
     edoweb_basic_delete($entity, $keepWebarchives, $purge);
     $parents = field_get_items('edoweb_basic', $entity, 'field_edoweb_struct_parent');
     $parent_id = '';

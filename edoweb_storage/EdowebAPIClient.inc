@@ -90,9 +90,26 @@ class EdowebAPIClient implements EdowebAPIClientInterface
 
     public function getTree($entity)
     {
+	// Zuerst versuchen, abgespeichertes tree/html aus Fedora zu lesen
+	// bei Webpages wird der Baum immer über die API eingelesen KS20260702 TOSDEV-50
+        if ($entity->bundle_type != 'webpage' && $entity->bundle_type != 'version') {
+          $http_url = sprintf('%s/resource/%s/tree', $this->__edoweb_api_host, $entity->remote_id);
+          $http_response = $this->_http_get($http_url, 'text/html');
+          // drupal_set_message("getTree: code: " . $http_response->code);
+          if (200 == $http_response->code && isset($http_response->data)) {
+            // drupal_set_message("getTree: data: " . $http_response->data);
+            $tree_json = array( "isHtml" => true, "html" => $http_response->data);
+            // drupal_set_message("getTree: tree_json: " . $tree_json);
+            return $tree_json;
+          }
+        }
+        // Wenn das nicht geklappt hat, den Baum komplett von der API neu aufbauen lassen
         $http_url = sprintf('%s/resource/%s/all', $this->__edoweb_api_host, $entity->remote_id);
         $http_response = $this->_http_get($http_url, 'application/json');
-        return json_decode($http_response->data, TRUE);
+        // drupal_set_message("getTree: got Tree data from listAllParts endpoint: " . $http_response->data);
+        $tree_json = sprintf('{"isHtml":false,"json":%s}', $http_response->data);
+        // drupal_set_message("getTree: tree_json: " . $tree_json);
+        return json_decode($tree_json, TRUE);
     }
 
     public function getMetadata($entity)
@@ -196,6 +213,15 @@ class EdowebAPIClient implements EdowebAPIClientInterface
         }
     }
 
+    public function writeTree($entity, $root_id, $tree_html)
+    {
+        if (isset($root_id)) {
+            // Update resource tree_html
+            $http_url = sprintf('%s/resource/%s/tree', $this->__edoweb_api_host, $root_id);
+            return $this->_http_put($http_url, $request_body = $tree_html, $content_type = 'text/plain;charset=utf-8');
+        }
+    }
+
     public function saveResource($entity, $transformers = null)
     {
         $data = array();
@@ -252,7 +278,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface
     public function delete($entity)
     {
         // Delete resource
-        $http_url = sprintf('%s/resource/%s?keepWebarchives=%d&purge=%s', $this->__edoweb_api_host, $entity->remote_id, $entity->keepWebarchives, $entity->purge);
+        $http_url = sprintf('%s/resource/%s?keepWebarchives=%s&purge=%s', $this->__edoweb_api_host, $entity->remote_id, $entity->keepWebarchives, $entity->purge);
         return $this->_http_delete($http_url);
     }
 
@@ -290,6 +316,7 @@ class EdowebAPIClient implements EdowebAPIClientInterface
 
         $results_per_page = variable_get('edoweb_storage_results_per_page', 10);
 
+        if (isset($results['hits']))
         pager_default_initialize($results['hits'], $results_per_page, $query_count);
 
         $query_count ++;

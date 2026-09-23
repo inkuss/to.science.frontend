@@ -162,10 +162,40 @@
     return false;
   }
 
+  // TOSDEV-48; Löschen eines Objektes über das /admin-Formular ("Extras")
+  // => Dieser Event-Handler wird irgendwie nicht mehr ausgeführt, nachdem man "submit" gedrückt hat.
+  Drupal.edoweb.delete_item = function(e) {
+    console.log('Starting delete_item');
+    entity_id = e.data.entity_id;
+    console.log('entity_id: ', entity_id);
+    var list_item = $('.edoweb-tree a[href="/resource/' + encodeURIComponent(entity_id) + '"]');
+    if (list_item.length) {
+      console.log('hiding list item in tree');
+      list_item.closest('li').hide();
+      writeTree(list_item.closest('li'), function() {$.unblockUI();});
+      Drupal.edoweb.refreshTree();
+      }
+  }
+
+  // TOSDEV-48; Reaktivierung eines Objektes über das /admin-Formular ("Extras")
+  Drupal.edoweb.reactivate_item = function(e) {
+    console.log('Starting reactivate_item');
+    entity_id = e.data.entity_id;
+    console.log('entity_id: ', entity_id);
+    var list_item = $('.edoweb-tree a[href="/resource/' + encodeURIComponent(entity_id) + '"]');
+    if (list_item.length) {
+      console.log('displaying list item in tree');
+      list_item.closest('li').show();
+      writeTree(list_item.closest('li'), function() {$.unblockUI();});
+      Drupal.edoweb.refreshTree();
+      }
+  }
+
   var loadTree = function(entity_id, target, callback) {
     var url = Drupal.settings.basePath + 'resource/' + entity_id + '/structure';
     $.get(url).onload = function() {
       var data = $(this.responseText);
+      console.log("data: ",data);
       Drupal.attachBehaviors(data);
       var replacement = data.children('ul').children('li');
       target.replaceWith(replacement);
@@ -176,6 +206,7 @@
 
   var UIButtons = [];
 
+  // hier werden die Event Handler gesetzt - das ist der Hauptteil dieser Javascript-Source
   Drupal.edoweb.refreshTree = function () {
     $('.edoweb-tree li[data-curie="' + Drupal.settings.edoweb.entity + '"]')
         .addClass('active').parents('li').removeClass('collapsed').addClass('expanded');
@@ -193,6 +224,7 @@
       button.remove();
     });
     UIButtons = [];
+    // Gibt es eine "ausgeschnittene Entität" = gibt es ein Objekt im Zwischenspeicher ?
     var cut_entity;
     try {
       cut_entity = JSON.parse(localStorage.getItem('cut_entity'));
@@ -200,6 +232,8 @@
       localStorage.removeItem('cut_entity');
     }
     if (cut_entity) {
+      // Darstellung des Baumes mit einer ausgeschnittenen Entität;
+      // es gibt keine Buttons "Ausschneiden", stattdessen gibt es Buttons "Einfügen".
       var entity_id = cut_entity.remote_id;
       var entity_bundle = cut_entity.bundle_type;
       var entity_label = cut_entity.remote_id;
@@ -209,10 +243,18 @@
         Drupal.edoweb.refreshTree();
       });
       Drupal.edoweb.entity_label(clipboard_item.find('span[data-curie]'));
+      // Darstellung der ausgeschnittenen Entität im Zwischenspeicher (Clipboard)
       $('#edoweb-tree-clipboard').html(clipboard_item.append(clipboard_cancel));
-      $('.edoweb-tree a[href="/resource/' + encodeURIComponent(entity_id) + '"]')
-        .addClass('edoweb-tree-cut-item')
-        .closest('li').find('a[data-bundle]').addClass('edoweb-tree-cut-item');
+      // die ausgeschnittene Entität selber wird ausgegraut dargestellt (Klasse 'edoweb-tree-cut-item')
+      // $('.edoweb-tree a[href="/resource/' + encodeURIComponent(entity_id) + '"]')
+      //   .addClass('edoweb-tree-cut-item')
+      //   .closest('li').find('a[data-bundle]').addClass('edoweb-tree-cut-item');
+      // stattdessen stellen wir die ausgeschnittene Entität im Baume gar nicht dar, für TOSDEV-49:
+      var list_item = $('.edoweb-tree a[href="/resource/' + encodeURIComponent(entity_id) + '"]');
+      list_item.closest('li').remove();
+      // und wir entfernen die ausgeschnittene Entität aus dem abgespeicherten Baum:
+      // dies für den Fall, dass sie in einen anderen Baum wieder eingefügt werden sollte (dann würde sie sonst hier nicht gelöscht werden).
+      writeTree(list_item.closest('li'), function() {$.unblockUI();});
 
       $('.edoweb-tree li').each(function() {
 
@@ -260,6 +302,7 @@
             }
             insert_position.append(inserted_item);
             $.post(target_struct_url, {'parent_id': target_parent_id}, function(data, textStatus, jqXHR) {
+              writeTree(list_item, function() {$.unblockUI();});
               saveStructure(list_item, function() {$.unblockUI()});
               throbber.remove();
               Drupal.edoweb.refreshTree();
@@ -293,6 +336,7 @@
             }
             insert_position.prepend(inserted_item);
             $.post(target_struct_url, {'parent_id': target_parent_id}, function(data, textStatus, jqXHR) {
+              writeTree(list_item, function() {$.unblockUI();});
               saveStructure(list_item, function() {$.unblockUI()});
               throbber.remove();
               Drupal.edoweb.refreshTree();
@@ -332,6 +376,7 @@
                 }
                 list_item.after(inserted_item);
                 $.post(target_struct_url, {'parent_id': target_parent_id}, function(data, textStatus, jqXHR) {            
+                  writeTree(list_item.parent().closest('li'), function() {$.unblockUI();});
                   saveStructure(list_item.parent().closest('li'), function() {$.unblockUI()});
                   throbber.remove();
                   Drupal.edoweb.refreshTree();
@@ -342,6 +387,8 @@
         }
       });
     } else {
+      // Darstellung des Baumes mit einer ausgeschnittenen Entität;
+      // es gibt Buttons "Ausschneiden"
       $('.edoweb-tree li').each(function() {
         var list_element = $(this);
         var link = list_element.children('a:eq(0)');
@@ -376,6 +423,7 @@
             var next = item.next('li');
             if (next.length > 0) {
               next.after(item);
+              writeTree(item.parent().closest('li'), function() {$.unblockUI();});
               saveStructure(item.parent().closest('li'), function() {$.unblockUI();});
               Drupal.edoweb.refreshTree();
             }
@@ -395,7 +443,11 @@
             var prev = item.prev('li');
             if (prev.length > 0) {
               prev.before(item);
+              // das HTML des gesamten, aktualisierten Baumes in Fedora abspeichern:
+              writeTree(item.parent().closest('li'), function() {$.unblockUI();});
+              // das speichert den SEQ-Datenstrom am Parent neu ab:
               saveStructure(item.parent().closest('li'), function() {$.unblockUI();});
+              // hier werden die event handler gesetzt:
               Drupal.edoweb.refreshTree();
             }
             return false;
@@ -413,6 +465,30 @@
 
     }
 
+    // Für TOSDEV-48: auf den Lösch-Submit-Button im Reiter "Extras" einen Event-Handler legen,
+    //  der den selektierten Eintrag aus dem Baum entfernt.
+    // Also auf das Element: <form action="/resource/edoweb%3A<ID>/admin" id="edoweb-basic-admin" /> <input type="submit" id="edit-dodelete"/>
+    // Achtung, nach Wechsel in das /admin Tab muss noch ein refreshTree durchgeführt werden, damit dieser Event Handler gesetzt wird.
+    // das müsste beim Ausführen des /admin - Endpoints (des Frontends) durchgeführt werden.
+    var admin_form = $('form#edoweb-basic-admin');
+    if ( admin_form.length ) {
+        var action_parts = admin_form.attr('action').split('/');
+        var entity_id = decodeURIComponent( action_parts[action_parts.length -2] );
+        console.log('entity_id: ',entity_id);
+        var delete_button = $('input#edit-dodelete');
+        if (delete_button.length) {
+          console.log('Adding action submit delete_item to delete button.');
+          delete_button.bind('submit', {entity_id: entity_id}, Drupal.edoweb.delete_item);
+        }
+        // Auf den Reaktivierungs-Button muss dann aber auch ein entsprechender Event-Handler gelegt werden.
+        // Also auf <input type="submit" id="edit-reactivate" />
+        var reactivate_button = $('input#edit-reactivate');
+        if (reactivate_button.length) {
+          console.log('Adding action submit reactivate_item to reactivate button.');
+          reactivate_button.bind('submit', {entity_id: entity_id}, Drupal.edoweb.reactivate_item);
+        }
+    }
+
   }
 
   var saveStructure = function(list_item, callback) {
@@ -422,9 +498,32 @@
     list.children('ul').children('li').children('a[data-bundle]').each(function() {
       ordered_children.push(decodeURIComponent($(this).attr('href').split('/').pop()));
     });
-    $.post(target_parent_url + '/structure', {'parts': ordered_children}, function(data, textStatus, jqXHR) {
-      if (callback) callback();
-    });
+    var content_type = $('ul.edoweb-tree').children('li').first().children('a').attr('data-bundle');
+    console.log("content_type: ", content_type);
+    if ( content_type == 'webpage' ) {
+    // Bei Webpages wird der SEQ-Datenstrom geschrieben und nicht der tree_html KS20260702 TOSDEV-50
+    // Beide Datenströme gleichzeitig kann man nicht speichern, weil die Schreibzugriffe in Fedora quer schießen.
+      $.post(target_parent_url + '/structure', {'parts': ordered_children}, function(data, textStatus, jqXHR) {
+        if (callback) callback();
+      });
+    }
+  }
+
+  var writeTree = function(list_item, callback) {
+    // Das HTML des geänderten Baumes abspeichern TOSDEV-11
+    // root_id = die PID des Journal- oder Monographie-Ojektes:
+    var root_id = $('ul.edoweb-tree').children('li').first().attr('data-curie');
+    var tree_html = $('ul.edoweb-tree').html();
+    console.log("tree_html: ",tree_html);
+    var target_parent_url = list_item.find('a:eq(0)').attr('href');
+    var content_type = $('ul.edoweb-tree').children('li').first().children('a').attr('data-bundle');
+    console.log("content_type: ", content_type);
+    if ( content_type != 'webpage' ) {
+      // Bei Webpages wird der tree_html-Datenstrom nicht geschrieben werden, sondern der SEQ KS20260702 TOSDEV-50
+      $.post(target_parent_url + '/structure', {'root_id': root_id, 'tree_html': tree_html}, function(data, textStatus, jqXHR) {
+        if (callback) callback();
+      });
+    }
   }
 
 })(jQuery);

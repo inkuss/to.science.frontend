@@ -65,7 +65,14 @@ function edoweb_basic_status($entity) {
             '#markup' => @$status['webgatherer']['launchCount'],
             '#weight' => 999,
         );
-        
+        $content['webgatherer']['_lastCrawlSize'] = array(
+            '#prefix' => '<div class="field field-label-above"><div class="field-label">'
+            . t('Last Crawl Size')
+            . ':</div><div class="field-items"><div class="field-item even">',
+            '#suffix' => '</div></div></div>',
+            '#markup' => @$status['webgatherer']['lastCrawlSize'],
+            '#weight' => 999,
+        );
         $content['webgatherer']['_lastLaunch'] = array(
             '#prefix' => '<div class="field field-label-above"><div class="field-label">'
             . t('Last launch')
@@ -82,6 +89,47 @@ function edoweb_basic_status($entity) {
             '#suffix' => '</div></div></div>',
             '#markup' => isset($status['webgatherer']['nextLaunch'])
             ? _edoweb_format_date(strtotime($status['webgatherer']['nextLaunch'])) : '',
+            '#weight' => 999,
+        );
+    } else if ('version' == $entity->bundle()) {
+        $content['webgatherer'] = array(
+           '#type' => 'fieldset',
+            '#title' => t('Web Crawl'),
+        );
+        $content['webgatherer']['_crawlExitStatus'] = array(
+            '#prefix' => '<div class="field field-label-above"><div class="field-label">'
+            . t('Exit Status')
+            . ':</div><div class="field-items"><div class="field-item even">',
+            '#suffix' => '</div></div></div>',
+            '#markup' => isset($status['webgatherer']['crawlExitStatus'])
+            ? $status['webgatherer']['crawlExitStatus'] : '',
+            '#weight' => 999,
+        );
+        $content['webgatherer']['_crawlFileSize'] = array(
+            '#prefix' => '<div class="field field-label-above"><div class="field-label">'
+            . t('Archivgröße')
+            . ':</div><div class="field-items"><div class="field-item even">',
+            '#suffix' => '</div></div></div>',
+            '#markup' => isset($status['webgatherer']['crawlFileSize'])
+            ? $status['webgatherer']['crawlFileSize'] : '',
+            '#weight' => 999,
+        );
+        $content['webgatherer']['_crawlDuration'] = array(
+            '#prefix' => '<div class="field field-label-above"><div class="field-label">'
+            . t('Crawl-Dauer')
+            . ':</div><div class="field-items"><div class="field-item even">',
+            '#suffix' => '</div></div></div>',
+            '#markup' => isset($status['webgatherer']['crawlDuration'])
+            ? $status['webgatherer']['crawlDuration'] : '',
+            '#weight' => 999,
+        );
+        $content['webgatherer']['_crawlStarted'] = array(
+            '#prefix' => '<div class="field field-label-above"><div class="field-label">'
+            . t('Crawl gestartet')
+            . ':</div><div class="field-items"><div class="field-item even">',
+            '#suffix' => '</div></div></div>',
+            '#markup' => isset($status['webgatherer']['crawlStarted'])
+            ? _edoweb_format_date(strtotime($status['webgatherer']['crawlStarted'])) : '',
             '#weight' => 999,
         );
     }
