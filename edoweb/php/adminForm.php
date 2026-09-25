@@ -54,28 +54,31 @@ function edoweb_basic_admin($form, &$form_state, $entity) {
         '#title' => t('Delete'),
         '#weight' => 200,
     );
-    $form['delete']['keepWebarchives'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('behalte Webarchive'),
-        '#name' => 'keepWebarchives',
-        '#default_value' => TRUE,
-    );
-    $parents = field_get_items('edoweb_basic', $entity, 'field_edoweb_struct_parent');
-    $parent_id = '';
-    if (FALSE !== $parents) {
-        foreach($parents as $parent) {
-            $parent_id = $parent['value'];
+
+    if( $entity->bundle() == 'webpage' || $entity->bundle() == 'version' ) {
+        $form['delete']['keepWebarchives'] = array(
+            '#type' => 'checkbox',
+            '#title' => t('behalte Webarchive'),
+            '#name' => 'keepWebarchives',
+            '#default_value' => TRUE,
+        );
+        $parents = field_get_items('edoweb_basic', $entity, 'field_edoweb_struct_parent');
+        $parent_id = '';
+        if (FALSE !== $parents) {
+            foreach($parents as $parent) {
+                $parent_id = $parent['value'];
+            }
         }
-    }
-    if (! $conf = $api->getCrawlerConfiguration($entity)) {
-    	if (! $conf = $api->getCrawlerConfigurationById($parent_id)) {
-        	/* falls keine Conf vorhanden noch versuchen, die Conf des Parent zu lesen (für kaputte Webschnitte) */
-        	$form['delete']['keepWebarchives']['#attributes'] = array('disabled' => 'disabled');
+        if (! $conf = $api->getCrawlerConfiguration($entity)) {
+            if (! $conf = $api->getCrawlerConfigurationById($parent_id)) {
+                   /* falls keine Conf vorhanden noch versuchen, die Conf des Parent zu lesen (für kaputte Webschnitte) */
+                   $form['delete']['keepWebarchives']['#attributes'] = array('disabled' => 'disabled');
+            }
         }
+        // Auf Testrechnern kann diese Zeile entfernt werden:  KS, 11.02.2026
+        $form['delete']['keepWebarchives']['#attributes'] = array('disabled' => 'disabled');
     }
-   // Auf Testrechnern kann diese Zeile entfernt werden:  KS, 11.02.2026
-   $form['delete']['keepWebarchives']['#attributes'] = array('disabled' => 'disabled');
-   $form['delete']['purge'] = array(
+    $form['delete']['purge'] = array(
      	'#type' => 'checkbox',
        	'#title' => t('endgültig löschen'),
        	'#name' => 'purge',
@@ -325,7 +328,7 @@ function edoweb_basic_admin_post_version( $form , &$form_state ) {
     $api = new EdowebAPIClient();
     if (! $conf = $api->getCrawlerConfiguration($entity)) {
        	/* falls keine Conf vorhanden noch versuchen, die Conf des Parent zu lesen (für kaputte Webschnitte) */
-    	$conf = $api->getCrawlerConfigurationById($parent_id);
+	$conf = $api->getCrawlerConfigurationById($parent_id);
     }
     $webpage_pid = $conf['name'];
     $version_pid = '';
