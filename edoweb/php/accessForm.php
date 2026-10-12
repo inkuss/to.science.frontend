@@ -27,6 +27,7 @@ function edoweb_basic_access_form($form, &$form_state, $entity) {
         '#default_value' => isset($entity->access_data) ? $entity->access_data : variable_get('access_data_default'),
         '#options' => array(
             'public' => t('Public'),
+            'campus' => t('Campus'),
             'private' => t('Private'),
             'restricted' => t('Restricted'),
             'remote' => t('Remote'),
@@ -35,7 +36,6 @@ function edoweb_basic_access_form($form, &$form_state, $entity) {
     );
     
     $children = field_get_items('edoweb_basic', $entity, 'field_edoweb_struct_child');
-    console_log('children='.$children);
     if (FALSE !== $children) {
         $form['subtree_apply'] = array(
             '#type' => 'checkbox',
