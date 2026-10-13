@@ -371,6 +371,7 @@ function edoweb_rdf_namespaces() {
         'rd_dbpedia' => 'http://dbpedia.org/ontology/',
         'rd_rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
         'rd_rda' => 'http://rdaregistry.info/Elements/u/',
+        'rda' => 'http://rdaregistry.info/Elements/u/',
         'rd_rda-media' => 'http://rdaregistry.info/termList/RDAMediaType/',
         'rd_bibframe' => 'http://id.loc.gov/ontologies/bibframe/',
         'rd_zettel' =>'info:regal/zettel/',
@@ -428,6 +429,9 @@ function _edoweb_format_access_icons($entity) {
         case 'subscriber':
         case 'restricted':
             $icons .= '<i class="fa fa-lock" title="' . t($entity->access_data) . '"style="color:orange;"></i>';
+            break;
+        case 'campus':
+            $icons .= '<i class="fa fa-unlock" title="' . t($entity->access_data) . '"style="color:lightblue;"></i>';
             break;
         case 'remote':
             $icons .= '<i class="fa fa-lock" title="' . t($entity->access_data) . '"style="color:yellow;"></i>';
