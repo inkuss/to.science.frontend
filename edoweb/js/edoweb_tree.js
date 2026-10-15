@@ -500,8 +500,8 @@
     });
     var content_type = $('ul.edoweb-tree').children('li').first().children('a').attr('data-bundle');
     console.log("content_type: ", content_type);
-    if ( content_type == 'webpage' ) {
-    // Bei Webpages wird der SEQ-Datenstrom geschrieben und nicht der tree_html KS20260702 TOSDEV-50
+    if ( content_type != 'journal' ) {
+    // Nur bei Zeitschriften wird der tree_html-Datenstrom geschrieben, sonsnt der SEQ-Datenstrom KS20260702 TOSDEV-50 TOS-1390
     // Beide Datenströme gleichzeitig kann man nicht speichern, weil die Schreibzugriffe in Fedora quer schießen.
       $.post(target_parent_url + '/structure', {'parts': ordered_children}, function(data, textStatus, jqXHR) {
         if (callback) callback();
@@ -518,8 +518,8 @@
     var target_parent_url = list_item.find('a:eq(0)').attr('href');
     var content_type = $('ul.edoweb-tree').children('li').first().children('a').attr('data-bundle');
     console.log("content_type: ", content_type);
-    if ( content_type != 'webpage' ) {
-      // Bei Webpages wird der tree_html-Datenstrom nicht geschrieben werden, sondern der SEQ KS20260702 TOSDEV-50
+    if ( content_type == 'journal' ) {
+      // Bei Zeitschriften wird der tree_html-Datenstrom geschrieben, nicht der SEQ KS20260702 TOSDEV-50 TOS-1390
       $.post(target_parent_url + '/structure', {'root_id': root_id, 'tree_html': tree_html}, function(data, textStatus, jqXHR) {
         if (callback) callback();
       });

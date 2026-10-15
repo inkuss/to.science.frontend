@@ -91,8 +91,9 @@ class EdowebAPIClient implements EdowebAPIClientInterface
     public function getTree($entity)
     {
 	// Zuerst versuchen, abgespeichertes tree/html aus Fedora zu lesen
+	// tree/html nur für Zeitschriften lesen, da es bei Monographien häufig nicht funktioniert KS20261015 TOSDEV-11 TOS-1390
 	// bei Webpages wird der Baum immer über die API eingelesen KS20260702 TOSDEV-50
-        if ($entity->bundle_type != 'webpage' && $entity->bundle_type != 'version') {
+        if ($entity->bundle_type == 'journal') {
           $http_url = sprintf('%s/resource/%s/tree', $this->__edoweb_api_host, $entity->remote_id);
           $http_response = $this->_http_get($http_url, 'text/html');
           // drupal_set_message("getTree: code: " . $http_response->code);
