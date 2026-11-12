@@ -277,7 +277,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             '#required' => FALSE,
             '#weight' => 65,
         );
-        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
+        if( $entity->bundle() == 'version' ) {
             $form['agentIdSelection']['#attributes'] = array('disabled' => 'disabled');
         }
         
@@ -304,7 +304,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             '#weight' => 80,
             '#required' => FALSE,
         );
-        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
+        if( $entity->bundle() == 'version' ) {
             $form['deepness']['#attributes'] = array('disabled' => 'disabled');
         }
         
@@ -326,7 +326,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
                 '600' => t('600'),
             ),
         );
-        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
+        if( $entity->bundle() == 'version' ) {
             $form['time_options']['#attributes'] = array('disabled' => 'disabled');
         }
         
@@ -339,7 +339,7 @@ function edoweb_basic_crawler_form($form, &$form_state, $entity) {
             '#weight' => 87,
             '#required' => FALSE,
         );
-        if( $entity->bundle() == 'version' || @$conf['crawlerSelection'] == 'heritrix' ) {
+        if( $entity->bundle() == 'version' ) {
             $form['waitSecBtRequests']['#attributes'] = array('disabled' => 'disabled');
         }
         
@@ -477,6 +477,12 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
     $conf['robotsPolicy'] = $form_state['values']['robotsPolicy'];
     $conf['notices'] = $form_state['values']['notices'];
     $conf['crawlerSelection'] = $form_state['values']['crawlerSelection'];
+    if( isset($form_state['values']['agentIdSelection']) && $form_state['values']['agentIdSelection'] != '' )
+    { $conf['agentIdSelection'] = $form_state['values']['agentIdSelection']; }
+    if( isset($form_state['values']['deepness']) && $form_state['values']['deepness'] != '' )
+    { $conf['deepness'] = $form_state['values']['deepness']; }
+    if( isset($form_state['values']['waitSecBtRequests']) && $form_state['values']['waitSecBtRequests'] != '' )
+    { $conf['waitSecBtRequests'] = $form_state['values']['waitSecBtRequests']; }
     if( $conf['crawlerSelection'] == 'wpull' || $conf['crawlerSelection'] == 'btrix' ) {
         if( isset($form_state['values']['urlExcluded00']) && $form_state['values']['urlExcluded00'] != '') {
             $conf['urlsExcluded'] = array($form_state['values']['urlExcluded00']);
@@ -486,16 +492,10 @@ function edoweb_basic_crawler_form_submit($form, &$form_state) {
             array_push($conf['urlsExcluded'], $form_state['values'][sprintf('urlExcluded%02d',$i)]);
             $i++;
         }
-        if( isset($form_state['values']['deepness']) && $form_state['values']['deepness'] != '' )
-        { $conf['deepness'] = $form_state['values']['deepness']; }
         if( isset($form_state['values']['maxCrawlSize']) && $form_state['values']['maxCrawlSize'] != '' )
         { $conf['maxCrawlSize'] = $form_state['values']['maxCrawlSize']; }
         if( isset($form_state['values']['quotaUnitSelection']) && $form_state['values']['quotaUnitSelection'] != '' )
         { $conf['quotaUnitSelection'] = $form_state['values']['quotaUnitSelection']; }
-        if( isset($form_state['values']['agentIdSelection']) && $form_state['values']['agentIdSelection'] != '' )
-        { $conf['agentIdSelection'] = $form_state['values']['agentIdSelection']; }
-        if( isset($form_state['values']['waitSecBtRequests']) && $form_state['values']['waitSecBtRequests'] != '' )
-        { $conf['waitSecBtRequests'] = $form_state['values']['waitSecBtRequests']; }
         if( isset($form_state['values']['tries']) && $form_state['values']['tries'] != '' )
         { $conf['tries'] = $form_state['values']['tries']; }
         else $conf['tries'] = '5';
